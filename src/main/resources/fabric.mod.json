@@ -14,16 +14,16 @@
   },
 
   "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "icon": "assets/guardvillagers/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "dev.mrsterner.guardvillagers.GuardVillagers"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "guardvillagers.mixins.json"
   ],
 
   "depends": {

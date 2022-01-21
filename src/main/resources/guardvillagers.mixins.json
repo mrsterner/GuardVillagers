@@ -6,7 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "ExampleMixin"
+    "dev.fabricmc.example.mixin.ExampleMixin"
   ],
   "injectors": {
     "defaultRequire": 1
