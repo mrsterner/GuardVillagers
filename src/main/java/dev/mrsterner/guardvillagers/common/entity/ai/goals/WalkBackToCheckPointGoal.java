@@ -18,7 +18,7 @@ public class WalkBackToCheckPointGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return guard.getPatrolPos() != null && !this.guard.getPatrolPos().closerThan(this.guard.position(), 1.0D) && !guard.isFollowing() && guard.isPatrolling();
+        return guard.getPatrolPos() != null && !this.guard.getPatrolPos().isWithinDistance(this.guard.getPos(), 1.0D) && !guard.isFollowing() && guard.isPatrolling();
     }
 
     @Override
@@ -32,7 +32,7 @@ public class WalkBackToCheckPointGoal extends Goal {
         if (blockpos != null) {
             Vec3d vector3d = Vec3d.ofBottomCenter(blockpos);
             Vec3d vector3d1 = NoPenaltyTargeting.findTo(this.guard, 16, 3, vector3d, (double) ((float) Math.PI / 10F));
-            if (!this.guard.getPatrolPos().closerThan(this.guard.position(), 1.0D) || blockpos != null)
+            if (!this.guard.getPatrolPos().isWithinDistance(this.guard.getPos(), 1.0D) || blockpos != null)
                 if (guard.getMainHandStack().getItem() instanceof RangedWeaponItem) {
                     this.guard.getNavigation().startMovingTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.speed);
                 } else if (vector3d1 != null && guard.getTarget() == null) {

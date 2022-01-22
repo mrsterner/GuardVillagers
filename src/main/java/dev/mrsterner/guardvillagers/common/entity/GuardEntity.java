@@ -2,11 +2,14 @@ package dev.mrsterner.guardvillagers.common.entity;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
+import dev.mrsterner.guardvillagers.ToolAction;
+import dev.mrsterner.guardvillagers.client.GuardSyncPacket;
+import dev.mrsterner.guardvillagers.client.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
-import dev.mrsterner.guardvillagers.mixin.ServerPlayerEntityAccessor;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
@@ -40,6 +43,7 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -52,9 +56,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
-import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.Nullable;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import com.google.common.collect.Sets;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -446,6 +452,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         super.onDeath(source);
     }
 
+
+
     @Override
     protected void consumeItem() {
         Hand interactionhand = this.getActiveHand();
@@ -455,8 +463,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
                 ItemStack copy = this.activeItemStack.copy();
-                ItemStack itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, copy,
-                getItemUseTimeLeft(), this.activeItemStack.finishUsing(this.world, this));
+                ItemStack itemstack = null;//TODO onItemUseFinish(this, copy, getItemUseTimeLeft(), this.activeItemStack.finishUsing(this.world, this));
                 if (itemstack != this.activeItemStack) {
                     this.setStackInHand(interactionhand, itemstack);
                 }
@@ -515,13 +522,13 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     @Override
     protected void takeShieldHit(LivingEntity entityIn) {
         super.takeShieldHit(entityIn);
-        if (entityIn.getMainHandStack().canDisableShield(this.activeItemStack, this, entityIn))
+        if (entityIn.getMainHandStack().getItem() instanceof AxeItem)
             this.disableShield(true);
     }
 
     @Override
     protected void damageShield(float damage) {
-        if (this.activeItemStack.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
+        if (canPerformAction(this.activeItemStack,ToolActions.SHIELD_BLOCK)) {
             if (damage >= 3.0F) {
                 int i = 1 + MathHelper.floor(damage);
                 Hand hand = this.getActiveHand();
@@ -539,10 +546,14 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
+    public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
+        return ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
+    }
+
     @Override
     public void setCurrentHand(Hand hand) {
         ItemStack itemstack = this.getStackInHand(hand);
-        if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
+        if (canPerformAction(itemstack,ToolActions.SHIELD_BLOCK)) {
             EntityAttributeInstance modifiableattributeinstance = this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             modifiableattributeinstance.removeModifier(USE_ITEM_SPEED_PENALTY);
             modifiableattributeinstance.addTemporaryModifier(USE_ITEM_SPEED_PENALTY);
@@ -697,13 +708,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             player.closeScreenHandler();
         }
         this.interacting = true;
-        ((ServerPlayerEntityAccessor) player).incrementScreenHandlerSyncId();
-        GuardPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new GuardOpenInventoryPacket(
-        ((ServerPlayerEntityAccessor) player).screenHandlerSyncId(), this.guardInventory.size(), this.getId()));
-        player.currentScreenHandler = new GuardContainer(((ServerPlayerEntityAccessor) player).screenHandlerSyncId(), player.getInventory(), this.guardInventory,
-        this);
-        ((ServerPlayerEntityAccessor) player).onScreenHandlerOpened(player.currentScreenHandler);
-        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, player.containerMenu));
+        if (!world.isClient && isAlive() && getTarget() == null) {
+                player.openHandledScreen(new SimpleNamedScreenHandlerFactory((id, playerInventory, customer) -> new GuardVillagerScreenHandler(id, playerInventory,this.guardInventory, this), getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
+        }
+
+
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
@@ -711,9 +720,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 20);
     }
 
-    public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {
-        return itemPredicate.test(livingEntity.getActiveItem().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
-    }
+
 
     @Override
     public void attack(LivingEntity target, float pullProgress) {
@@ -721,10 +728,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.getActiveItem().getItem() instanceof CrossbowItem)
             this.shoot(this, 6.0F);
         if (this.getActiveItem().getItem() instanceof BowItem) {
-            ItemStack itemstack = this.getArrowType(this.getStackInHand(getHandWith(this, item -> item instanceof BowItem)));
+            ItemStack itemstack = this.getArrowType(this.getStackInHand(GuardVillagers.getHandWith(this, item -> item instanceof BowItem)));
             ItemStack hand = this.getActiveItem();
             PersistentProjectileEntity abstractarrowentity = ProjectileUtil.createArrowProjectile(this, itemstack, pullProgress);
-            abstractarrowentity = ((net.minecraft.item.BowItem) this.getActiveItem().getItem()).createArrow(abstractarrowentity);
+            //TODO abstractarrowentity = ((net.minecraft.item.BowItem) this.getActiveItem().getItem()).createArrow(abstractarrowentity);
             int powerLevel = EnchantmentHelper.getLevel(Enchantments.POWER, itemstack);
             if (powerLevel > 0)
                 abstractarrowentity
@@ -967,6 +974,22 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                 this.guard.swingHand(Hand.MAIN_HAND);
                 this.guard.tryAttack(enemy);
             }
+        }
+    }
+
+
+
+    public class ToolActions {
+
+        /**
+         * A tool action corresponding to the 'block' action of shields.
+         */
+        public static final ToolAction SHIELD_BLOCK = ToolAction.get("shield_block");
+
+        public static final Set<ToolAction> DEFAULT_SHIELD_ACTIONS = of(SHIELD_BLOCK);
+
+        private static Set<ToolAction> of(ToolAction... actions) {
+            return Stream.of(actions).collect(Collectors.toCollection(Sets::newIdentityHashSet));
         }
     }
 }

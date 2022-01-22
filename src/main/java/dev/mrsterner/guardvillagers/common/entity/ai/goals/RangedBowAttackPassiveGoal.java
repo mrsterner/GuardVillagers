@@ -1,5 +1,6 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.RangedAttackMob;
@@ -48,13 +49,13 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
     @Override
     public void start() {
         super.start();
-        this.entity.setAggressive(true);
+        this.entity.setAttacking(true);
     }
 
     @Override
     public void stop() {
         super.stop();
-        this.entity.setAggressive(false);
+        this.entity.setAttacking(false);
         this.seeTime = 0;
         this.attackTime = -1;
         this.entity.stopUsingItem();
@@ -122,7 +123,7 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
                     }
                 }
             } else if (--this.attackTime <= 0 && this.seeTime >= -60 && !this.entity.isBlocking()) {
-                this.entity.setCurrentHand(GuardItems.getHandWith(entity, item -> item instanceof BowItem));
+                this.entity.setCurrentHand(GuardVillagers.getHandWith(entity, item -> item instanceof BowItem));
             }
 
         }

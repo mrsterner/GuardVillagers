@@ -30,6 +30,14 @@ public class GuardVillagersConfig implements ConfigData {
 
     @ConfigEntry.Gui.RequiresRestart
     public boolean setGuardPatrolHotv = true;
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean GuardAlwaysShield = true;
+
+
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean FriendlyFire = true;
+
+
 
 
 

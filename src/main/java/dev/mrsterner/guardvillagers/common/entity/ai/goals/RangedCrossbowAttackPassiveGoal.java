@@ -1,5 +1,7 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityPose;
@@ -51,7 +53,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
     @Override
     public void stop() {
         super.stop();
-        this.entity.setAggressive(false);
+        this.entity.setAttacking(false);
         this.entity.setTarget((LivingEntity) null);
         ((GuardEntity) this.entity).setKicking(false);
         this.seeTicks = 0;
@@ -68,13 +70,13 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
         for (LivingEntity guard : list) {
             if (entity != guard || guard != entity) {
                 if (guard != entity.getTarget()) {
-                    boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardEntityType.GUARD.get() || guard.getType() == EntityType.IRON_GOLEM;
+                    boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD || guard.getType() == EntityType.IRON_GOLEM;
                     if (isVillager) {
                         Vec3d vector3d = entity.getRotationVector();
                         Vec3d vector3d1 = guard.getPos().relativize(entity.getPos()).normalize();
                         vector3d1 = new Vec3d(vector3d1.x, vector3d1.y, vector3d1.z);
                         if (vector3d1.dotProduct(vector3d) < 0.0D && entity.canSee(guard))
-                            return GuardConfig.FriendlyFire;
+                            return GuardVillagersConfig.get().FriendlyFire;
                     }
                 }
             }
@@ -86,7 +88,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
     public void tick() {
         LivingEntity livingentity = this.entity.getTarget();
         if (livingentity != null) {
-            this.entity.setAggressive(true);
+            this.entity.setAttacking(true);
             boolean flag = this.entity.getVisibilityCache().canSee(livingentity);
             boolean flag1 = this.seeTicks > 0;
             if (flag != flag1) {
@@ -124,7 +126,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
             this.entity.getLookControl().lookAt(livingentity, 30.0F, 30.0F);
             if (this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.UNCHARGED && !CrossbowItem.isCharged(entity.getActiveItem()) && !entity.isBlocking()) {
                 if (flag) {
-                    this.entity.setStackInHand(GuardItems.getHandWith(entity, item -> item instanceof CrossbowItem));
+                    this.entity.setCurrentHand(GuardVillagers.getHandWith(entity, item -> item instanceof CrossbowItem));
                     this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.CHARGING;
                     ((CrossbowUser) this.entity).setCharging(true);
                 }
@@ -146,7 +148,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                 }
             } else if (this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.READY_TO_ATTACK && flag && !checkFriendlyFire() && !entity.isBlocking()) {
                 ((RangedAttackMob) this.entity).attack(livingentity, 1.0F);
-                ItemStack itemstack1 = this.entity.getActiveItem(GuardItems.getHandWith(entity, item -> item instanceof CrossbowItem));
+                ItemStack itemstack1 = this.entity.getStackInHand(GuardVillagers.getHandWith(entity, item -> item instanceof CrossbowItem));
                 CrossbowItem.setCharged(itemstack1, false);
                 this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.UNCHARGED;
             }
