@@ -15,11 +15,18 @@ loom {
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
+	maven {
+		name "Cardinal Components"
+		url "https://ladysnake.jfrog.io/artifactory/mods"
+		content {
+			includeGroup 'io.github.ladysnake'
+			includeGroupByRegex 'io\\.github\\.onyxstudios.*'
+		}
+	}
+	maven {
+		name "REI, Cloth Config"
+		url "https://maven.shedaniel.me/"
+	}
 }
 
 dependencies {
@@ -30,6 +37,16 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	//Cloth Config
+	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+		exclude (group: "net.fabricmc.fabric-api") }
+
+	//Cardinal Components
+	modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
+	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
+	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
+	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 }
 
 processResources {

@@ -5,3 +5,4 @@ accessible class net/minecraft/client/render/RenderPhase$Shader
 accessible class net/minecraft/client/render/RenderPhase$Texture
 accessible class net/minecraft/client/render/RenderPhase$TextureBase
 accessible class net/minecraft/client/render/RenderPhase$TRANSLUCENT_TRANSPARENCY
+accessible field net/minecraft/world/entity/ai/goal/MeleeAttackGoal path Lnet/minecraft/entity/ai/pathing/Path;

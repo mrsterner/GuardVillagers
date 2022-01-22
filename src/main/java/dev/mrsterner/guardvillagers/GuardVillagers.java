@@ -1,5 +1,7 @@
 package dev.mrsterner.guardvillagers;
 
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.ItemGroup;
@@ -15,9 +17,12 @@ public class GuardVillagers implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final String MODID = "guardvillagers";
 	public static final Logger LOGGER = LoggerFactory.getLogger("modid");
+	public static GuardVillagersConfig config;
 
 	@Override
 	public void onInitialize() {
+		AutoConfig.register(GuardVillagersConfig.class, GsonConfigSerializer::new);
+		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
