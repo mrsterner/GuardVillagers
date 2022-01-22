@@ -1,12 +1,21 @@
 package dev.mrsterner.guardvillagers;
 
+import dev.mrsterner.guardvillagers.client.*;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import dev.mrsterner.guardvillagers.common.registy.GuardVillagersEntityTypes;
+import dev.mrsterner.guardvillagers.common.registy.GuardVillagersScreenHandlers;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -29,7 +38,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class GuardVillagers implements ModInitializer {
+public class GuardVillagers implements ModInitializer, ClientModInitializer {
 	public static final String MODID = "guardvillagers";
 	public static GuardVillagersConfig config;
 
@@ -40,22 +49,33 @@ public class GuardVillagers implements ModInitializer {
 	public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {
 		return itemPredicate.test(livingEntity.getMainHandStack().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
 	}
-	public static final EntityType<GuardEntity> GUARD = create("guard", GuardEntity.createAttributes(), FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, GuardEntity::new).dimensions(EntityDimensions.fixed(0.6f, 1.8f)).build());
-	private static final Map<EntityType<?>, Identifier> ENTITY_TYPES = new LinkedHashMap<>();
-
-	private static <T extends LivingEntity> EntityType<T> create(String name, DefaultAttributeContainer.Builder attributes, EntityType<T> type) {
-		FabricDefaultAttributeRegistry.register(type, attributes);
-		ENTITY_TYPES.put(type, new Identifier(MODID, name));
-		return type;
-	}
 
 
+
+
+	public static EntityModelLayer GUARD = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard"), "guard");
+	public static EntityModelLayer GUARD_STEVE = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_steve"), "guard_steve");
+	public static EntityModelLayer GUARD_ARMOR_OUTER = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_armor_outer"), "guard_armor_outer");
+	public static EntityModelLayer GUARD_ARMOR_INNER = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_armor_inner"), "guard_armor_inner");
 
 	@Override
 	public void onInitialize() {
 		AutoConfig.register(GuardVillagersConfig.class, GsonConfigSerializer::new);
 		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
+		GuardVillagersEntityTypes.init();
 
-		ENTITY_TYPES.keySet().forEach(entityType -> Registry.register(Registry.ENTITY_TYPE, ENTITY_TYPES.get(entityType), entityType));
+	}
+
+	@Override
+	public void onInitializeClient() {
+		//ScreenRegistry.register(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER, GuardVillagersScreenHandlers::new);
+		EntityModelLayerRegistry.registerModelLayer(GUARD, GuardVillagerModel::createBodyLayer);
+		EntityModelLayerRegistry.registerModelLayer(GUARD_STEVE, GuardSteveModel::createMesh);
+		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_OUTER, GuardArmorModel::createOuterArmorLayer);
+		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
+		EntityRendererRegistry.register(GuardVillagersEntityTypes.GUARD_VILLAGER, GuardRenderer::new);
+
+
+
 	}
 }

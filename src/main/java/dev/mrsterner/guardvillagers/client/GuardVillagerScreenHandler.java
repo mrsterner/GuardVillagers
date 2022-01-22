@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -21,6 +22,10 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
     private final Inventory guardInventory;
     private final GuardEntity guard;
     private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+
+
+
+
     public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory guardInventory, final GuardEntity guard) {
         super((ScreenHandlerType<?>) null, id);
         this.guardInventory = guardInventory;
@@ -184,6 +189,8 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
         }
     }
+
+
 
     @Override
     public boolean canUse(PlayerEntity player) {

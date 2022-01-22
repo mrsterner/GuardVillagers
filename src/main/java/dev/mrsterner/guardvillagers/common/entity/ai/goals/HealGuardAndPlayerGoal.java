@@ -1,6 +1,7 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.common.registy.GuardVillagersEntityTypes;
 import net.fabricmc.loader.api.metadata.ModEnvironment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
@@ -56,7 +57,7 @@ public class HealGuardAndPlayerGoal extends Goal {
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {
-                    if (mob instanceof VillagerEntity && mob.isAlive() && mob.getHealth() < mob.getMaxHealth() && mob != healer|| mob.getType() == GuardVillagers.GUARD && mob != null && mob.isAlive() && mob.getHealth() < mob.getMaxHealth()
+                    if (mob instanceof VillagerEntity && mob.isAlive() && mob.getHealth() < mob.getMaxHealth() && mob != healer|| mob.getType() == GuardVillagersEntityTypes.GUARD_VILLAGER && mob != null && mob.isAlive() && mob.getHealth() < mob.getMaxHealth()
                     || mob instanceof PlayerEntity && mob.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && !((PlayerEntity) mob).getAbilities().creativeMode && mob.getHealth() < mob.getMaxHealth()) {
                         this.mob = mob;
                         return true;

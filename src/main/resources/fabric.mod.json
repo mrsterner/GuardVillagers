@@ -20,6 +20,12 @@
   "entrypoints": {
     "main": [
       "dev.mrsterner.guardvillagers.GuardVillagers"
+    ],
+    "client": [
+      "dev.mrsterner.guardvillagers.GuardVillagers"
+    ],
+    "modmenu": [
+      "dev.mrsterner.guardvillagers.client.GVModMenu"
     ]
   },
   "mixins": [

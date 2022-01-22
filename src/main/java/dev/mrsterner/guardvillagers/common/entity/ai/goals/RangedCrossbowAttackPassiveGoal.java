@@ -3,6 +3,7 @@ package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import dev.mrsterner.guardvillagers.common.registy.GuardVillagersEntityTypes;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -70,7 +71,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
         for (LivingEntity guard : list) {
             if (entity != guard || guard != entity) {
                 if (guard != entity.getTarget()) {
-                    boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD || guard.getType() == EntityType.IRON_GOLEM;
+                    boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagersEntityTypes.GUARD_VILLAGER || guard.getType() == EntityType.IRON_GOLEM;
                     if (isVillager) {
                         Vec3d vector3d = entity.getRotationVector();
                         Vec3d vector3d1 = guard.getPos().relativize(entity.getPos()).normalize();

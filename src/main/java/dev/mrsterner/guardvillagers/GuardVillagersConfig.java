@@ -33,6 +33,8 @@ public class GuardVillagersConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     public boolean GuardAlwaysShield = true;
 
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean guardSteve = false;
 
     @ConfigEntry.Gui.RequiresRestart
     public boolean FriendlyFire = true;
