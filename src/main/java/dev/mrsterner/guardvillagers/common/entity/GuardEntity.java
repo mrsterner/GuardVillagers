@@ -8,8 +8,11 @@ import dev.mrsterner.guardvillagers.ToolAction;
 import dev.mrsterner.guardvillagers.client.GuardSyncPacket;
 import dev.mrsterner.guardvillagers.client.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
+import dev.mrsterner.guardvillagers.common.IMerchant;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
+import dev.mrsterner.guardvillagers.common.registy.GuardVillagersScreenHandlers;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
@@ -30,6 +33,7 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.PolarBearEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
@@ -43,12 +47,15 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -65,7 +72,7 @@ import com.google.common.collect.Sets;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener {
+public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener, IMerchant {
     private static final UUID MODIFIER_UUID = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E");
     private static final EntityAttributeModifier USE_ITEM_SPEED_PENALTY = new EntityAttributeModifier(MODIFIER_UUID, "Use item speed penalty", -0.25D, EntityAttributeModifier.Operation.ADDITION);
     private static final TrackedData<Optional<BlockPos>> GUARD_POS = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.OPTIONAL_BLOCK_POS);
@@ -92,6 +99,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     private int remainingPersistentAngerTime;
     private static final UniformIntProvider angerTime = TimeHelper.betweenSeconds(20, 39);
     private UUID persistentAngerTarget;
+    private PlayerEntity customer = null;
     private static final Map<EquipmentSlot, Identifier> EQUIPMENT_SLOT_ITEMS = Util.make(Maps.newHashMap(),
     (slotItems) -> {
         slotItems.put(EquipmentSlot.MAINHAND, GuardLootTables.GUARD_MAIN_HAND);
@@ -703,16 +711,24 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         return super.interactMob(player, hand);
     }
 
+
     public void openGui(ServerPlayerEntity player) {
-        if (player.currentScreenHandler != player.playerScreenHandler) {
-            player.closeScreenHandler();
-        }
         this.interacting = true;
-        if (!world.isClient && isAlive() && getTarget() == null) {
-                player.openHandledScreen(new SimpleNamedScreenHandlerFactory((id, playerInventory, customer) -> new GuardVillagerScreenHandler(id, playerInventory,this.guardInventory, this), getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
+
+        if (!world.isClient && isAlive()) {
+            if (getCurrentCustomer() == null) {
+                setCurrentCustomer(player);
+            }
+            if (getGuard() == null) {
+                setGuardClientside(this);
+            }
+            this.sendOffers(player, this.getDisplayName());
+            /*
+                player.openHandledScreen(new SimpleNamedScreenHandlerFactory((id, playerInventory, customer) ->
+                new GuardVillagerScreenHandler(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER,id, this), getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
+
+             */
         }
-
-
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
@@ -825,6 +841,31 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     public void setGuardVariant(int typeId) {
         this.dataTracker.set(GUARD_VARIANT, typeId);
+    }
+
+    @Override
+    public GuardEntity getGuard() {
+        return this;
+    }
+
+    @Override
+    public void setCurrentCustomer(PlayerEntity customer) {
+        this.customer = customer;
+    }
+
+    @Override
+    public @Nullable PlayerEntity getCurrentCustomer() {
+        return customer;
+    }
+
+    @Override
+    public boolean isClient() {
+        return this.getWorld().isClient;
+    }
+
+    @Override
+    public void setGuardClientside(GuardEntity trader) {
+
     }
 
     public static class GuardData implements EntityData {

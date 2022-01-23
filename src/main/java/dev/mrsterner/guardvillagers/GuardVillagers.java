@@ -9,12 +9,14 @@ import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.client.model.FabricModelPredicateProviderRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -27,6 +29,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.stat.Stat;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -68,12 +72,27 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		//ScreenRegistry.register(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER, GuardVillagersScreenHandlers::new);
+		ScreenRegistry.register(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER, GuardInventoryScreen::new);
 		EntityModelLayerRegistry.registerModelLayer(GUARD, GuardVillagerModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_STEVE, GuardSteveModel::createMesh);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_OUTER, GuardArmorModel::createOuterArmorLayer);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
 		EntityRendererRegistry.register(GuardVillagersEntityTypes.GUARD_VILLAGER, GuardRenderer::new);
+
+		ClientPlayNetworking.registerGlobalReceiver(GuardSyncPacket.ID, (client, network, buf, sender) -> {
+			int syncId = buf.readInt();
+			int traderId = buf.readInt();
+			System.out.println("CALLED");
+			client.execute(() -> {
+				if (client.player != null) {
+					ScreenHandler screenHandler = client.player.currentScreenHandler;
+					if (syncId == screenHandler.syncId && screenHandler instanceof GuardVillagerScreenHandler) {
+						((GuardVillagerScreenHandler) screenHandler).guard.setCurrentCustomer(client.player);
+						((GuardVillagerScreenHandler) screenHandler).guard.setGuardClientside((GuardEntity) client.world.getEntityById(traderId));
+					}
+				}
+			});
+		});
 
 
 

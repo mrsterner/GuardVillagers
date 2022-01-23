@@ -33,13 +33,13 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
     private float mousePosY;
     private boolean buttonPressed;
 
-    public GuardInventoryScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, GuardEntity guard) {
-        super(handler, inventory, guard.getDisplayName());
-        this.guard = guard;
+    public GuardInventoryScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, Text title) {
+        super(handler, inventory, title);
         this.titleX = 80;
         this.playerInventoryTitleX = 100;
         this.passEvents = false;
         this.player = inventory.player;
+        this.guard = handler.guard;
     }
 
     @Override
@@ -66,14 +66,14 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guard);
+        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.handler.guard);
     }
 
     @Override
     protected void drawForeground(MatrixStack matrixStack, int x, int y) {
         super.drawForeground(matrixStack, x, y);
-        int health = MathHelper.ceil(guard.getHealth());
-        int armor = guard.getArmor();
+        int health = MathHelper.ceil(handler.guard.getHealth());
+        int armor = handler.guard.getArmor();
         Text guardHealthText = new TranslatableText("guardinventory.health", health);
         Text guardArmorText = new TranslatableText("guardinventory.armor", armor);
         this.textRenderer.draw(matrixStack, guardHealthText, 80.0F, 20.0F, 4210752);
@@ -104,8 +104,9 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
 
         // This is stupid.
         public boolean requirementsForTexture() {
-            boolean following = GuardInventoryScreen.this.guard.isFollowing();
-            boolean patrol = GuardInventoryScreen.this.guard.isPatrolling();
+
+            boolean following = GuardInventoryScreen.this.handler.guard.isFollowing();
+            boolean patrol = GuardInventoryScreen.this.handler.guard.isPatrolling();
             return this.isFollowButton ? following : patrol;
         }
 
