@@ -7,6 +7,6 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
 public class GuardVillagersScreenHandlers {
-    public static final ScreenHandlerType<? extends GuardVillagerScreenHandler> GUARD_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(GuardVillagers.MODID, "guard_screen"), GuardVillagerScreenHandler::new);
+    //public static final ScreenHandlerType<? extends GuardVillagerScreenHandler> GUARD_SCREEN_HANDLER = ScreenHandlerRegistry.registerSimple(new Identifier(GuardVillagers.MODID, "guard_screen"), GuardVillagerScreenHandler::new);
 
 }

@@ -29,11 +29,13 @@ public interface IMerchant {
 
     @Nullable
     PlayerEntity getCurrentCustomer();
-
+/*
     default void sendOffers(PlayerEntity player, Text test) {
         OptionalInt optionalInt = player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerx) -> {
             return new GuardVillagerScreenHandler(syncId, playerInventory, this);
         }, test));
     }
+
+ */
     boolean isClient();
 }

@@ -22,12 +22,11 @@ import net.minecraft.util.math.MathHelper;
 import java.util.Stack;
 
 public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandler> {
-    private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/container/inventory.png");
-    private static final Identifier GUARD_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/container/following_icons.png");
-    private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/container/not_following_icons.png");
-    private static final Identifier PATROL_ICON = new Identifier(GuardVillagers.MODID, "textures/container/patrollingui.png");
-    private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/container/notpatrollingui.png");
-    private final GuardEntity guard;
+    private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");
+    private static final Identifier GUARD_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/following_icons.png");
+    private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/not_following_icons.png");
+    private static final Identifier PATROL_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/patrollingui.png");
+    private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/notpatrollingui.png");
     private PlayerEntity player;
     private float mousePosX;
     private float mousePosY;
@@ -39,7 +38,6 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
         this.playerInventoryTitleX = 100;
         this.passEvents = false;
         this.player = inventory.player;
-        this.guard = handler.guard;
     }
 
     @Override
@@ -66,18 +64,13 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.handler.guard);
+        //InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.handler.guard);
     }
 
     @Override
     protected void drawForeground(MatrixStack matrixStack, int x, int y) {
         super.drawForeground(matrixStack, x, y);
-        int health = MathHelper.ceil(handler.guard.getHealth());
-        int armor = handler.guard.getArmor();
-        Text guardHealthText = new TranslatableText("guardinventory.health", health);
-        Text guardArmorText = new TranslatableText("guardinventory.armor", armor);
-        this.textRenderer.draw(matrixStack, guardHealthText, 80.0F, 20.0F, 4210752);
-        this.textRenderer.draw(matrixStack, guardArmorText, 80.0F, 30.0F, 4210752);
+
     }
 
     @Override
@@ -105,9 +98,9 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
         // This is stupid.
         public boolean requirementsForTexture() {
 
-            boolean following = GuardInventoryScreen.this.handler.guard.isFollowing();
-            boolean patrol = GuardInventoryScreen.this.handler.guard.isPatrolling();
-            return this.isFollowButton ? following : patrol;
+            //boolean following = GuardInventoryScreen.this.handler.guard.isFollowing();
+            //boolean patrol = GuardInventoryScreen.this.handler.guard.isPatrolling();
+            return true;//this.isFollowButton ? following : patrol;
         }
 
         @Override

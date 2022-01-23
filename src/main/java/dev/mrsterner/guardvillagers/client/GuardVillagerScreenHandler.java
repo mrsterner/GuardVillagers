@@ -11,7 +11,10 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -21,24 +24,25 @@ import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 public class GuardVillagerScreenHandler extends ScreenHandler {
-    public final Inventory guardInventory;
-    public final GuardEntity guard;
+    public Inventory guardInventory;
     private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
 
-    public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleIMerchant(playerInventory.player));
+
+    public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+        this(syncId, playerInventory, new SimpleInventory(12));
     }
 
-    public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, IMerchant guard) {
-        super(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER, id);
-        this.guardInventory = guard.getGuard().guardInventory;
-        this.guard = guard.getGuard();
-        //guardInventory.onOpen(playerInventory.player);
+
+    public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory) {
+        super(GuardVillagers.BAT_SCREEN_HANDLER, id);
+        this.guardInventory = inventory;
+        //this.guard = guard;
+        inventory.onOpen(playerInventory.player);
         this.addSlot(new Slot(guardInventory, 0, 8, 9) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[0] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return EQUIPMENT_SLOT_ORDER[0] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -49,10 +53,10 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.HEAD, stack);
+                //guard.equipStack(EquipmentSlot.HEAD, stack);
             }
 
-            @Override
+                @Override
             public boolean canTakeItems(PlayerEntity playerIn) {
                 return GuardVillagers.hotvChecker(playerIn);
             }
@@ -65,7 +69,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 1, 8, 26) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[1] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return EQUIPMENT_SLOT_ORDER[1] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -76,7 +80,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.CHEST, stack);
+                //guard.equipStack(EquipmentSlot.CHEST, stack);
             }
 
             @Override
@@ -92,7 +96,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 2, 8, 44) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[2] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return EQUIPMENT_SLOT_ORDER[2] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -103,12 +107,12 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.LEGS, stack);
+                //guard.equipStack(EquipmentSlot.LEGS, stack);
             }
 
             @Override
             public boolean canTakeItems(PlayerEntity playerIn) {
-                return GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -119,7 +123,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 3, 8, 62) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[3] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return EQUIPMENT_SLOT_ORDER[3] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -130,7 +134,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.FEET, stack);
+                //guard.equipStack(EquipmentSlot.FEET, stack);
             }
 
             @Override
@@ -146,13 +150,13 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 4, 77, 62) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.OFFHAND, stack);
+                //guard.equipStack(EquipmentSlot.OFFHAND, stack);
             }
 
             @Override
@@ -169,7 +173,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 5, 77, 44) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return GuardVillagers.hotvChecker(guard.getCurrentCustomer());
+                return GuardVillagers.hotvChecker(playerInventory.player);
             }
 
             @Override
@@ -180,60 +184,47 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                guard.getGuard().equipStack(EquipmentSlot.MAINHAND, stack);
+                //guard.equipStack(EquipmentSlot.MAINHAND, stack);
             }
         });
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlot(new Slot(guard.getCurrentCustomer().getInventory(), j1 + (l + 1) * 9, 8 + j1 * 18, 84 + l * 18));
+                this.addSlot(new Slot(playerInventory, j1 + (l + 1) * 9, 8 + j1 * 18, 84 + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; ++i1) {
-            this.addSlot(new Slot(guard.getCurrentCustomer().getInventory(), i1, 8 + i1 * 18, 142));
+            this.addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 142));
         }
     }
-
-
-    public static class SimpleIMerchant implements IMerchant {
-        private final PlayerEntity player;
-        private GuardEntity guardEntity;
-
-        public SimpleIMerchant(PlayerEntity player) {
-            this.player = player;
-        }
-
-        @Override
-        public GuardEntity getGuard() {
-            return guardEntity;
-        }
-
-        @Override
-        public void setCurrentCustomer(@Nullable PlayerEntity customer) {
-
-        }
-
-        @Override
-        public @Nullable PlayerEntity getCurrentCustomer() {
-            return null;
-        }
-
-
-        @Override
-        public boolean isClient() {
-            return this.player.getWorld().isClient;
-        }
-
-        @Override
-        @Environment(EnvType.CLIENT)
-        public void setGuardClientside(GuardEntity guardEntity) {
-            this.guardEntity = guardEntity;
-        }
-    }
-
 
     @Override
     public boolean canUse(PlayerEntity player) {
         return true;
+    }
+
+    @Override
+    public ItemStack transferSlot(PlayerEntity player, int index) {
+        ItemStack newStack = ItemStack.EMPTY;
+        Slot slot = this.slots.get(index);
+        if (slot != null && slot.hasStack()) {
+            ItemStack originalStack = slot.getStack();
+            newStack = originalStack.copy();
+            if (index < this.guardInventory.size()) {
+                if (!this.insertItem(originalStack, this.guardInventory.size(), this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.insertItem(originalStack, 0, this.guardInventory.size(), false)) {
+                return ItemStack.EMPTY;
+            }
+
+            if (originalStack.isEmpty()) {
+                slot.setStack(ItemStack.EMPTY);
+            } else {
+                slot.markDirty();
+            }
+        }
+        return newStack;
+
     }
 }

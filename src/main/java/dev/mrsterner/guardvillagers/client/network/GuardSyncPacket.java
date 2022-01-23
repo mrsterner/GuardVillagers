@@ -1,4 +1,4 @@
-package dev.mrsterner.guardvillagers.client;
+package dev.mrsterner.guardvillagers.client.network;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
@@ -15,7 +15,7 @@ public class GuardSyncPacket {
     public static void send(PlayerEntity player, GuardEntity entity, int syncId) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(syncId);
-        buf.writeInt(entity.getGuard().getId());
+        buf.writeInt(entity.getId());
         ServerPlayNetworking.send((ServerPlayerEntity) player, ID, buf);
     }
 }

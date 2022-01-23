@@ -5,13 +5,12 @@ import com.google.common.collect.Maps;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.ToolAction;
-import dev.mrsterner.guardvillagers.client.GuardSyncPacket;
+import dev.mrsterner.guardvillagers.client.network.GuardSyncPacket;
 import dev.mrsterner.guardvillagers.client.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
-import dev.mrsterner.guardvillagers.common.IMerchant;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
-import dev.mrsterner.guardvillagers.common.registy.GuardVillagersScreenHandlers;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
+import dev.mrsterner.guardvillagers.mixin.ServerPlayerEntityAccessor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -56,6 +55,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -72,7 +72,7 @@ import com.google.common.collect.Sets;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener, IMerchant {
+public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener {
     private static final UUID MODIFIER_UUID = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E");
     private static final EntityAttributeModifier USE_ITEM_SPEED_PENALTY = new EntityAttributeModifier(MODIFIER_UUID, "Use item speed penalty", -0.25D, EntityAttributeModifier.Operation.ADDITION);
     private static final TrackedData<Optional<BlockPos>> GUARD_POS = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.OPTIONAL_BLOCK_POS);
@@ -393,6 +393,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(0, new KickGoal(this));
         this.goalSelector.add(0, new GuardEatFoodGoal(this));
         this.goalSelector.add(0, new RaiseShieldGoal(this));
+        this.goalSelector.add(0, new EquipArmor(this));
         this.goalSelector.add(1, new GuardRunToEatGoal(this));
         this.goalSelector.add(1, new GuardSetRunningToEatGoal(this, 1.0D));
         this.goalSelector.add(2, new RangedCrossbowAttackPassiveGoal<>(this, 1.0D, 8.0F));
@@ -601,36 +602,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.dataTracker.startTracking(RUNNING_TO_EAT, false);
     }
 
-    @Override
-    public void equipStack(EquipmentSlot slot, ItemStack stack) {
-        super.equipStack(slot, stack);
-        switch (slot) {
-            case CHEST:
-                if (this.guardInventory.getStack(1).isEmpty())
-                    //this.guardInventory.setStack(1, this.getEquippedStack(slot.getEntitySlotId()));//TODO
-                break;
-            case FEET:
-                if (this.guardInventory.getStack(3).isEmpty())
-                    //this.guardInventory.setStack(3, this.getArmorItems().iterator().next());
-                break;
-            case HEAD:
-                if (this.guardInventory.getStack(0).isEmpty())
-                    //this.guardInventory.setStack(0, this.getArmorItems().get(slotIn.getIndex()));
-                break;
-            case LEGS:
-                if (this.guardInventory.getStack(2).isEmpty())
-                    //this.guardInventory.setStack(2, this.armorItems.get(slotIn.getIndex()));
-                break;
-            case MAINHAND:
-                if (this.guardInventory.getStack(5).isEmpty())
-                    //this.guardInventory.setStack(5, this.handItems.get(slotIn.getIndex()));
-                break;
-            case OFFHAND:
-                if (this.guardInventory.getStack(4).isEmpty())
-                    //this.guardInventory.setStack(4, this.handItems.get(slotIn.getIndex()));
-                break;
-        }
-    }
+
 
     public static int getRandomTypeForBiome(ServerWorldAccess world, BlockPos pos) {
         VillagerType type = VillagerType.forBiome(world.getBiomeKey(pos));
@@ -701,28 +673,56 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         boolean inventoryRequirements = !player.shouldCancelInteraction() && this.onGround;
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {
-                if (player instanceof ServerPlayerEntity) {
-                    this.openGui((ServerPlayerEntity) player);
+
+                    this.openGui(player, guardInventory, player.getStackInHand(hand));
                     return ActionResult.SUCCESS;
-                }
+
             }
             return ActionResult.CONSUME;
         }
         return super.interactMob(player, hand);
     }
 
+    public ScreenHandler getScreenHandler(int syncId, PlayerInventory playerInventory) {
+        return GuardVillagers.BAT_SCREEN_HANDLER.create(syncId, playerInventory);
+    }
 
-    public void openGui(ServerPlayerEntity player) {
-        this.interacting = true;
 
-        if (!world.isClient && isAlive()) {
-            if (getCurrentCustomer() == null) {
-                setCurrentCustomer(player);
-            }
-            if (getGuard() == null) {
-                setGuardClientside(this);
-            }
-            this.sendOffers(player, this.getDisplayName());
+
+    public void openGui(PlayerEntity player, Inventory inventory, ItemStack handstack) {
+        if (player.world != null && !player.world.isClient) {
+            player.openHandledScreen(new ExtendedScreenHandlerFactory() {
+                @Override
+                public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
+                    packetByteBuf.writeItemStack(handstack);
+                }
+
+                @Override
+                public Text getDisplayName() {
+                    return new TranslatableText("inventory");
+                }
+
+                @Override
+                public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+                    return new GuardVillagerScreenHandler(syncId, inv, inventory);
+                }
+            });
+
+
+
+
+            //((ServerPlayerEntityAccessor) player).incrementScreenHandlerSyncId();
+
+
+
+            //((ServerPlayerEntityAccessor) player).currentScreenHandler() = new GuardVillagerScreenHandler(((ServerPlayerEntityAccessor) player).screenHandlerSyncId(), player.getInventory(), inventory, guard);
+            //this.sendOffers(player, this.getDisplayName());
+            /*
+            player.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerx) ->
+            new GuardVillagerScreenHandler(syncId, playerInventory, inventory, guard), this.getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
+
+             */
+
             /*
                 player.openHandledScreen(new SimpleNamedScreenHandlerFactory((id, playerInventory, customer) ->
                 new GuardVillagerScreenHandler(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER,id, this), getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
@@ -843,30 +843,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.dataTracker.set(GUARD_VARIANT, typeId);
     }
 
-    @Override
-    public GuardEntity getGuard() {
-        return this;
-    }
-
-    @Override
-    public void setCurrentCustomer(PlayerEntity customer) {
-        this.customer = customer;
-    }
-
-    @Override
-    public @Nullable PlayerEntity getCurrentCustomer() {
-        return customer;
-    }
-
-    @Override
-    public boolean isClient() {
-        return this.getWorld().isClient;
-    }
-
-    @Override
-    public void setGuardClientside(GuardEntity trader) {
-
-    }
 
     public static class GuardData implements EntityData {
         public final int variantData;
@@ -961,6 +937,56 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             if (guard.getOwner() != null && !guard.getOwner().hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
                 guard.setOwnerId(null);
                 guard.setFollowing(false);
+            }
+        }
+    }
+
+    public class EquipArmor extends Goal{
+        public final GuardEntity guard;
+
+        public EquipArmor(GuardEntity guard) {
+            this.guard = guard;
+
+        }
+
+        @Override
+        public boolean canStart() {
+            return !guard.guardInventory.getStack(0).isEmpty() ||
+                   !guard.guardInventory.getStack(1).isEmpty() ||
+                   !guard.guardInventory.getStack(2).isEmpty() ||
+                   !guard.guardInventory.getStack(3).isEmpty() ||
+                   !guard.guardInventory.getStack(4).isEmpty() ||
+                   !guard.guardInventory.getStack(5).isEmpty();
+        }
+
+        @Override
+        public boolean shouldContinue() {
+            return canStart();
+        }
+
+
+        @Override
+        public void tick() {
+            super.tick();
+            if(shouldContinue()){
+                if(!guard.guardInventory.getStack(0).isEmpty()){
+                    guard.equipStack(EquipmentSlot.HEAD, guard.guardInventory.getStack(0));
+                }
+                if(!guard.guardInventory.getStack(1).isEmpty()){
+                    guard.equipStack(EquipmentSlot.CHEST, guard.guardInventory.getStack(1));
+                }
+                if(!guard.guardInventory.getStack(2).isEmpty()){
+                    guard.equipStack(EquipmentSlot.LEGS, guard.guardInventory.getStack(2));
+                }
+                if(!guard.guardInventory.getStack(3).isEmpty()){
+                    guard.equipStack(EquipmentSlot.LEGS, guard.guardInventory.getStack(3));
+                }
+                if(!guard.guardInventory.getStack(4).isEmpty()){
+                    guard.equipStack(EquipmentSlot.OFFHAND, guard.guardInventory.getStack(4));
+                }
+                if(!guard.guardInventory.getStack(5).isEmpty()){
+                    guard.equipStack(EquipmentSlot.MAINHAND, guard.guardInventory.getStack(5));
+                }
             }
         }
     }
