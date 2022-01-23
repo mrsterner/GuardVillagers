@@ -582,7 +582,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
 
 
-    public static int getRandomTypeForBiome(ServerWorldAccess world, BlockPos pos) {
+    public static int getRandomTypeForBiome(WorldAccess world, BlockPos pos) {
         VillagerType type = VillagerType.forBiome(world.getBiomeKey(pos));
         if (type == VillagerType.SNOW)
             return 6;

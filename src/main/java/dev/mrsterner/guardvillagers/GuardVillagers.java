@@ -14,21 +14,33 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.ZombieVillagerEntity;
+import net.minecraft.entity.mob.ZombifiedPiglinEntity;
+import net.minecraft.entity.passive.PigEntity;
+import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.*;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.village.VillagerProfession;
+import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.World;
 
 import java.util.function.Predicate;
 
@@ -54,6 +66,27 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
 		FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
 		Registry.register(Registry.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
+
+		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
+			ItemStack itemStack = player.getStackInHand(hand);
+			if ((itemStack.getItem() instanceof SwordItem || itemStack.getItem() instanceof CrossbowItem) && player.isSneaking()) {
+				Entity target = hitResult.getEntity();
+				if (target instanceof VillagerEntity villagerEntity) {
+					if (!villagerEntity.isBaby()) {
+						if (villagerEntity.getVillagerData().getProfession() == VillagerProfession.NONE || villagerEntity.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
+							if (!GuardVillagersConfig.get().ConvertVillagerIfHaveHOTV || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagersConfig.get().ConvertVillagerIfHaveHOTV) {
+								convertVillager(villagerEntity, player, world);
+								if (!player.getAbilities().creativeMode)
+									itemStack.decrement(1);
+								return ActionResult.SUCCESS;
+							}
+						}
+					}
+				}
+			}
+
+			return ActionResult.PASS;
+		});
 	}
 
 	@Override
@@ -75,5 +108,40 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 
 	public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {
 		return itemPredicate.test(livingEntity.getMainHandStack().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
+	}
+
+	private static void convertVillager(VillagerEntity villagerEntity, PlayerEntity player, World world) {
+		player.swingHand(Hand.MAIN_HAND);
+		ItemStack itemstack = player.getEquippedStack(EquipmentSlot.MAINHAND);
+		GuardEntity guard = GUARD_VILLAGER.create(world);
+		if (guard == null)
+			return;
+		if (player.world.isClient()) {
+			ParticleEffect iparticledata = ParticleTypes.HAPPY_VILLAGER;
+			for (int i = 0; i < 10; ++i) {
+				double d0 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+				double d1 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+				double d2 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+				villagerEntity.world.addParticle(iparticledata, villagerEntity.getX() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), villagerEntity.getY() + 0.5D + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth()),
+				villagerEntity.getZ() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), d0, d1, d2);
+			}
+		}
+		guard.copyPositionAndRotation(villagerEntity);
+		guard.limbDistance = villagerEntity.limbDistance;
+		guard.lastLimbDistance = villagerEntity.lastLimbDistance;
+		guard.headYaw = villagerEntity.headYaw;
+		guard.refreshPositionAndAngles(villagerEntity.getX(), villagerEntity.getY(), villagerEntity.getZ(), villagerEntity.getYaw(), villagerEntity.getPitch());
+		guard.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1.0F, 1.0F);
+		guard.equipStack(EquipmentSlot.MAINHAND, itemstack.copy());
+		int i = GuardEntity.getRandomTypeForBiome(guard.world, guard.getBlockPos());
+		guard.setGuardVariant(i);
+		guard.setPersistent();
+		world.spawnEntity(guard);
+		villagerEntity.releaseTicketFor(MemoryModuleType.HOME);
+		villagerEntity.releaseTicketFor(MemoryModuleType.JOB_SITE);
+		villagerEntity.releaseTicketFor(MemoryModuleType.MEETING_POINT);
+		villagerEntity.remove(Entity.RemovalReason.DISCARDED);
+		villagerEntity.discard();
+
 	}
 }

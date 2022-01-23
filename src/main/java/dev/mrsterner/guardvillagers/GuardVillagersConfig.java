@@ -52,6 +52,9 @@ public class GuardVillagersConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     public double GuardVillagerHelpRange = 50.0D;
 
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean ConvertVillagerIfHaveHOTV = true;
+
 
 
 
