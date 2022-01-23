@@ -4,6 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -13,6 +15,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -22,6 +25,8 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/not_following_icons.png");
     private static final Identifier PATROL_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/patrollingui.png");
     private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/notpatrollingui.png");
+    public static final Identifier ID = new Identifier(GuardVillagers.MODID, "guard_follow");
+    public static final Identifier ID_2 = new Identifier(GuardVillagers.MODID, "guard_patroll");
     private PlayerEntity player;
     private GuardEntity guardEntity;
     private float mousePosX;
@@ -41,21 +46,20 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     @Override
     protected void init() {
         super.init();
-        /*
-        if(guardEntity == null){
-            guardEntity = GuardVillagers.GUARD_VILLAGER.create(MinecraftClient.getInstance().world);
-        }
-
-         */
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true, (p_214086_1_) -> {
-                //TODO GuardPacketHandler.INSTANCE.sendToServer(new GuardFollowPacket(guard.getId()));
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeInt(guardEntity.getId());
+                ClientPlayNetworking.send(ID, buf);
             }));
         }
         if (GuardVillagersConfig.get().setGuardPatrolHotv && player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) || !GuardVillagersConfig.get().setGuardPatrolHotv) {
             this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false, (p_214086_1_) -> {
                 buttonPressed = !buttonPressed;
-               //TODO GuardPacketHandler.INSTANCE.sendToServer(new GuardSetPatrolPosPacket(guard.getId(), buttonPressed));
+                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                buf.writeInt(guardEntity.getId());
+                buf.writeBoolean(buttonPressed);
+                ClientPlayNetworking.send(ID_2, buf);
             }));
         }
     }
@@ -102,9 +106,9 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         // This is stupid.
         public boolean requirementsForTexture() {
 
-            //boolean following = GuardInventoryScreen.this.handler.guard.isFollowing();
-            //boolean patrol = GuardInventoryScreen.this.handler.guard.isPatrolling();
-            return true;//this.isFollowButton ? following : patrol;
+            boolean following = guardEntity.isFollowing();
+            boolean patrol = guardEntity.isPatrolling();
+            return this.isFollowButton ? following : patrol;
         }
 
         @Override

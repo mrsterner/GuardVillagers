@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
@@ -33,6 +34,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.World;
@@ -82,6 +84,33 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 
 			return ActionResult.PASS;
 		});
+
+		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID, ((server, player, handler, buf, responseSender) -> {
+			int entityId = buf.readInt();
+			server.execute(() -> {
+				Entity entity = player.world.getEntityById(entityId);
+				if(entity instanceof GuardEntity guardEntity){
+					guardEntity.setFollowing(!guardEntity.isFollowing());
+					guardEntity.setOwnerId(player.getUuid());
+					guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
+				}
+
+			});
+		}));
+		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID_2, ((server, player, handler, buf, responseSender) -> {
+			int entityId = buf.readInt();
+			boolean pressed = buf.readBoolean();
+			server.execute(() -> {
+				Entity entity = player.world.getEntityById(entityId);
+				if(entity instanceof GuardEntity guardEntity){
+					BlockPos pos = pressed ? null : guardEntity.getBlockPos();
+					if (guardEntity.getBlockPos() != null)
+						guardEntity.setPatrolPos(pos);
+					guardEntity.setPatrolling(pressed);
+				}
+
+			});
+		}));
 	}
 
 	@Override
