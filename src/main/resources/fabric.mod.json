@@ -3,17 +3,17 @@
   "id": "modid",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Guard Villagers Fabric",
+  "description": "Guards that help with village pest control ",
   "authors": [
-    "Me!"
+    "MrSterner"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://bloomhousemc.com/",
+    "sources": "https://github.com/mrsterner/GuardVillagers"
   },
 
-  "license": "CC0-1.0",
+  "license": "MIT",
   "icon": "assets/guardvillagers/icon.png",
 
   "environment": "*",

@@ -7,7 +7,6 @@ import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.mixin.TexturedButtonWidgetAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;

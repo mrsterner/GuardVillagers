@@ -1,7 +1,9 @@
 package dev.mrsterner.guardvillagers.client.renderer;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.client.model.GuardArmorModel;
+import dev.mrsterner.guardvillagers.client.model.GuardSteveModel;
 import dev.mrsterner.guardvillagers.client.model.GuardVillagerModel;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -9,6 +11,7 @@ import net.minecraft.client.render.entity.BipedEntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
@@ -20,14 +23,20 @@ import org.jetbrains.annotations.Nullable;
 
 public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityModel<GuardEntity>> {
 
+    private final BipedEntityModel<GuardEntity> steve;
     private final BipedEntityModel<GuardEntity> normal = this.getModel();
 
     public GuardRenderer(EntityRendererFactory.Context context) {
         super(context, new GuardVillagerModel(context.getPart(GuardVillagers.GUARD)), 0.5F);
-        this.model = normal;
-        this.addFeature(new ArmorFeatureRenderer<>(this,
-        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_INNER)),
-        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_OUTER))));
+        this.steve = new GuardSteveModel(context.getPart(GuardVillagers.GUARD_STEVE));
+        if (GuardVillagersConfig.get().useSteveModel)
+            this.model = steve;
+        else
+            this.model = normal;
+        this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagersConfig.get().useSteveModel ?
+        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagersConfig.get().useSteveModel ?
+        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
+
     }
 
     @Override
@@ -105,6 +114,10 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     @Nullable
     @Override
     public Identifier getTexture(GuardEntity entity) {
-        return new Identifier(GuardVillagers.MODID, "textures/entity/guard/guard_" + entity.getGuardVariant() + ".png");
+        return !GuardVillagersConfig.get().useSteveModel
+        ? new Identifier(GuardVillagers.MODID,
+        "textures/entity/guard/guard_" + entity.getGuardVariant() + ".png")
+        : new Identifier(GuardVillagers.MODID,
+        "textures/entity/guard/guard_steve_" + entity.getGuardVariant() + ".png");
     }
 }

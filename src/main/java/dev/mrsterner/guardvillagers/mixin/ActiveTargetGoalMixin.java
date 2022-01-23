@@ -1,6 +1,5 @@
 package dev.mrsterner.guardvillagers.mixin;
 
-import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;

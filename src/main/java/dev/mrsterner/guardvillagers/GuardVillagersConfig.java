@@ -11,6 +11,8 @@ import java.util.List;
 @Config(name = GuardVillagers.MODID)
 public class GuardVillagersConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
+    public boolean useSteveModel = false;
+    @ConfigEntry.Gui.RequiresRestart
     public boolean GuardsRunFromPolarBears = true;
     @ConfigEntry.Gui.RequiresRestart
     public boolean GuardFormation = true;

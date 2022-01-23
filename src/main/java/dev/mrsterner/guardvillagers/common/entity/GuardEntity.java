@@ -51,7 +51,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -760,12 +759,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     @Override
     public void attack(LivingEntity target, float pullProgress) {
         this.shieldCoolDown = 8;
-        System.out.println(this.getActiveItem().getItem());
         if (this.getMainHandStack().getItem() instanceof CrossbowItem)
             this.shoot(this, 6.0F);
         if (this.getMainHandStack().getItem() instanceof BowItem) {
             ItemStack itemStack = this.getArrowType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
-            System.out.println("ItemStackArrow: "+itemStack);
             ItemStack hand = this.getActiveItem();
             PersistentProjectileEntity persistentProjectileEntity = ProjectileUtil.createArrowProjectile(this, itemStack, pullProgress);
             int powerLevel = EnchantmentHelper.getLevel(Enchantments.POWER, itemStack);

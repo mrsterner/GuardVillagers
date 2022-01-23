@@ -20,15 +20,7 @@ repositories {
 		url 'https://maven.terraformersmc.com/'
 	}
 	maven {
-		name "Cardinal Components"
-		url "https://ladysnake.jfrog.io/artifactory/mods"
-		content {
-			includeGroup 'io.github.ladysnake'
-			includeGroupByRegex 'io\\.github\\.onyxstudios.*'
-		}
-	}
-	maven {
-		name "REI, Cloth Config"
+		name "Cloth Config"
 		url "https://maven.shedaniel.me/"
 	}
 }
@@ -49,13 +41,6 @@ dependencies {
 	//Modmenu
         modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
             exclude group: "net.fabricmc.fabric-api" }
-
-
-	//Cardinal Components
-	modApi "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cc_version}"
-	modImplementation "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
-	include "io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cc_version}"
 }
 
 processResources {
