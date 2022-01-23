@@ -1,0 +1,6 @@
+{
+  "entity.guardvillagers.guard": "Guard",
+  "item.guardvillagers.guard_spawn_egg": "Guard Spawn Egg",
+  "guardinventory.health": "Health: %s",
+  "guardinventory.armor": "Armor: %s"
+}

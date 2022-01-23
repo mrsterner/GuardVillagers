@@ -7,6 +7,7 @@ import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.mixin.TexturedButtonWidgetAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -86,7 +87,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         Text guardArmorText = new TranslatableText("guardinventory.armor", armor);
         this.textRenderer.draw(matrixStack, guardHealthText, 80.0F, 20.0F, 4210752);
         this.textRenderer.draw(matrixStack, guardArmorText, 80.0F, 30.0F, 4210752);
-
+        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
     }
 
     @Override
