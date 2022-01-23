@@ -12,10 +12,10 @@ jobs:
       matrix:
         # Use these Java versions
         java: [
-          17,    # Current Java LTS & minimum supported by Minecraft
+          17    # Minimum supported by Minecraft
         ]
         # and run on both Linux and Windows
-        os: [ubuntu-20.04, windows-2022]
+        os: [ubuntu-20.04, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: checkout repository
@@ -36,4 +36,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
-          path: build/libs/
+          path: build/libs/libs/
