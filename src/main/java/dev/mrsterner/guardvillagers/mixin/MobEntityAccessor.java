@@ -3,6 +3,8 @@ package dev.mrsterner.guardvillagers.mixin;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.transformer.meta.MixinInner;
@@ -14,4 +16,10 @@ public interface MobEntityAccessor {
 
     @Accessor("goalSelector")
     GoalSelector goalSelector();
+
+    @Accessor("armorItems")
+    DefaultedList<ItemStack> armorItems();
+
+    @Accessor("handItems")
+    DefaultedList<ItemStack> handItems();
 }

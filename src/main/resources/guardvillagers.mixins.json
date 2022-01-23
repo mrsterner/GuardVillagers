@@ -12,6 +12,7 @@
     "ServerWorldMixin"
   ],
   "client": [
+    "TexturedButtonWidgetAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

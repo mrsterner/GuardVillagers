@@ -30,13 +30,6 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, GuardEntity guardEntity) {
         this(syncId, playerInventory, new SimpleInventory(12), guardEntity);
     }
-/*
-    public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, new SimpleInventory(12), GuardVillagers.GUARD_VILLAGER.create(playerInventory.player.world));
-    }
-
- */
-
 
     public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory, GuardEntity guardEntity) {
         super(GuardVillagers.GUARD_SCREEN_HANDLER, id);
@@ -47,7 +40,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 0, 8, 9) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[0] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
+                return EQUIPMENT_SLOT_ORDER[0] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(player);
             }
 
             @Override
@@ -58,7 +51,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.HEAD, stack);
+                guardEntity.equipStack(EquipmentSlot.HEAD, stack);
             }
 
                 @Override
@@ -74,7 +67,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 1, 8, 26) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[1] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
+                return EQUIPMENT_SLOT_ORDER[1] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(player);
             }
 
             @Override
@@ -85,7 +78,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.CHEST, stack);
+                guardEntity.equipStack(EquipmentSlot.CHEST, stack);
             }
 
             @Override
@@ -101,7 +94,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 2, 8, 44) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[2] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
+                return EQUIPMENT_SLOT_ORDER[2] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(player);
             }
 
             @Override
@@ -112,7 +105,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.LEGS, stack);
+                guardEntity.equipStack(EquipmentSlot.LEGS, stack);
             }
 
             @Override
@@ -128,7 +121,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 3, 8, 62) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return EQUIPMENT_SLOT_ORDER[3] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(playerInventory.player);
+                return EQUIPMENT_SLOT_ORDER[3] == MobEntity.getPreferredEquipmentSlot(stack) && GuardVillagers.hotvChecker(player);
             }
 
             @Override
@@ -139,7 +132,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.FEET, stack);
+                guardEntity.equipStack(EquipmentSlot.FEET, stack);
             }
 
             @Override
@@ -155,13 +148,13 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 4, 77, 62) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return GuardVillagers.hotvChecker(playerInventory.player);
+                return GuardVillagers.hotvChecker(player);
             }
 
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.OFFHAND, stack);
+                guardEntity.equipStack(EquipmentSlot.OFFHAND, stack);
             }
 
             @Override
@@ -178,7 +171,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(guardInventory, 5, 77, 44) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return GuardVillagers.hotvChecker(playerInventory.player);
+                return GuardVillagers.hotvChecker(player);
             }
 
             @Override
@@ -189,7 +182,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             @Override
             public void setStack(ItemStack stack) {
                 super.setStack(stack);
-                //guard.equipStack(EquipmentSlot.MAINHAND, stack);
+                guardEntity.equipStack(EquipmentSlot.MAINHAND, stack);
             }
         });
         for (int l = 0; l < 3; ++l) {
@@ -210,26 +203,59 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
 
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        ItemStack newStack = ItemStack.EMPTY;
+        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
         if (slot != null && slot.hasStack()) {
-            ItemStack originalStack = slot.getStack();
-            newStack = originalStack.copy();
-            if (index < this.guardInventory.size()) {
-                if (!this.insertItem(originalStack, this.guardInventory.size(), this.slots.size(), true)) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
+            int i = this.guardInventory.size();
+            if (index < i) {
+                if (!this.insertItem(itemstack1, i, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.insertItem(originalStack, 0, this.guardInventory.size(), false)) {
+            } else if (this.getSlot(1).canInsert(itemstack1) && !this.getSlot(1).hasStack()) {
+                if (!this.insertItem(itemstack1, 1, 2, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (this.getSlot(0).canInsert(itemstack1)) {
+                if (!this.insertItem(itemstack1, 0, 1, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (i <= 2 || !this.insertItem(itemstack1, 2, i, false)) {
+                int j = i + 27;
+                int k = j + 9;
+                if (index >= j && index < k) {
+                    if (!this.insertItem(itemstack1, i, j, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (index >= i && index < j) {
+                    if (!this.insertItem(itemstack1, j, k, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (!this.insertItem(itemstack1, j, j, false)) {
+                    return ItemStack.EMPTY;
+                }
+
                 return ItemStack.EMPTY;
             }
 
-            if (originalStack.isEmpty()) {
+            if (itemstack1.isEmpty()) {
                 slot.setStack(ItemStack.EMPTY);
             } else {
                 slot.markDirty();
             }
         }
-        return newStack;
+
+        return itemstack;
 
     }
+
+    @Override
+    public void close(PlayerEntity player) {
+        super.close(player);
+        this.guardInventory.onClose(player);
+        this.guardEntity.interacting = false;
+    }
+
+
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import dev.mrsterner.guardvillagers.mixin.TexturedButtonWidgetAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
@@ -17,7 +18,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandler> {
     private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");
@@ -78,6 +81,12 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     @Override
     protected void drawForeground(MatrixStack matrixStack, int x, int y) {
         super.drawForeground(matrixStack, x, y);
+        int health = MathHelper.ceil(guardEntity.getHealth());
+        int armor = guardEntity.getArmor();
+        Text guardHealthText = new TranslatableText("guardinventory.health", health);
+        Text guardArmorText = new TranslatableText("guardinventory.armor", armor);
+        this.textRenderer.draw(matrixStack, guardHealthText, 80.0F, 20.0F, 4210752);
+        this.textRenderer.draw(matrixStack, guardArmorText, 80.0F, 30.0F, 4210752);
 
     }
 
@@ -115,13 +124,13 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             Identifier icon = this.requirementsForTexture() ? texture : newTexture;
             RenderSystem.setShaderTexture(0, icon);
-            int i = this.y;
+            int i = ((TexturedButtonWidgetAccessor)this).v();
             if (this.isHovered()) {
-                i += this.y;
+                i += ((TexturedButtonWidgetAccessor)this).hoveredVOffset();
             }
 
             RenderSystem.enableDepthTest();
-            drawTexture(matrixStack, this.x, this.y, (float) this.x, (float) i, this.width, this.height, this.width, this.height);
+            drawTexture(matrixStack, this.x, this.y, (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
             if (this.isHovered()) {
                 this.renderTooltip(matrixStack, mouseX, mouseY);
             }
