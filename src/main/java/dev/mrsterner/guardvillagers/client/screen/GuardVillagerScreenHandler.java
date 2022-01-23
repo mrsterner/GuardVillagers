@@ -1,6 +1,7 @@
 package dev.mrsterner.guardvillagers.client.screen;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,20 +17,32 @@ import net.minecraft.util.Identifier;
 import com.mojang.datafixers.util.Pair;
 
 public class GuardVillagerScreenHandler extends ScreenHandler {
-    public Inventory guardInventory;
+    private final PlayerEntity player;
+    public final GuardEntity guardEntity;
+    public final Inventory guardInventory;
     private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 
-
-
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, new SimpleInventory(12));
+        this(syncId, playerInventory,
+        playerInventory.player.getWorld().getEntityById(buf.readVarInt()) instanceof GuardEntity snail ? snail : null);
     }
 
+    public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, GuardEntity guardEntity) {
+        this(syncId, playerInventory, new SimpleInventory(12), guardEntity);
+    }
+/*
+    public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+        this(syncId, playerInventory, new SimpleInventory(12), GuardVillagers.GUARD_VILLAGER.create(playerInventory.player.world));
+    }
 
-    public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory) {
+ */
+
+
+    public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory, GuardEntity guardEntity) {
         super(GuardVillagers.GUARD_SCREEN_HANDLER, id);
         this.guardInventory = inventory;
-        //this.guard = guard;
+        this.player = playerInventory.player;
+        this.guardEntity = guardEntity;
         inventory.onOpen(playerInventory.player);
         this.addSlot(new Slot(guardInventory, 0, 8, 9) {
             @Override

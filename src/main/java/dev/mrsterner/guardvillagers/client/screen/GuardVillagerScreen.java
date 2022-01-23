@@ -3,7 +3,10 @@ package dev.mrsterner.guardvillagers.client.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
+import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -20,21 +23,30 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     private static final Identifier PATROL_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/patrollingui.png");
     private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/notpatrollingui.png");
     private PlayerEntity player;
+    private GuardEntity guardEntity;
     private float mousePosX;
     private float mousePosY;
     private boolean buttonPressed;
 
-    public GuardVillagerScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, Text title) {
-        super(handler, inventory, title);
+
+    public GuardVillagerScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, Text text) {
+        super(handler, inventory, handler.guardEntity.getDisplayName());
         this.titleX = 80;
         this.playerInventoryTitleX = 100;
         this.passEvents = false;
         this.player = inventory.player;
+        guardEntity = handler.guardEntity;
     }
 
     @Override
     protected void init() {
         super.init();
+        /*
+        if(guardEntity == null){
+            guardEntity = GuardVillagers.GUARD_VILLAGER.create(MinecraftClient.getInstance().world);
+        }
+
+         */
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true, (p_214086_1_) -> {
                 //TODO GuardPacketHandler.INSTANCE.sendToServer(new GuardFollowPacket(guard.getId()));
@@ -56,7 +68,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        //InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.handler.guard);
+        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
     }
 
     @Override

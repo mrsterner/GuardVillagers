@@ -653,7 +653,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {
 
-                    this.openGui(player, guardInventory, player.getStackInHand(hand));
+                    this.openGui(player, guardInventory, player.getStackInHand(hand), this);
                     return ActionResult.SUCCESS;
 
             }
@@ -666,26 +666,32 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         return GuardVillagers.GUARD_SCREEN_HANDLER.create(syncId, playerInventory);
     }
 
+    private class GuardScreenHandlerFactory implements ExtendedScreenHandlerFactory {
+        private GuardEntity guard() {
+            return GuardEntity.this;
+        }
 
+        @Override
+        public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+            buf.writeVarInt(this.guard().getId());
+        }
 
-    public void openGui(PlayerEntity player, Inventory inventory, ItemStack handstack) {
+        @Override
+        public Text getDisplayName() {
+            return this.guard().getDisplayName();
+        }
+
+        @Override
+        public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+            var guardInv = this.guard().guardInventory;
+            return new GuardVillagerScreenHandler(syncId, inv, guardInv, this.guard());
+        }
+    }
+
+    public void openGui(PlayerEntity player, Inventory inventory, ItemStack handstack, GuardEntity guardEntity) {
         if (player.world != null && !player.world.isClient) {
-            player.openHandledScreen(new ExtendedScreenHandlerFactory() {
-                @Override
-                public void writeScreenOpeningData(ServerPlayerEntity serverPlayerEntity, PacketByteBuf packetByteBuf) {
-                    packetByteBuf.writeItemStack(handstack);
-                }
-
-                @Override
-                public Text getDisplayName() {
-                    return new TranslatableText("inventory");
-                }
-
-                @Override
-                public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-                    return new GuardVillagerScreenHandler(syncId, inv, inventory);
-                }
-            });
+            player.openHandledScreen(new GuardScreenHandlerFactory());
+        }
 
 
 
@@ -707,7 +713,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                 new GuardVillagerScreenHandler(GuardVillagersScreenHandlers.GUARD_SCREEN_HANDLER,id, this), getDisplayName())).ifPresent(syncId -> GuardSyncPacket.send(player, this, syncId));
 
              */
-        }
+
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
