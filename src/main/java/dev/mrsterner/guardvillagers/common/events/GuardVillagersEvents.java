@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 
@@ -42,10 +43,14 @@ public final class GuardVillagersEvents {
         void onSpawned(ServerWorld serverWorld, Entity entity);
     }
 
-
-
-
-
-
-
+    public static final Event<OnConsumed> ON_CONSUMED_EVENT = createArrayBacked(OnConsumed.class, listeners -> (livingEntity, itemStack, i, finish) -> {
+        for (OnConsumed listener : listeners) {
+            listener.onConsumed(livingEntity, itemStack, i , finish);
+        }
+        return finish;
+    });
+    @FunctionalInterface
+    public interface OnConsumed {
+        ItemStack onConsumed(LivingEntity livingEntity, ItemStack itemStack, int i, ItemStack finish);
+    }
 }

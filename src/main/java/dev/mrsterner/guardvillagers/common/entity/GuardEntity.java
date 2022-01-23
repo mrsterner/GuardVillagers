@@ -8,6 +8,7 @@ import dev.mrsterner.guardvillagers.ToolAction;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
+import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -450,9 +451,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
                 ItemStack copy = this.activeItemStack.copy();
-                ItemStack itemstack = null;//TODO onItemUseFinish(this, copy, getItemUseTimeLeft(), this.activeItemStack.finishUsing(this.world, this));
-                if (itemstack != this.activeItemStack) {
-                    this.setStackInHand(interactionhand, itemstack);
+                ItemStack itemStack = GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed(this, copy, getItemUseTimeLeft(), this.activeItemStack.finishUsing(this.world,this));
+                if (itemStack != this.activeItemStack) {
+                    this.setStackInHand(interactionhand, itemStack);
                 }
                 if (!this.activeItemStack.isFood())
                     this.activeItemStack.decrement(1);

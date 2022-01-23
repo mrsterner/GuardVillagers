@@ -9,6 +9,8 @@ import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.RavagerEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.util.Hand;
 
 public class RaiseShieldGoal extends Goal {
 
@@ -20,13 +22,8 @@ public class RaiseShieldGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        /*TODO
-        return !CrossbowItem.isCharged(guard.getMainHandStack()) && (guard.getOffHandStack().getItem().canPerformAction(guard.getOffHandStack(),
-        GuardEntity.ToolActions.SHIELD_BLOCK) && raiseShield() && guard.shieldCoolDown == 0
-        && !guard.getOffHandStack().getItem().equals(ForgeRegistries.ITEMS.getValue(new ResourceLocation("bigbrain:buckler"))));
+        return !CrossbowItem.isCharged(guard.getMainHandStack()) && (guard.getOffHandStack().getItem() instanceof ShieldItem) && raiseShield() && guard.shieldCoolDown == 0;
 
-         */
-        return false;
     }
 
     @Override
@@ -36,11 +33,8 @@ public class RaiseShieldGoal extends Goal {
 
     @Override
     public void start() {
-        /*TODO
-        if (GuardEntity.canPerformAction(guard.getOffHandStack(), GuardEntity.ToolActions.SHIELD_BLOCK))
-            guard.startUsingItem(Hand.OFF_HAND);
-
-         */
+        if (guard.getOffHandStack().getItem() instanceof ShieldItem)
+            guard.setCurrentHand(Hand.OFF_HAND);
     }
 
     @Override
