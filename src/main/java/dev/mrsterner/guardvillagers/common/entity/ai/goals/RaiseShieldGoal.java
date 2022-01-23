@@ -9,7 +9,6 @@ import net.minecraft.entity.mob.CreeperEntity;
 import net.minecraft.entity.mob.RavagerEntity;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
-import net.minecraft.util.Hand;
 
 public class RaiseShieldGoal extends Goal {
 

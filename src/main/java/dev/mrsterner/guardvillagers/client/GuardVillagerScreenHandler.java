@@ -1,11 +1,6 @@
 package dev.mrsterner.guardvillagers.client;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
-import dev.mrsterner.guardvillagers.common.IMerchant;
-import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
-import dev.mrsterner.guardvillagers.common.registy.GuardVillagersScreenHandlers;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,14 +9,11 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.HorseScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
 import com.mojang.datafixers.util.Pair;
-import org.jetbrains.annotations.Nullable;
 
 public class GuardVillagerScreenHandler extends ScreenHandler {
     public Inventory guardInventory;
@@ -35,7 +27,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
 
 
     public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory) {
-        super(GuardVillagers.BAT_SCREEN_HANDLER, id);
+        super(GuardVillagers.GUARD_SCREEN_HANDLER, id);
         this.guardInventory = inventory;
         //this.guard = guard;
         inventory.onOpen(playerInventory.player);

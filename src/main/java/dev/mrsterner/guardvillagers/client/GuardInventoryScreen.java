@@ -3,23 +3,15 @@ package dev.mrsterner.guardvillagers.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
-import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.stat.Stat;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-
-import java.util.Stack;
 
 public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandler> {
     private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");

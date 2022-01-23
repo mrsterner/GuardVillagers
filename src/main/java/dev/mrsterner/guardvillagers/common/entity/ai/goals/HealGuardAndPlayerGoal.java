@@ -1,8 +1,6 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
-import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.common.registy.GuardVillagersEntityTypes;
-import net.fabricmc.loader.api.metadata.ModEnvironment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.brain.MemoryModuleType;

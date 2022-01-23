@@ -4,7 +4,6 @@ import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.mixin.LootContextTypesAccessor;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextType;
-import net.minecraft.loot.context.LootContextTypes;
 import net.minecraft.util.Identifier;
 
 public class GuardLootTables {
