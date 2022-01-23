@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
-import dev.mrsterner.guardvillagers.ToolAction;
+import dev.mrsterner.guardvillagers.common.ToolAction;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;

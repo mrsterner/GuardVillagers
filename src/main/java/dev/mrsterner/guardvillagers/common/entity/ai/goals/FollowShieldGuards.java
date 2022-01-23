@@ -1,6 +1,6 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
-import dev.mrsterner.guardvillagers.ToolAction;
+import dev.mrsterner.guardvillagers.common.ToolAction;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.TargetPredicate;
