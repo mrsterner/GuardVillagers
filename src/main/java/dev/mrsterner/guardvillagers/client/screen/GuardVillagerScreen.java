@@ -1,4 +1,4 @@
-package dev.mrsterner.guardvillagers.client;
+package dev.mrsterner.guardvillagers.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
@@ -13,7 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandler> {
+public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandler> {
     private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");
     private static final Identifier GUARD_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/following_icons.png");
     private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/not_following_icons.png");
@@ -24,7 +24,7 @@ public class GuardInventoryScreen extends HandledScreen<GuardVillagerScreenHandl
     private float mousePosY;
     private boolean buttonPressed;
 
-    public GuardInventoryScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, Text title) {
+    public GuardVillagerScreen(GuardVillagerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         this.titleX = 80;
         this.playerInventoryTitleX = 100;

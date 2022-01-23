@@ -1,4 +1,4 @@
-package dev.mrsterner.guardvillagers.client;
+package dev.mrsterner.guardvillagers.client.model;
 
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.model.*;

@@ -1,6 +1,8 @@
-package dev.mrsterner.guardvillagers.client;
+package dev.mrsterner.guardvillagers.client.renderer;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.client.model.GuardArmorModel;
+import dev.mrsterner.guardvillagers.client.model.GuardVillagerModel;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.BipedEntityRenderer;

@@ -4,11 +4,14 @@
   "package": "dev.mrsterner.guardvillagers.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "ActiveTargetGoalMixin",
+    "LivingEntityMixin",
+    "LootContextTypesAccessor",
     "MeleeAttackGoalAccessor",
-    "LootContextTypesAccessor"
+    "MobEntityAccessor",
+    "ServerWorldMixin"
   ],
   "client": [
-
   ],
   "injectors": {
     "defaultRequire": 1

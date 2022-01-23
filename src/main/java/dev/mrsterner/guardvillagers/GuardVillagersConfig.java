@@ -35,6 +35,24 @@ public class GuardVillagersConfig implements ConfigData {
     @ConfigEntry.Gui.RequiresRestart
     public boolean FriendlyFire = true;
 
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean guardArrowsHurtVillagers = false;
+
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean RaidAnimals = true;
+
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean WitchesVillager = true;
+
+    @ConfigEntry.Gui.RequiresRestart
+    public boolean BlackSmithHealing = true;
+
+
+
+    @ConfigEntry.Gui.RequiresRestart
+    public double GuardVillagerHelpRange = 50.0D;
+
+
 
 
 

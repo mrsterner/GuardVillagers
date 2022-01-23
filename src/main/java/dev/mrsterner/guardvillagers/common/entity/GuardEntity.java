@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.ToolAction;
-import dev.mrsterner.guardvillagers.client.GuardVillagerScreenHandler;
+import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
@@ -54,6 +54,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -329,13 +330,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         return this.dataTracker.get(PATROLLING);
     }
 
-        // TODO
-    /*
     public ItemStack getPickedResult(HitResult target) {
-        return new ItemStack(GuardItems.GUARD_SPAWN_EGG.get());
+        return new ItemStack(GuardVillagers.GUARD_SPAWN_EGG.asItem());
     }
 
-     */
+
 
     @Nullable
     public LivingEntity getOwner() {

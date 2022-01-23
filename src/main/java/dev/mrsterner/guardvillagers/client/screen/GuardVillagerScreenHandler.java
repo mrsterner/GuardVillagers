@@ -1,4 +1,4 @@
-package dev.mrsterner.guardvillagers.client;
+package dev.mrsterner.guardvillagers.client.screen;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import net.minecraft.entity.EquipmentSlot;

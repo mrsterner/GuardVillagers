@@ -25,7 +25,7 @@
       "dev.mrsterner.guardvillagers.GuardVillagers"
     ],
     "modmenu": [
-      "dev.mrsterner.guardvillagers.client.GVModMenu"
+      "dev.mrsterner.guardvillagers.client.compat.GuardVillagersModMenu"
     ]
   },
   "mixins": [
