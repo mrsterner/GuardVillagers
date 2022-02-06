@@ -1,6 +1,7 @@
 package dev.mrsterner.guardvillagers.client.screen;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.GuardVillagersClient;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
@@ -24,7 +25,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
 
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         this(syncId, playerInventory,
-        playerInventory.player.getWorld().getEntityById(buf.readVarInt()) instanceof GuardEntity snail ? snail : null);
+        playerInventory.player.getWorld().getEntityById(buf.readVarInt()) instanceof GuardEntity guard ? guard : null);
     }
 
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, GuardEntity guardEntity) {

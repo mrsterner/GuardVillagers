@@ -1,6 +1,7 @@
 package dev.mrsterner.guardvillagers.client.renderer;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.GuardVillagersClient;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.client.model.GuardArmorModel;
 import dev.mrsterner.guardvillagers.client.model.GuardSteveModel;
@@ -27,15 +28,15 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     private final BipedEntityModel<GuardEntity> normal = this.getModel();
 
     public GuardRenderer(EntityRendererFactory.Context context) {
-        super(context, new GuardVillagerModel(context.getPart(GuardVillagers.GUARD)), 0.5F);
-        this.steve = new GuardSteveModel(context.getPart(GuardVillagers.GUARD_STEVE));
+        super(context, new GuardVillagerModel(context.getPart(GuardVillagersClient.GUARD)), 0.5F);
+        this.steve = new GuardSteveModel(context.getPart(GuardVillagersClient.GUARD_STEVE));
         if (GuardVillagersConfig.get().useSteveModel)
             this.model = steve;
         else
             this.model = normal;
         this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagersConfig.get().useSteveModel ?
-        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagersConfig.get().useSteveModel ?
-        new GuardArmorModel(context.getPart(GuardVillagers.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
+        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagersConfig.get().useSteveModel ?
+        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
 
     }
 

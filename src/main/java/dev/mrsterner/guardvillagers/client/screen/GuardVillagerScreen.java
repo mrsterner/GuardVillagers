@@ -6,6 +6,8 @@ import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.mixin.TexturedButtonWidgetAccessor;
 import io.netty.buffer.Unpooled;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -22,6 +24,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
+@Environment(EnvType.CLIENT)
 public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandler> {
     private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");
     private static final Identifier GUARD_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/following_icons.png");
@@ -114,7 +117,6 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
 
         // This is stupid.
         public boolean requirementsForTexture() {
-
             boolean following = guardEntity.isFollowing();
             boolean patrol = guardEntity.isPatrolling();
             return this.isFollowButton ? following : patrol;

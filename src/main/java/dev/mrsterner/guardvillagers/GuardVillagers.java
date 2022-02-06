@@ -41,16 +41,12 @@ import net.minecraft.world.World;
 
 import java.util.function.Predicate;
 
-public class GuardVillagers implements ModInitializer, ClientModInitializer {
+public class GuardVillagers implements ModInitializer {
 	public static final String MODID = "guardvillagers";
 	public static GuardVillagersConfig config;
 
-	public static final ScreenHandlerType<GuardVillagerScreenHandler> GUARD_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(MODID, "guard_screen"), GuardVillagerScreenHandler::new);
+	public static final ScreenHandlerType<GuardVillagerScreenHandler> GUARD_SCREEN_HANDLER = ScreenHandlerRegistry.registerExtended(new Identifier(GuardVillagers.MODID, "guard_screen"), GuardVillagerScreenHandler::new);
 
-	public static EntityModelLayer GUARD = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard"), "guard");
-	public static EntityModelLayer GUARD_STEVE = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_steve"), "guard_steve");
-	public static EntityModelLayer GUARD_ARMOR_OUTER = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_armor_outer"), "guard_armor_outer");
-	public static EntityModelLayer GUARD_ARMOR_INNER = new EntityModelLayer(new Identifier(GuardVillagers.MODID + "guard_armor_inner"), "guard_armor_inner");
 
 	public static final EntityType<GuardEntity> GUARD_VILLAGER = Registry.register(Registry.ENTITY_TYPE, new Identifier(GuardVillagers.MODID, "guard"),
 	FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, GuardEntity::new).dimensions(EntityDimensions.fixed(0.6f, 1.8f)).build());
@@ -63,6 +59,9 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
 		FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
 		Registry.register(Registry.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
+
+
+
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			ItemStack itemStack = player.getStackInHand(hand);
@@ -85,46 +84,10 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 			return ActionResult.PASS;
 		});
 
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					guardEntity.setFollowing(!guardEntity.isFollowing());
-					guardEntity.setOwnerId(player.getUuid());
-					guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
-				}
-
-			});
-		}));
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID_2, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			boolean pressed = buf.readBoolean();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					BlockPos pos = pressed ? null : guardEntity.getBlockPos();
-					if (guardEntity.getBlockPos() != null)
-						guardEntity.setPatrolPos(pos);
-					guardEntity.setPatrolling(pressed);
-				}
-
-			});
-		}));
-	}
-
-	@Override
-	public void onInitializeClient() {
-		ScreenRegistry.register(GUARD_SCREEN_HANDLER, GuardVillagerScreen::new);
-		EntityModelLayerRegistry.registerModelLayer(GUARD, GuardVillagerModel::createBodyLayer);
-		EntityModelLayerRegistry.registerModelLayer(GUARD_STEVE, GuardSteveModel::createMesh);
-		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_OUTER, GuardArmorModel::createOuterArmorLayer);
-		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
-		EntityRendererRegistry.register(GUARD_VILLAGER, GuardRenderer::new);
-
-
 
 	}
+
+
 
 	public static boolean hotvChecker(PlayerEntity player) {
 		return player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagersConfig.get().giveGuardStuffHOTV || !GuardVillagersConfig.get().giveGuardStuffHOTV;
@@ -164,7 +127,6 @@ public class GuardVillagers implements ModInitializer, ClientModInitializer {
 		villagerEntity.releaseTicketFor(MemoryModuleType.HOME);
 		villagerEntity.releaseTicketFor(MemoryModuleType.JOB_SITE);
 		villagerEntity.releaseTicketFor(MemoryModuleType.MEETING_POINT);
-		villagerEntity.remove(Entity.RemovalReason.DISCARDED);
 		villagerEntity.discard();
 
 	}

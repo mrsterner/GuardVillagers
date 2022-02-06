@@ -22,7 +22,7 @@
       "dev.mrsterner.guardvillagers.GuardVillagers"
     ],
     "client": [
-      "dev.mrsterner.guardvillagers.GuardVillagers"
+      "dev.mrsterner.guardvillagers.GuardVillagersClient"
     ],
     "modmenu": [
       "dev.mrsterner.guardvillagers.client.compat.GuardVillagersModMenu"
@@ -36,6 +36,7 @@
     "fabricloader": ">=0.11.3",
     "fabric": "*",
     "minecraft": "1.18.x",
+    "cloth-config2": ">=6.1.48",
     "java": ">=17"
   },
   "suggests": {

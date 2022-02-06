@@ -119,7 +119,7 @@ public class HealGuardAndPlayerGoal extends Goal {
         double d1 = target.getEyeY() - (double) 1.1F - healer.getY();
         double d2 = target.getZ() + vec3d.z - healer.getZ();
         float f = MathHelper.sqrt((float) (d0 * d0 + d2 * d2));
-        Potion potion = Potions.REGENERATION;
+        Potion potion;
         if (target.getHealth() <= 4.0F) {
             potion = Potions.HEALING;
         } else {

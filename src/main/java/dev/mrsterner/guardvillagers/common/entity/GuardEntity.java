@@ -12,6 +12,7 @@ import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
 import dev.mrsterner.guardvillagers.mixin.MobEntityAccessor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
@@ -330,7 +331,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             nbt.putInt("PatrolPosY", this.getPatrolPos().getY());
             nbt.putInt("PatrolPosZ", this.getPatrolPos().getZ());
         }
-        this.readAngerFromNbt((ServerWorld) this.world, nbt);
+        this.readAngerFromNbt(this.world, nbt);
     }
 
     public void setOwnerId(@Nullable UUID p_184754_1_) {
@@ -431,7 +432,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(1, new GuardSetRunningToEatGoal(this, 1.0D));
         this.goalSelector.add(2, new RangedCrossbowAttackPassiveGoal<>(this, 1.0D, 8.0F));
         this.goalSelector.add(2, new RangedBowAttackPassiveGoal<>(this, 0.5D, 20, 15.0F));
-        this.goalSelector.add(2, new GuardEntity.GuardMeleeGoal(this, 0.8D, true));
+        this.goalSelector.add(2, new GuardMeleeGoal(this, 0.8D, true));
         this.goalSelector.add(3, new GuardEntity.FollowHeroGoal(this));
         if (GuardVillagersConfig.get().GuardsRunFromPolarBears)
             this.goalSelector.add(3, new FleeEntityGoal<>(this, PolarBearEntity.class, 12.0F, 1.0D, 1.2D));
@@ -466,9 +467,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, RaiderEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllusionerEntity.class, true));
         if (GuardVillagersConfig.get().AttackAllMobs) {
-            this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> {
-                return mob instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(mob.getEntityName());
-            }));
+            this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(mob.getEntityName())));
         }
         this.targetSelector.add(3,
         new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
@@ -706,18 +705,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         boolean inventoryRequirements = !player.shouldCancelInteraction() && this.onGround;
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {
-
-                    this.openGui(player, guardInventory, player.getStackInHand(hand), this);
-                    return ActionResult.SUCCESS;
-
+                    this.openGui(player);
+                    return ActionResult.success(this.world.isClient());
             }
-            return ActionResult.CONSUME;
         }
         return super.interactMob(player, hand);
-    }
-
-    public ScreenHandler getScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return GuardVillagers.GUARD_SCREEN_HANDLER.create(syncId, playerInventory);
     }
 
     private class GuardScreenHandlerFactory implements ExtendedScreenHandlerFactory {
@@ -742,8 +734,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
-    public void openGui(PlayerEntity player, Inventory inventory, ItemStack handstack, GuardEntity guardEntity) {
-        if (player.world != null && !player.world.isClient) {
+    public void openGui(PlayerEntity player) {
+        if (player.world != null && !this.world.isClient()) {
             this.interacting = true;
             player.openHandledScreen(new GuardScreenHandlerFactory());
         }
@@ -997,7 +989,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
 
-    public class GuardMeleeGoal extends MeleeAttackGoal {
+    public static class GuardMeleeGoal extends MeleeAttackGoal {
         public final GuardEntity guard;
 
         public GuardMeleeGoal(GuardEntity guard, double speedIn, boolean useLongMemory) {
@@ -1050,9 +1042,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
-
-
-    public class ToolActions {
+    public static class ToolActions {
         public static final ToolAction SHIELD_BLOCK = ToolAction.get("shield_block");
         public static final Set<ToolAction> DEFAULT_SHIELD_ACTIONS = of(SHIELD_BLOCK);
 

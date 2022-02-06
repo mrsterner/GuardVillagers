@@ -1,5 +1,6 @@
 package dev.mrsterner.guardvillagers.mixin;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
@@ -32,8 +33,14 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "consumeItem", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"))
     private void onConsumeEvent(CallbackInfo ci){
-        ItemStack copy = this.activeItemStack.copy();
-        GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed((LivingEntity)(Object)this, copy, itemUseTimeLeft, this.activeItemStack.finishUsing(this.world, (LivingEntity)(Object)this));
+        if((LivingEntity)(Object)this instanceof GuardEntity){
+            /*
+            ItemStack copy = this.activeItemStack.copy();
+            GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed((LivingEntity)(Object)this, copy, itemUseTimeLeft, this.activeItemStack.finishUsing(this.world, (LivingEntity)(Object)this));
+
+             */
+
+        }
     }
 
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), cancellable = true)

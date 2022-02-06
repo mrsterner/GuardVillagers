@@ -48,6 +48,7 @@ public final class GuardVillagersEvents {
         }
         return finish;
     });
+
     @FunctionalInterface
     public interface OnConsumed {
         ItemStack onConsumed(LivingEntity livingEntity, ItemStack itemStack, int i, ItemStack finish);

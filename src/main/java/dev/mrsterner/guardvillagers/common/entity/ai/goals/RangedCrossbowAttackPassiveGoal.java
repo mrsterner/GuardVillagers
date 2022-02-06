@@ -54,21 +54,21 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
     public void stop() {
         super.stop();
         this.entity.setAttacking(false);
-        this.entity.setTarget((LivingEntity) null);
+        this.entity.setTarget(null);
         ((GuardEntity) this.entity).setKicking(false);
         this.seeTicks = 0;
         if (this.entity.getPose() == EntityPose.CROUCHING)
             this.entity.setPose(EntityPose.STANDING);
         if (this.entity.isUsingItem()) {
             this.entity.stopUsingItem();
-            ((CrossbowUser) this.entity).setCharging(false);
+            this.entity.setCharging(false);
         }
     }
 
     public boolean checkFriendlyFire() {
         List<LivingEntity> list = this.entity.world.getNonSpectatingEntities(LivingEntity.class, this.entity.getBoundingBox().expand(4.0D, 1.0D, 4.0D));
         for (LivingEntity guard : list) {
-            if (entity != guard || guard != entity) {
+            if (entity != guard) {
                 if (guard != entity.getTarget()) {
                     boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD_VILLAGER || guard.getType() == EntityType.IRON_GOLEM;
                     if (isVillager) {
@@ -128,7 +128,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                 if (flag) {
                     this.entity.setCurrentHand(GuardVillagers.getHandWith(entity, item -> item instanceof CrossbowItem));
                     this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.CHARGING;
-                    ((CrossbowUser) this.entity).setCharging(true);
+                    this.entity.setCharging(true);
                 }
             } else if (this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.CHARGING) {
                 if (!this.entity.isUsingItem())
@@ -139,7 +139,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                     this.entity.stopUsingItem();
                     this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.CHARGED;
                     this.timeUntilStrike = 20 + this.entity.getRandom().nextInt(20);
-                    ((CrossbowUser) this.entity).setCharging(false);
+                    this.entity.setCharging(false);
                 }
             } else if (this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.CHARGED) {
                 --this.timeUntilStrike;
@@ -147,7 +147,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                     this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.READY_TO_ATTACK;
                 }
             } else if (this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.READY_TO_ATTACK && flag && !checkFriendlyFire() && !entity.isBlocking()) {
-                ((RangedAttackMob) this.entity).attack(livingentity, 1.0F);
+                this.entity.attack(livingentity, 1.0F);
                 ItemStack itemstack1 = this.entity.getStackInHand(GuardVillagers.getHandWith(entity, item -> item instanceof CrossbowItem));
                 CrossbowItem.setCharged(itemstack1, false);
                 this.crossbowState = RangedCrossbowAttackPassiveGoal.CrossbowState.UNCHARGED;
@@ -159,7 +159,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
         return this.crossbowState == RangedCrossbowAttackPassiveGoal.CrossbowState.UNCHARGED;
     }
 
-    static enum CrossbowState {
+    enum CrossbowState {
         UNCHARGED, CHARGING, CHARGED, READY_TO_ATTACK;
     }
 }
