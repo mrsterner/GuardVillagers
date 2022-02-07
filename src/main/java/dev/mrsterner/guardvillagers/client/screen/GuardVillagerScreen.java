@@ -10,6 +10,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.hud.InGameOverlayRenderer;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -81,16 +82,39 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
     }
 
+
+
     @Override
     protected void drawForeground(MatrixStack matrixStack, int x, int y) {
         super.drawForeground(matrixStack, x, y);
         int health = MathHelper.ceil(guardEntity.getHealth());
         int armor = guardEntity.getArmor();
-        Text guardHealthText = new TranslatableText("guardinventory.health", health);
-        Text guardArmorText = new TranslatableText("guardinventory.armor", armor);
-        this.textRenderer.draw(matrixStack, guardHealthText, 80.0F, 20.0F, 4210752);
-        this.textRenderer.draw(matrixStack, guardArmorText, 80.0F, 30.0F, 4210752);
         RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
+        //Health
+        for (int i = 0; i < 10; i++) {
+            drawTexture(matrixStack, (i * 8) + 80, 20, 16, 0, 9, 9);
+        }
+        for (int i = 0; i < health/2; i++) {
+            if(health % 2 != 0 && health/2 == i + 1){
+                drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9*4, 0, 9,9);
+                drawTexture(matrixStack, ((i + 1) * 8) + 80, 20, 16 + 9*5, 0, 9,9);
+            }else{
+                drawTexture(matrixStack,  (i * 8) + 80, 20, 16 + 9*4, 0, 9, 9);
+               }
+        }
+        //Armor
+        for (int i = 0; i < 10; i++) {
+            drawTexture(matrixStack, (i * 8) + 80, 30, 16, 9, 9, 9);
+        }
+        for (int i = 0; i < armor/2; i++) {
+            if(armor % 2 != 0 && armor/2 == i + 1){
+                drawTexture(matrixStack, (i * 8) + 80, 30, 16 + 9*2, 9, 9,9);
+                drawTexture(matrixStack, ((i + 1) * 8) + 80, 30, 16 + 9*1, 9, 9,9);
+            }else{
+                drawTexture(matrixStack,  (i * 8) + 80, 30, 16 + 9*2, 9, 9, 9);
+            }
+        }
+
     }
 
     @Override

@@ -742,8 +742,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
     public static DefaultAttributeContainer.Builder createAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 20).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5)
-        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D).add(EntityAttributes.GENERIC_FOLLOW_RANGE, 20);
+        return MobEntity.createMobAttributes()
+        .add(EntityAttributes.GENERIC_MAX_HEALTH, 20)
+        .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.5)
+        .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0D)
+        .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 20);
     }
 
 

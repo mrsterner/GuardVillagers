@@ -34,12 +34,8 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "consumeItem", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"))
     private void onConsumeEvent(CallbackInfo ci){
         if((LivingEntity)(Object)this instanceof GuardEntity){
-            /*
             ItemStack copy = this.activeItemStack.copy();
             GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed((LivingEntity)(Object)this, copy, itemUseTimeLeft, this.activeItemStack.finishUsing(this.world, (LivingEntity)(Object)this));
-
-             */
-
         }
     }
 
