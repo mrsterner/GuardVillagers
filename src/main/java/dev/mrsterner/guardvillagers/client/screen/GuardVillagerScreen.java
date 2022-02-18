@@ -90,16 +90,17 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         int health = MathHelper.ceil(guardEntity.getHealth());
         int armor = guardEntity.getArmor();
         RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
+        int statusU = guardEntity.hasStatusEffect(StatusEffects.POISON) ? 4 : 0;
         //Health
         for (int i = 0; i < 10; i++) {
             drawTexture(matrixStack, (i * 8) + 80, 20, 16, 0, 9, 9);
         }
         for (int i = 0; i < health/2; i++) {
             if(health % 2 != 0 && health/2 == i + 1){
-                drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9*4, 0, 9,9);
-                drawTexture(matrixStack, ((i + 1) * 8) + 80, 20, 16 + 9*5, 0, 9,9);
+                drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9,9);
+                drawTexture(matrixStack, ((i + 1) * 8) + 80, 20, 16 + 9*(5 + statusU), 0, 9,9);
             }else{
-                drawTexture(matrixStack,  (i * 8) + 80, 20, 16 + 9*4, 0, 9, 9);
+                drawTexture(matrixStack,  (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9, 9);
                }
         }
         //Armor

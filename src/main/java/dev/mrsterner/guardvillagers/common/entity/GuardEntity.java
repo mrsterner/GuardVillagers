@@ -184,8 +184,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     protected void pushAway(Entity entity) {
-        if (entity instanceof PathAwareEntity) {
-            PathAwareEntity living = (PathAwareEntity) entity;
+        if (entity instanceof PathAwareEntity living) {
             boolean attackTargets = living.getTarget() instanceof VillagerEntity || living.getTarget() instanceof IronGolemEntity || living.getTarget() instanceof GuardEntity;
             if (attackTargets)
                 this.setTarget(living);
@@ -193,14 +192,13 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         super.pushAway(entity);
     }
 
-    @Nullable
     public void setPatrolPos(BlockPos position) {
         this.dataTracker.set(GUARD_POS, Optional.ofNullable(position));
     }
 
     @Nullable
     public BlockPos getPatrolPos() {
-        return this.dataTracker.get(GUARD_POS).orElse((BlockPos) null);
+        return this.dataTracker.get(GUARD_POS).orElse(null);
     }
 
     @Override
@@ -460,6 +458,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.targetSelector.add(5, new GuardEntity.DefendVillageGuardGoal(this));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, true));
         this.targetSelector.add(2, (new RevengeGoal(this, GuardEntity.class, IronGolemEntity.class)).setGroupRevenge());
+        this.targetSelector.add(2, new RevengeGoal(this, MobEntity.class));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, WitchEntity.class, true));
         this.targetSelector.add(3, new HeroHurtByTargetGoal(this));
         this.targetSelector.add(3, new HeroHurtTargetGoal(this));
@@ -485,9 +484,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             ZombieVillagerEntity zombieguard = this.convertTo(EntityType.ZOMBIE_VILLAGER, true);
             zombieguard.initialize((ServerWorldAccess) this.world,
             this.world.getLocalDifficulty(zombieguard.getBlockPos()), SpawnReason.CONVERSION,
-            new ZombieEntity.ZombieData(false, true), (NbtCompound) null);
+            new ZombieEntity.ZombieData(false, true), null);
             if (!this.isSilent())
-                this.world.syncWorldEvent((PlayerEntity) null, 1026, this.getBlockPos(), 0);
+                this.world.syncWorldEvent(null, 1026, this.getBlockPos(), 0);
             this.discard();
         }
         super.onDeath(source);
@@ -503,11 +502,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         } else {
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
-                ItemStack copy = this.activeItemStack.copy();
-                ItemStack itemStack = GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed(this, copy, getItemUseTimeLeft(), this.activeItemStack.finishUsing(this.world,this));
-                if (itemStack != this.activeItemStack) {
-                    this.setStackInHand(interactionhand, itemStack);
-                }
                 if (!this.activeItemStack.isFood())
                     this.activeItemStack.decrement(1);
                 this.stopUsingItem();
@@ -808,9 +802,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     @Override
     public void tickRiding() {
         super.tickRiding();
-        if (this.getVehicle() instanceof PathAwareEntity) {
-            PathAwareEntity creatureentity = (PathAwareEntity) this.getVehicle();
-            this.bodyYaw = creatureentity.bodyYaw;
+        if (this.getVehicle() instanceof PathAwareEntity creatureEntity) {
+            this.bodyYaw = creatureEntity.bodyYaw;
         }
     }
 
@@ -877,7 +870,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             if (witchEntity == null)
                 return;
             witchEntity.copyPositionAndRotation(this);
-            witchEntity.initialize(serverWorld, world.getLocalDifficulty(witchEntity.getBlockPos()), SpawnReason.CONVERSION, (EntityData)null, (NbtCompound)null);
+            witchEntity.initialize(serverWorld, world.getLocalDifficulty(witchEntity.getBlockPos()), SpawnReason.CONVERSION, null, null);
             witchEntity.setAiDisabled(this.isAiDisabled());
             witchEntity.setCustomName(this.getCustomName());
             witchEntity.setCustomNameVisible(this.isCustomNameVisible());
@@ -917,10 +910,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             Box axisalignedbb = this.guard.getBoundingBox().expand(10.0D, 8.0D, 10.0D);
             List<VillagerEntity> list = guard.world.getNonSpectatingEntities(VillagerEntity.class, axisalignedbb);
             List<PlayerEntity> list1 = guard.world.getNonSpectatingEntities(PlayerEntity.class, axisalignedbb);
-            for (LivingEntity livingentity : list) {
-                VillagerEntity villagerentity = (VillagerEntity) livingentity;
+            for (VillagerEntity livingentity : list) {
                 for (PlayerEntity playerentity : list1) {
-                    int i = villagerentity.getReputation(playerentity);
+                    int i = livingentity.getReputation(playerentity);
                     if (i <= -100) {
                         this.villageAggressorTarget = playerentity;
                     }
@@ -970,10 +962,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         public boolean canStart() {
             List<PlayerEntity> list = this.guard.world.getNonSpectatingEntities(PlayerEntity.class, this.guard.getBoundingBox().expand(10.0D));
             if (!list.isEmpty()) {
-                for (LivingEntity mob : list) {
-                    PlayerEntity player = (PlayerEntity) mob;
-                    if (!player.isInvisible() && player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-                        guard.setOwnerId(player.getUuid());
+                for (PlayerEntity mob : list) {
+                    if (!mob.isInvisible() && mob.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+                        guard.setOwnerId(mob.getUuid());
                         return guard.isFollowing();
                     }
                 }

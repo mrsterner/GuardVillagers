@@ -1,6 +1,5 @@
 package dev.mrsterner.guardvillagers.mixin;
 
-import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
@@ -9,13 +8,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
@@ -23,21 +19,10 @@ import java.util.List;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 
-    @Shadow protected ItemStack activeItemStack;
-
-    @Shadow protected int itemUseTimeLeft;
-
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
 
-    @Inject(method = "consumeItem", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/item/ItemStack;finishUsing(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;"))
-    private void onConsumeEvent(CallbackInfo ci){
-        if((LivingEntity)(Object)this instanceof GuardEntity){
-            ItemStack copy = this.activeItemStack.copy();
-            GuardVillagersEvents.ON_CONSUMED_EVENT.invoker().onConsumed((LivingEntity)(Object)this, copy, itemUseTimeLeft, this.activeItemStack.finishUsing(this.world, (LivingEntity)(Object)this));
-        }
-    }
 
     @Inject(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), cancellable = true)
     private void onDamageTakenEvent(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir){

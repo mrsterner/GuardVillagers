@@ -28,7 +28,7 @@ public class RaiseShieldGoal extends Goal {
 
     @Override
     public boolean shouldContinue() {
-        return this.canStart();
+        return this.canStart() && guard.getTarget() != null;
     }
 
     @Override
