@@ -34,13 +34,13 @@ public class GuardVillagersConfig implements ConfigData {
     public boolean GuardAlwaysShield = true;
 
     @ConfigEntry.Gui.RequiresRestart
-    public boolean FriendlyFire = true;
+    public boolean FriendlyFire = false;
 
     @ConfigEntry.Gui.RequiresRestart
     public boolean guardArrowsHurtVillagers = false;
 
     @ConfigEntry.Gui.RequiresRestart
-    public boolean RaidAnimals = true;
+    public boolean RaidAnimals = false;
 
     @ConfigEntry.Gui.RequiresRestart
     public boolean WitchesVillager = true;
@@ -54,7 +54,7 @@ public class GuardVillagersConfig implements ConfigData {
     public double GuardVillagerHelpRange = 50.0D;
 
     @ConfigEntry.Gui.RequiresRestart
-    public boolean ConvertVillagerIfHaveHOTV = true;
+    public boolean ConvertVillagerIfHaveHOTV = false;
 
 
 
