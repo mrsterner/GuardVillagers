@@ -65,7 +65,7 @@ public class GuardVillagersConfig implements ConfigData {
     public int amountOfHealthRegenerated = 1;
 
 
-    public List<String> MobBlackList = Arrays.asList("creeper");
+    public List<String> MobBlackList = Arrays.asList("minecraft:creeper");
 
 
 
