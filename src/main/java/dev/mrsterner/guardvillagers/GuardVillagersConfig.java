@@ -5,6 +5,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class GuardVillagersConfig implements ConfigData {
     public int amountOfHealthRegenerated = 1;
 
 
-    public List<String> MobBlackList = Arrays.asList("creeper");
+    public List<String> MobBlackList = Arrays.asList("minecraft:creeper");
 
 
 

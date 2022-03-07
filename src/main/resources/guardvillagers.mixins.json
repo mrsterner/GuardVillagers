@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [
     "ActiveTargetGoalMixin",
+    "EntityAccessor",
     "LivingEntityMixin",
     "LootContextTypesAccessor",
     "MeleeAttackGoalAccessor",
