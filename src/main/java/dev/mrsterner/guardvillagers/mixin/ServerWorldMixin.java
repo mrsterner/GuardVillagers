@@ -34,16 +34,6 @@ public class ServerWorldMixin {
                     ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
                 }
         }
-        if (GuardVillagersConfig.get().AttackAllMobs) {
-            if (entity instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(entity.getEntityName())
-            && !(entity instanceof SpiderEntity)) {
-                MobEntity mob = (MobEntity) entity;
-                ((MobEntityAccessor)mob).targetSelector().add(2, new ActiveTargetGoal<>(mob, GuardEntity.class, false));
-            }
-            if (entity instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(entity.getEntityName()) && entity instanceof SpiderEntity spider) {
-                ((MobEntityAccessor)spider).targetSelector().add(3, new AttackEntityDaytimeGoal<>(spider, GuardEntity.class));
-            }
-        }
         if (entity instanceof IllagerEntity illager) {
             ((MobEntityAccessor)illager).targetSelector().add(2, new ActiveTargetGoal<>(illager, GuardEntity.class, false));
         }
