@@ -466,9 +466,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllagerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, RaiderEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllusionerEntity.class, true));
-        if (GuardVillagersConfig.get().AttackAllMobs) {
-            this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(((EntityAccessor) mob).getSavedEntityId())));
-        }
         this.targetSelector.add(3,
         new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, ZombieEntity.class, true));

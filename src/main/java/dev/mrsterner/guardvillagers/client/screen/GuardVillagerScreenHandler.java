@@ -25,7 +25,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
 
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
         this(syncId, playerInventory,
-        playerInventory.player.getWorld().getEntityById(buf.readVarInt()) instanceof GuardEntity guard ? guard : null);
+        playerInventory.player.world.getEntityById(buf.readVarInt()) instanceof GuardEntity guard ? guard : null);
     }
 
     public GuardVillagerScreenHandler(int syncId, PlayerInventory playerInventory, GuardEntity guardEntity) {

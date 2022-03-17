@@ -23,9 +23,6 @@ public class GuardVillagersConfig implements ConfigData {
     public boolean GuardsOpenDoors = true;
 
     @ConfigEntry.Gui.RequiresRestart
-    public boolean AttackAllMobs = false;
-
-    @ConfigEntry.Gui.RequiresRestart
     public boolean giveGuardStuffHOTV = true;
 
     @ConfigEntry.Gui.RequiresRestart
