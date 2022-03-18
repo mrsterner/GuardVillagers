@@ -2,5 +2,23 @@
   "entity.guardvillagers.guard": "Guard",
   "item.guardvillagers.guard_spawn_egg": "Guard Spawn Egg",
   "guardinventory.health": "Health: %s",
-  "guardinventory.armor": "Armor: %s"
+  "guardinventory.armor": "Armor: %s",
+
+  "text.autoconfig.guardvillagers.option.useSteveModel": "Use Steve Model",
+  "text.autoconfig.guardvillagers.option.GuardsRunFromPolarBears": "Guards Run From Polar Bear",
+
+  "text.autoconfig.guardvillagers.option.GuardFormation": "Guard Formation",
+  "text.autoconfig.guardvillagers.option.ClericHealing": "Cleric Healing",
+  "text.autoconfig.guardvillagers.option.armorerRepairGuardArmor": "Armorer Repair Guard Armor",
+  "text.autoconfig.guardvillagers.option.GuardsOpenDoors": "Guards Open Doors",
+  "text.autoconfig.guardvillagers.option.giveGuardStuffHOTV": "Require HOTV To Give Guards Stuff",
+  "text.autoconfig.guardvillagers.option.setGuardPatrolHotv": "Require HOTV To Set Guards Patrol",
+  "text.autoconfig.guardvillagers.option.GuardsAlwaysShield": "Guard Always Shield",
+  "text.autoconfig.guardvillagers.option.FriendlyFire": "Friendly Fire",
+  "text.autoconfig.guardvillagers.option.guardArrowsHurtVillagers": "Guard Arrows Hurt Villagers",
+  "text.autoconfig.guardvillagers.option.RaidAnimals": "Raiders Will Attack Animals",
+  "text.autoconfig.guardvillagers.option.WitchesVillagers": "Witches Will Attack Villagers",
+  "text.autoconfig.guardvillagers.option.BlackSmithHealing": "Blacksmith Will Heal Iron Golems",
+  "text.autoconfig.guardvillagers.option.ConvertVillagerIfHaveHOTV": "Require HOTV To Convert Villagers",
+  "text.autoconfig.guardvillagers.option.MobBlackList": "Guard Attack Blacklist"
 }
