@@ -57,10 +57,10 @@ public class GuardVillagers implements ModInitializer {
 	public void onInitialize() {
 		AutoConfig.register(GuardVillagersConfig.class, GsonConfigSerializer::new);
 		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
+
+
 		FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
 		Registry.register(Registry.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
-
-
 
 
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
