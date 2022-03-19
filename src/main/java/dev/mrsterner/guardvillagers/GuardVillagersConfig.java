@@ -11,63 +11,70 @@ import java.util.List;
 
 @Config(name = GuardVillagers.MODID)
 public class GuardVillagersConfig implements ConfigData {
-    public boolean useSteveModel = false;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean GuardsRunFromPolarBears = true;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean GuardFormation = true;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean ClericHealing = true;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean armorerRepairGuardArmor = true;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean GuardsOpenDoors = true;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean AttackAllMobs = false;
+    @ConfigEntry.Gui.CollapsibleObject
+    public General generail = new General();
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean giveGuardStuffHOTV = true;
+    @ConfigEntry.Gui.CollapsibleObject
+    public Permission permission = new Permission();
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean setGuardPatrolHotv = true;
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean GuardAlwaysShield = true;
+    public static class General {
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean FriendlyFire = false;
+        public boolean useSteveModel = false;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean GuardsRunFromPolarBears = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean GuardFormation = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean ClericHealing = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean armorerRepairGuardArmor = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean GuardsOpenDoors = true;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean guardArrowsHurtVillagers = false;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean AttackAllMobs = false;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean RaidAnimals = false;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean giveGuardStuffHOTV = true;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean WitchesVillager = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean setGuardPatrolHotv = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean GuardAlwaysShield = true;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean BlackSmithHealing = true;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean FriendlyFire = false;
 
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean guardArrowsHurtVillagers = false;
 
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean RaidAnimals = false;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public double GuardVillagerHelpRange = 50.0D;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean WitchesVillager = true;
 
-    @ConfigEntry.Gui.RequiresRestart
-    public boolean ConvertVillagerIfHaveHOTV = false;
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean BlackSmithHealing = true;
 
+        @ConfigEntry.Gui.RequiresRestart
+        @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
+        public double GuardVillagerHelpRange = 50.0D;
 
+        @ConfigEntry.Gui.RequiresRestart
+        public boolean ConvertVillagerIfHaveHOTV = false;
 
+        @ConfigEntry.Gui.RequiresRestart
+        public int amountOfHealthRegenerated = 1;
 
+        public List<String> MobBlackList = Arrays.asList("minecraft:creeper");
+    }
 
-
-    @ConfigEntry.Gui.RequiresRestart
-    public int amountOfHealthRegenerated = 1;
-
-
-    public List<String> MobBlackList = Arrays.asList("minecraft:creeper");
-
+    public static class Permission {
+        @ConfigEntry.BoundedDiscrete(max = 100, min = 0)
+        public int AmountOfConversions = 5;
+    }
 
 
     public static GuardVillagersConfig get() {

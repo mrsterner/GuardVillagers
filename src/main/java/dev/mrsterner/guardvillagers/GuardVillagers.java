@@ -7,6 +7,8 @@ import dev.mrsterner.guardvillagers.client.renderer.GuardRenderer;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreen;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
+import me.lucko.fabric.api.permissions.v0.PermissionCheckEvent;
+import me.lucko.fabric.api.permissions.v0.Permissions;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ClientModInitializer;
@@ -20,6 +22,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
+import net.fabricmc.fabric.api.util.TriState;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
@@ -83,14 +87,15 @@ public class GuardVillagers implements ModInitializer {
 
 			return ActionResult.PASS;
 		});
-
-
 	}
 
 
+	public static boolean isFabricPermissionsAPILoaded(){
+		return FabricLoader.getInstance().isModLoaded("fabric-permissions-api-v0");
+	}
 
 	public static boolean hotvChecker(PlayerEntity player) {
-		return player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagersConfig.get().giveGuardStuffHOTV || !GuardVillagersConfig.get().giveGuardStuffHOTV;
+		return player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) || !config.generail.giveGuardStuffHOTV;
 	}
 
 	public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {
@@ -98,36 +103,37 @@ public class GuardVillagers implements ModInitializer {
 	}
 
 	private static void convertVillager(VillagerEntity villagerEntity, PlayerEntity player, World world) {
-		player.swingHand(Hand.MAIN_HAND);
-		ItemStack itemstack = player.getEquippedStack(EquipmentSlot.MAINHAND);
-		GuardEntity guard = GUARD_VILLAGER.create(world);
-		if (guard == null)
-			return;
-		if (player.world.isClient()) {
-			ParticleEffect iparticledata = ParticleTypes.HAPPY_VILLAGER;
-			for (int i = 0; i < 10; ++i) {
-				double d0 = villagerEntity.getRandom().nextGaussian() * 0.02D;
-				double d1 = villagerEntity.getRandom().nextGaussian() * 0.02D;
-				double d2 = villagerEntity.getRandom().nextGaussian() * 0.02D;
-				villagerEntity.world.addParticle(iparticledata, villagerEntity.getX() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), villagerEntity.getY() + 0.5D + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth()),
-				villagerEntity.getZ() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), d0, d1, d2);
+		if(isFabricPermissionsAPILoaded() && Permissions.check(player, "guardvillagers.create") || !isFabricPermissionsAPILoaded()){
+			player.swingHand(Hand.MAIN_HAND);
+			ItemStack itemstack = player.getEquippedStack(EquipmentSlot.MAINHAND);
+			GuardEntity guard = GUARD_VILLAGER.create(world);
+			if (guard == null)
+				return;
+			if (player.world.isClient()) {
+				ParticleEffect particleEffect = ParticleTypes.HAPPY_VILLAGER;
+				for (int i = 0; i < 10; ++i) {
+					double d0 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+					double d1 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+					double d2 = villagerEntity.getRandom().nextGaussian() * 0.02D;
+					villagerEntity.world.addParticle(particleEffect, villagerEntity.getX() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), villagerEntity.getY() + 0.5D + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth()),
+					villagerEntity.getZ() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), d0, d1, d2);
+				}
 			}
+			guard.copyPositionAndRotation(villagerEntity);
+			guard.limbDistance = villagerEntity.limbDistance;
+			guard.lastLimbDistance = villagerEntity.lastLimbDistance;
+			guard.headYaw = villagerEntity.headYaw;
+			guard.refreshPositionAndAngles(villagerEntity.getX(), villagerEntity.getY(), villagerEntity.getZ(), villagerEntity.getYaw(), villagerEntity.getPitch());
+			guard.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1.0F, 1.0F);
+			guard.equipStack(EquipmentSlot.MAINHAND, itemstack.copy());
+			int i = GuardEntity.getRandomTypeForBiome(guard.world, guard.getBlockPos());
+			guard.setGuardVariant(i);
+			guard.setPersistent();
+			world.spawnEntity(guard);
+			villagerEntity.releaseTicketFor(MemoryModuleType.HOME);
+			villagerEntity.releaseTicketFor(MemoryModuleType.JOB_SITE);
+			villagerEntity.releaseTicketFor(MemoryModuleType.MEETING_POINT);
+			villagerEntity.discard();
 		}
-		guard.copyPositionAndRotation(villagerEntity);
-		guard.limbDistance = villagerEntity.limbDistance;
-		guard.lastLimbDistance = villagerEntity.lastLimbDistance;
-		guard.headYaw = villagerEntity.headYaw;
-		guard.refreshPositionAndAngles(villagerEntity.getX(), villagerEntity.getY(), villagerEntity.getZ(), villagerEntity.getYaw(), villagerEntity.getPitch());
-		guard.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1.0F, 1.0F);
-		guard.equipStack(EquipmentSlot.MAINHAND, itemstack.copy());
-		int i = GuardEntity.getRandomTypeForBiome(guard.world, guard.getBlockPos());
-		guard.setGuardVariant(i);
-		guard.setPersistent();
-		world.spawnEntity(guard);
-		villagerEntity.releaseTicketFor(MemoryModuleType.HOME);
-		villagerEntity.releaseTicketFor(MemoryModuleType.JOB_SITE);
-		villagerEntity.releaseTicketFor(MemoryModuleType.MEETING_POINT);
-		villagerEntity.discard();
-
 	}
 }

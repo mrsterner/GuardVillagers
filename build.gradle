@@ -19,6 +19,10 @@ repositories {
 		name "Cloth Config"
 		url "https://maven.shedaniel.me/"
 	}
+
+	maven {
+		url 'https://oss.sonatype.org/content/repositories/snapshots'
+	}
 }
 
 dependencies {
@@ -37,6 +41,9 @@ dependencies {
 	//Modmenu
         modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
             exclude group: "net.fabricmc.fabric-api" }
+
+	//LuckPerms
+	modImplementation 'me.lucko:fabric-permissions-api:0.1-SNAPSHOT'
 }
 
 processResources {
