@@ -56,7 +56,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true, (p_214086_1_) -> {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                buf.writeInt(guardEntity.getId());
+                buf.writeInt(guardEntity.getEntityId());
                 ClientPlayNetworking.send(ID, buf);
             }));
         }
@@ -64,7 +64,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false, (p_214086_1_) -> {
                 buttonPressed = !buttonPressed;
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                buf.writeInt(guardEntity.getId());
+                buf.writeInt(guardEntity.getEntityId());
                 buf.writeBoolean(buttonPressed);
                 ClientPlayNetworking.send(ID_2, buf);
             }));
@@ -159,7 +159,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             RenderSystem.enableDepthTest();
             drawTexture(matrixStack, this.x, this.y, (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
             if (this.isHovered()) {
-                this.renderTooltip(matrixStack, mouseX, mouseY);
+                this.renderToolTip(matrixStack, mouseX, mouseY);
             }
         }
     }

@@ -73,7 +73,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                     boolean isVillager = guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD_VILLAGER || guard.getType() == EntityType.IRON_GOLEM;
                     if (isVillager) {
                         Vec3d vector3d = entity.getRotationVector();
-                        Vec3d vector3d1 = guard.getPos().relativize(entity.getPos()).normalize();
+                        Vec3d vector3d1 = guard.getPos().reverseSubtract(entity.getPos()).normalize();
                         vector3d1 = new Vec3d(vector3d1.x, vector3d1.y, vector3d1.z);
                         if (vector3d1.dotProduct(vector3d) < 0.0D && entity.canSee(guard))
                             return GuardVillagersConfig.get().FriendlyFire;

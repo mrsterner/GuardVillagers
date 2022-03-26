@@ -17,6 +17,7 @@ import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.Durations;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -43,8 +44,8 @@ import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -95,7 +96,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public int kickCoolDown;
     public boolean interacting;
     private int remainingPersistentAngerTime;
-    private static final UniformIntProvider angerTime = TimeHelper.betweenSeconds(20, 39);
+    private static final UniformIntProvider angerTime = Durations.betweenSeconds(20, 39);
     private UUID persistentAngerTarget;
     private static final Map<EquipmentSlot, Identifier> EQUIPMENT_SLOT_ITEMS = Util.make(Maps.newHashMap(),
     (slotItems) -> {
@@ -160,7 +161,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundTag entityNbt) {
         this.setPersistent();
         int type = GuardEntity.getRandomTypeForBiome(world, this.getBlockPos());
         if (entityData instanceof GuardEntity.GuardData) {
@@ -249,8 +250,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
+    public void readCustomDataFromTag(CompoundTag nbt) {
+        super.readCustomDataFromTag(nbt);
         UUID uuid = nbt.containsUuid("Owner") ? nbt.getUuid("Owner") : null;
         if (uuid != null) {
             try {
@@ -274,35 +275,35 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             int z = nbt.getInt("PatrolPosZ");
             this.dataTracker.set(GUARD_POS, Optional.ofNullable(new BlockPos(x, y, z)));
         }
-        NbtList listnbt = nbt.getList("Inventory", 10);
+        ListTag listnbt = nbt.getList("Inventory", 10);
         for (int i = 0; i < listnbt.size(); ++i) {
-            NbtCompound compoundnbt = listnbt.getCompound(i);
+            CompoundTag compoundnbt = listnbt.getCompound(i);
             int j = compoundnbt.getByte("Slot") & 255;
-            this.guardInventory.setStack(j, ItemStack.fromNbt(compoundnbt));
+            this.guardInventory.setStack(j, ItemStack.fromTag(compoundnbt));
         }
 
         if (nbt.contains("ArmorItems", 9)) {
-            NbtList armorItems = nbt.getList("ArmorItems", 10);
+            ListTag armorItems = nbt.getList("ArmorItems", 10);
             for (int i = 0; i < ((MobEntityAccessor)this).armorItems().size(); ++i) {
-                int index = GuardEntity.slotToInventoryIndex(MobEntity.getPreferredEquipmentSlot(ItemStack.fromNbt(armorItems.getCompound(i))));
-                this.guardInventory.setStack(index, ItemStack.fromNbt(armorItems.getCompound(i)));
+                int index = GuardEntity.slotToInventoryIndex(MobEntity.getPreferredEquipmentSlot(ItemStack.fromTag(armorItems.getCompound(i))));
+                this.guardInventory.setStack(index, ItemStack.fromTag(armorItems.getCompound(i)));
             }
         }
         if (nbt.contains("HandItems", 9)) {
-            NbtList handItems = nbt.getList("HandItems", 10);
+            ListTag handItems = nbt.getList("HandItems", 10);
             for (int i = 0; i < ((MobEntityAccessor)this).handItems().size(); ++i) {
                 int handSlot = i == 0 ? 5 : 4;
-                this.guardInventory.setStack(handSlot, ItemStack.fromNbt(handItems.getCompound(i)));
+                this.guardInventory.setStack(handSlot, ItemStack.fromTag(handItems.getCompound(i)));
             }
         }
 
         if (!world.isClient())
-            this.readAngerFromNbt(this.world, nbt);
+            this.angerFromTag(this.world, nbt);
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
+    public void writeCustomDataToTag(CompoundTag nbt) {
+        super.writeCustomDataToTag(nbt);
         nbt.putInt("Type", this.getGuardVariant());
         nbt.putInt("KickTicks", this.kickTicks);
         nbt.putInt("ShieldCooldown", this.shieldCoolDown);
@@ -315,12 +316,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.getOwnerId() != null) {
             nbt.putUuid("Owner", this.getOwnerId());
         }
-        NbtList listnbt = new NbtList();
+        ListTag listnbt = new ListTag();
         for (int i = 0; i < this.guardInventory.size(); ++i) {
             ItemStack itemstack = this.guardInventory.getStack(i);
-            NbtCompound compoundnbt = new NbtCompound();
+            CompoundTag compoundnbt = new CompoundTag();
             compoundnbt.putByte("Slot", (byte) i);
-            itemstack.writeNbt(compoundnbt);
+            itemstack.toTag(compoundnbt);
             listnbt.add(compoundnbt);
 
         }
@@ -330,7 +331,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             nbt.putInt("PatrolPosY", this.getPatrolPos().getY());
             nbt.putInt("PatrolPosZ", this.getPatrolPos().getZ());
         }
-        this.readAngerFromNbt(this.world, nbt);
+        this.angerFromTag(this.world, nbt);
     }
 
     public void setOwnerId(@Nullable UUID p_184754_1_) {
@@ -457,18 +458,18 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(8, new WanderAroundGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.targetSelector.add(5, new GuardEntity.DefendVillageGuardGoal(this));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, true));
+        this.targetSelector.add(2, new FollowTargetGoal<>(this, RavagerEntity.class, true));
         this.targetSelector.add(2, (new RevengeGoal(this, GuardEntity.class, IronGolemEntity.class)).setGroupRevenge());
         this.targetSelector.add(2, new RevengeGoal(this, MobEntity.class));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, WitchEntity.class, true));
+        this.targetSelector.add(2, new FollowTargetGoal<>(this, WitchEntity.class, true));
         this.targetSelector.add(3, new HeroHurtByTargetGoal(this));
         this.targetSelector.add(3, new HeroHurtTargetGoal(this));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllagerEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, RaiderEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllusionerEntity.class, true));
+        this.targetSelector.add(3, new FollowTargetGoal<>(this, IllagerEntity.class, true));
+        this.targetSelector.add(3, new FollowTargetGoal<>(this, RaiderEntity.class, true));
+        this.targetSelector.add(3, new FollowTargetGoal<>(this, IllusionerEntity.class, true));
         this.targetSelector.add(3,
-        new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
-        this.targetSelector.add(4, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
+        new FollowTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(4, new FollowTargetGoal<>(this, ZombieEntity.class, true));
         this.targetSelector.add(4, new UniversalAngerGoal<>(this, false));
     }
 
@@ -711,7 +712,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
         @Override
         public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-            buf.writeVarInt(this.guard().getId());
+            buf.writeVarInt(this.guard().getEntityId());
         }
 
         @Override

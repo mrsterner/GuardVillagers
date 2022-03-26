@@ -14,7 +14,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class GuardVillagerModel extends BipedEntityModel<GuardEntity> {
     public ModelPart Nose = this.head.getChild("nose");
-    public ModelPart quiver = this.body.getChild("quiver");
+    public ModelPart quiver = this.torso.getChild("quiver");
     public ModelPart ArmLShoulderPad = this.rightArm.getChild("shoulderPad_left");
     public ModelPart ArmRShoulderPad = this.leftArm.getChild("shoulderPad_right");
 
@@ -96,7 +96,7 @@ public class GuardVillagerModel extends BipedEntityModel<GuardEntity> {
             this.rightArm.roll = MathHelper.cos(ageInTicks) * 0.1F;
             this.head.pitch = MathHelper.cos(ageInTicks) * 0.2F;
             this.head.yaw = 0.0F;
-            this.hat.copyTransform(head);
+            this.helmet.copyPositionAndRotation(head);
         }
     }
 
@@ -111,7 +111,7 @@ public class GuardVillagerModel extends BipedEntityModel<GuardEntity> {
             this.leftArm.roll = MathHelper.cos(ageInTicks) * 0.1F;
             this.head.pitch = MathHelper.cos(ageInTicks) * 0.2F;
             this.head.yaw = 0.0F;
-            this.hat.copyTransform(head);
+            this.helmet.copyPositionAndRotation(head);
         }
     }
 

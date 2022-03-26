@@ -5,7 +5,7 @@ import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
+import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.TrackTargetGoal;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
-@Mixin(ActiveTargetGoal.class)
+@Mixin(FollowTargetGoal.class)
 public abstract class ActiveTargetGoalMixin<T extends LivingEntity> extends TrackTargetGoal {
 
     @Shadow @Nullable protected LivingEntity targetEntity;

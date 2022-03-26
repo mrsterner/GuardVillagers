@@ -49,7 +49,7 @@ public class GuardSteveModel extends PlayerEntityModel<GuardEntity> {
             this.rightArm.roll = MathHelper.cos(ageInTicks) * 0.1F;
             this.head.pitch = MathHelper.cos(ageInTicks) * 0.2F;
             this.head.yaw = 0.0F;
-            this.hat.copyTransform(head);
+            this.helmet.copyPositionAndRotation(head);
         }
     }
 
@@ -64,7 +64,7 @@ public class GuardSteveModel extends PlayerEntityModel<GuardEntity> {
             this.leftArm.roll = MathHelper.cos(ageInTicks) * 0.1F;
             this.head.pitch = MathHelper.cos(ageInTicks) * 0.2F;
             this.head.yaw = 0.0F;
-            this.hat.copyTransform(head);
+            this.helmet.copyPositionAndRotation(head);
         }
     }
 }

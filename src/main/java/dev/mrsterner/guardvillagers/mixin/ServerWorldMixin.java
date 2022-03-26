@@ -7,8 +7,8 @@ import dev.mrsterner.guardvillagers.common.entity.ai.goals.HealGolemGoal;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.HealGuardAndPlayerGoal;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
+import net.minecraft.entity.ai.goal.FollowTargetGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -31,11 +31,11 @@ public class ServerWorldMixin {
         if (GuardVillagersConfig.get().RaidAnimals) {
             if (entity instanceof RaiderEntity raiderEntity)
                 if (raiderEntity.hasActiveRaid()) {
-                    ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
+                    ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new FollowTargetGoal<>(raiderEntity, AnimalEntity.class, false));
                 }
         }
         if (entity instanceof IllagerEntity illager) {
-            ((MobEntityAccessor)illager).targetSelector().add(2, new ActiveTargetGoal<>(illager, GuardEntity.class, false));
+            ((MobEntityAccessor)illager).targetSelector().add(2, new FollowTargetGoal<>(illager, GuardEntity.class, false));
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
@@ -60,18 +60,18 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof ZombieEntity zombie) {
-            ((MobEntityAccessor)zombie).targetSelector().add(3,new ActiveTargetGoal<>(zombie, GuardEntity.class, false));
+            ((MobEntityAccessor)zombie).targetSelector().add(3,new FollowTargetGoal<>(zombie, GuardEntity.class, false));
         }
 
         if (entity instanceof RavagerEntity ravager) {
-            ((MobEntityAccessor)ravager).targetSelector().add(2, new ActiveTargetGoal<>(ravager, GuardEntity.class, false));
+            ((MobEntityAccessor)ravager).targetSelector().add(2, new FollowTargetGoal<>(ravager, GuardEntity.class, false));
         }
 
         if (entity instanceof WitchEntity witch) {
             if (GuardVillagersConfig.get().WitchesVillager) {
-                ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, VillagerEntity.class, true));
-                ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, IronGolemEntity.class, true));
-                ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, GuardEntity.class, true));
+                ((MobEntityAccessor)witch).targetSelector().add(3, new FollowTargetGoal<>(witch, VillagerEntity.class, true));
+                ((MobEntityAccessor)witch).targetSelector().add(3, new FollowTargetGoal<>(witch, IronGolemEntity.class, true));
+                ((MobEntityAccessor)witch).targetSelector().add(3, new FollowTargetGoal<>(witch, GuardEntity.class, true));
             }
         }
 
