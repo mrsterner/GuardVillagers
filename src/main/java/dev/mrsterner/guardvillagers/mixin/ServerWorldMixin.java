@@ -1,5 +1,6 @@
 package dev.mrsterner.guardvillagers.mixin;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.AttackEntityDaytimeGoal;
@@ -28,35 +29,37 @@ public class ServerWorldMixin {
     @Inject(method = "addEntity", at = @At("HEAD"))
     private void onSpawnedEvent(Entity entity, CallbackInfoReturnable<Boolean> cir){
         GuardVillagersEvents.ON_SPAWNED_ENTITY_EVENT.invoker().onSpawned((ServerWorld) (Object) this, entity);
-        if (GuardVillagersConfig.get().RaidAnimals) {
+        if (GuardVillagers.config.generail.RaidAnimals) {
             if (entity instanceof RaiderEntity raiderEntity)
                 if (raiderEntity.hasActiveRaid()) {
                     ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
                 }
         }
-        if (GuardVillagersConfig.get().AttackAllMobs) {
-            if (entity instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(entity.getEntityName())
-            && !(entity instanceof SpiderEntity)) {
+        /*
+        if (GuardVillagers.config.generail.AttackAllMobs) {
+            if (entity instanceof Monster && !(entity instanceof SpiderEntity)) {
                 MobEntity mob = (MobEntity) entity;
                 ((MobEntityAccessor)mob).targetSelector().add(2, new ActiveTargetGoal<>(mob, GuardEntity.class, false));
             }
-            if (entity instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(entity.getEntityName()) && entity instanceof SpiderEntity spider) {
+            if (entity instanceof SpiderEntity spider) {
                 ((MobEntityAccessor)spider).targetSelector().add(3, new AttackEntityDaytimeGoal<>(spider, GuardEntity.class));
             }
         }
+
+         */
         if (entity instanceof IllagerEntity illager) {
             ((MobEntityAccessor)illager).targetSelector().add(2, new ActiveTargetGoal<>(illager, GuardEntity.class, false));
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagersConfig.get().WitchesVillager)
+            if (GuardVillagers.config.generail.WitchesVillager)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(2, new FleeEntityGoal<>(villagerEntity, WitchEntity.class, 6.0F, 1.0D, 1.2D));
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagersConfig.get().BlackSmithHealing)
+            if (GuardVillagers.config.generail.BlackSmithHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGolemGoal(villagerEntity));
-            if (GuardVillagersConfig.get().ClericHealing)
+            if (GuardVillagers.config.generail.ClericHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGuardAndPlayerGoal(villagerEntity, 1.0D, 100, 0, 10.0F));
         }
 
@@ -78,7 +81,7 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof WitchEntity witch) {
-            if (GuardVillagersConfig.get().WitchesVillager) {
+            if (GuardVillagers.config.generail.WitchesVillager) {
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, VillagerEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, IronGolemEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, GuardEntity.class, true));

@@ -1,5 +1,6 @@
 package dev.mrsterner.guardvillagers.mixin;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
@@ -34,11 +35,11 @@ public abstract class LivingEntityMixin extends Entity {
                 return;
             boolean isVillager = entity.getType() == EntityType.VILLAGER || entity instanceof GuardEntity;
             boolean isGolem = isVillager || entity.getType() == EntityType.IRON_GOLEM;
-            if (isGolem && entity2 instanceof GuardEntity && !GuardVillagersConfig.get().guardArrowsHurtVillagers) {
+            if (isGolem && entity2 instanceof GuardEntity && !GuardVillagers.config.generail.guardArrowsHurtVillagers) {
                 cir.cancel();
             }
             if (isVillager && entity2 instanceof MobEntity) {
-                List<MobEntity> list = entity2.world.getNonSpectatingEntities(MobEntity.class, entity2.getBoundingBox().expand(GuardVillagersConfig.get().GuardVillagerHelpRange, 5.0D, GuardVillagersConfig.get().GuardVillagerHelpRange));
+                List<MobEntity> list = entity2.world.getNonSpectatingEntities(MobEntity.class, entity2.getBoundingBox().expand(GuardVillagers.config.generail.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.generail.GuardVillagerHelpRange));
                 for (MobEntity mob : list) {
                     boolean type = mob instanceof GuardEntity || mob.getType() == EntityType.IRON_GOLEM;
                     boolean trueSourceGolem = entity2 instanceof GuardEntity || entity2.getType() == EntityType.IRON_GOLEM;

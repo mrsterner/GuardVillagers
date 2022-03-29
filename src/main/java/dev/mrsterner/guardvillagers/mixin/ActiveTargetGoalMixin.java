@@ -1,5 +1,6 @@
 package dev.mrsterner.guardvillagers.mixin;
 
+import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
@@ -40,7 +41,7 @@ public abstract class ActiveTargetGoalMixin<T extends LivingEntity> extends Trac
         boolean isVillager = target.getType() == EntityType.VILLAGER || target instanceof GuardEntity;
         if (isVillager) {
             List<MobEntity> list = this.mob.world.getNonSpectatingEntities(MobEntity.class, this.mob.getBoundingBox()
-            .expand(GuardVillagersConfig.get().GuardVillagerHelpRange, 5.0D, GuardVillagersConfig.get().GuardVillagerHelpRange));
+            .expand(GuardVillagers.config.generail.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.generail.GuardVillagerHelpRange));
             for (MobEntity mobEntity : list) {
                 if ((mobEntity instanceof GuardEntity || mob.getType() == EntityType.IRON_GOLEM)
                 && mobEntity.getTarget() == null) {

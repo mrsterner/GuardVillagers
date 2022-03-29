@@ -31,9 +31,11 @@ public class GuardVillagersConfig implements ConfigData {
         public boolean armorerRepairGuardArmor = true;
         @ConfigEntry.Gui.RequiresRestart
         public boolean GuardsOpenDoors = true;
-
+/*
         @ConfigEntry.Gui.RequiresRestart
         public boolean AttackAllMobs = false;
+
+ */
 
         @ConfigEntry.Gui.RequiresRestart
         public boolean giveGuardStuffHOTV = true;
@@ -69,7 +71,6 @@ public class GuardVillagersConfig implements ConfigData {
         @ConfigEntry.Gui.RequiresRestart
         public int amountOfHealthRegenerated = 1;
 
-        public List<String> MobBlackList = Arrays.asList("minecraft:creeper");
     }
 
     public static class Permission {
