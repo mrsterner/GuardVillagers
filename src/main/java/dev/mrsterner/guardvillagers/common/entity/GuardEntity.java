@@ -500,8 +500,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         } else {
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
-                if (!this.activeItemStack.isFood())
-                    this.activeItemStack.decrement(1);
+                if (this.activeItemStack.isFood())
+                    this.heal(this.activeItemStack.getItem().getFoodComponent().getHunger());
+                this.activeItemStack.decrement(1);
                 this.stopUsingItem();
             }
         }
@@ -509,9 +510,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public ItemStack eatFood(World world, ItemStack stack) {
-        if (stack.isFood()) {
-            this.heal(stack.getItem().getFoodComponent().getHunger());
-        }
         super.eatFood(world, stack);
         world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F,
         world.random.nextFloat() * 0.1F + 0.9F);
