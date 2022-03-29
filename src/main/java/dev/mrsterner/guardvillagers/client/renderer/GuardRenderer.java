@@ -2,7 +2,6 @@ package dev.mrsterner.guardvillagers.client.renderer;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
 import dev.mrsterner.guardvillagers.GuardVillagersClient;
-import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.client.model.GuardArmorModel;
 import dev.mrsterner.guardvillagers.client.model.GuardSteveModel;
 import dev.mrsterner.guardvillagers.client.model.GuardVillagerModel;
@@ -30,12 +29,12 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     public GuardRenderer(EntityRendererFactory.Context context) {
         super(context, new GuardVillagerModel(context.getPart(GuardVillagersClient.GUARD)), 0.5F);
         this.steve = new GuardSteveModel(context.getPart(GuardVillagersClient.GUARD_STEVE));
-        if (GuardVillagersConfig.get().useSteveModel)
+        if (GuardVillagers.config.generail.useSteveModel)
             this.model = steve;
         else
             this.model = normal;
-        this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagersConfig.get().useSteveModel ?
-        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagersConfig.get().useSteveModel ?
+        this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagers.config.generail.useSteveModel ?
+        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagers.config.generail.useSteveModel ?
         new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
 
     }
@@ -115,7 +114,7 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     @Nullable
     @Override
     public Identifier getTexture(GuardEntity entity) {
-        return !GuardVillagersConfig.get().useSteveModel
+        return !GuardVillagers.config.generail.useSteveModel
         ? new Identifier(GuardVillagers.MODID,
         "textures/entity/guard/guard_" + entity.getGuardVariant() + ".png")
         : new Identifier(GuardVillagers.MODID,

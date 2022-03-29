@@ -1,14 +1,12 @@
 package dev.mrsterner.guardvillagers.client.screen;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
-import dev.mrsterner.guardvillagers.GuardVillagersClient;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PlayerScreenHandler;

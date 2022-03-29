@@ -5,7 +5,6 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +16,7 @@ public class GuardVillagersConfig implements ConfigData {
 
     @ConfigEntry.Gui.CollapsibleObject
     public Permission permission = new Permission();
+
 
     public static class General {
 
@@ -64,6 +64,7 @@ public class GuardVillagersConfig implements ConfigData {
 
         @ConfigEntry.Gui.RequiresRestart
         public boolean ConvertVillagerIfHaveHOTV = false;
+
 
         @ConfigEntry.Gui.RequiresRestart
         public int amountOfHealthRegenerated = 1;

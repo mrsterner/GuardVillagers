@@ -1,7 +1,6 @@
 package dev.mrsterner.guardvillagers.common.entity.ai.goals;
 
 import dev.mrsterner.guardvillagers.GuardVillagers;
-import dev.mrsterner.guardvillagers.GuardVillagersConfig;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityPose;
@@ -76,7 +75,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                         Vec3d vector3d1 = guard.getPos().relativize(entity.getPos()).normalize();
                         vector3d1 = new Vec3d(vector3d1.x, vector3d1.y, vector3d1.z);
                         if (vector3d1.dotProduct(vector3d) < 0.0D && entity.canSee(guard))
-                            return GuardVillagersConfig.get().FriendlyFire;
+                            return GuardVillagers.config.generail.FriendlyFire;
                     }
                 }
             }
