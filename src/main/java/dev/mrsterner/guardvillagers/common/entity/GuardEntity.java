@@ -8,12 +8,9 @@ import dev.mrsterner.guardvillagers.common.ToolAction;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreenHandler;
 import dev.mrsterner.guardvillagers.common.GuardLootTables;
 import dev.mrsterner.guardvillagers.common.entity.ai.goals.*;
-import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
-import dev.mrsterner.guardvillagers.mixin.EntityAccessor;
 import dev.mrsterner.guardvillagers.mixin.MeleeAttackGoalAccessor;
 import dev.mrsterner.guardvillagers.mixin.MobEntityAccessor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
@@ -61,6 +58,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
+import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.Collectors;
@@ -466,9 +464,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllagerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, RaiderEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllusionerEntity.class, true));
-        if (GuardVillagersConfig.get().AttackAllMobs) {
-            this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagersConfig.get().MobBlackList.contains(((EntityAccessor) mob).getSavedEntityId())));
-        }
+
         this.targetSelector.add(3,
         new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
@@ -503,8 +499,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         } else {
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
-                if (!this.activeItemStack.isFood())
+                if (this.activeItemStack.isFood()){
+                    this.heal(this.activeItemStack.getItem().getFoodComponent().getHunger());
                     this.activeItemStack.decrement(1);
+                }
                 this.stopUsingItem();
             }
         }
@@ -512,9 +510,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public ItemStack eatFood(World world, ItemStack stack) {
-        if (stack.isFood()) {
-            this.heal(stack.getItem().getFoodComponent().getHunger());
-        }
         super.eatFood(world, stack);
         world.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F,
         world.random.nextFloat() * 0.1F + 0.9F);
