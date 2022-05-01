@@ -29,14 +29,14 @@ public class ServerWorldMixin {
     @Inject(method = "addEntity", at = @At("HEAD"))
     private void onSpawnedEvent(Entity entity, CallbackInfoReturnable<Boolean> cir){
         GuardVillagersEvents.ON_SPAWNED_ENTITY_EVENT.invoker().onSpawned((ServerWorld) (Object) this, entity);
-        if (GuardVillagers.config.generail.RaidAnimals) {
+        if (GuardVillagers.config.general.RaidAnimals) {
             if (entity instanceof RaiderEntity raiderEntity)
                 if (raiderEntity.hasActiveRaid()) {
                     ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
                 }
         }
         /*
-        if (GuardVillagers.config.generail.AttackAllMobs) {
+        if (GuardVillagers.config.general.AttackAllMobs) {
             if (entity instanceof Monster && !(entity instanceof SpiderEntity)) {
                 MobEntity mob = (MobEntity) entity;
                 ((MobEntityAccessor)mob).targetSelector().add(2, new ActiveTargetGoal<>(mob, GuardEntity.class, false));
@@ -52,14 +52,14 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagers.config.generail.WitchesVillager)
+            if (GuardVillagers.config.general.WitchesVillager)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(2, new FleeEntityGoal<>(villagerEntity, WitchEntity.class, 6.0F, 1.0D, 1.2D));
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagers.config.generail.BlackSmithHealing)
+            if (GuardVillagers.config.general.BlackSmithHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGolemGoal(villagerEntity));
-            if (GuardVillagers.config.generail.ClericHealing)
+            if (GuardVillagers.config.general.ClericHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGuardAndPlayerGoal(villagerEntity, 1.0D, 100, 0, 10.0F));
         }
 
@@ -81,7 +81,7 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof WitchEntity witch) {
-            if (GuardVillagers.config.generail.WitchesVillager) {
+            if (GuardVillagers.config.general.WitchesVillager) {
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, VillagerEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, IronGolemEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, GuardEntity.class, true));

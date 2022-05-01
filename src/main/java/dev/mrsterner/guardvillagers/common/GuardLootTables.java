@@ -8,8 +8,8 @@ import net.minecraft.util.Identifier;
 
 public class GuardLootTables {
 
-    public static final LootContextType SLOT = LootContextTypesAccessor.guardvillager$register("slot", (p_216252_0_) -> {
-        p_216252_0_.allow(LootContextParameters.THIS_ENTITY);
+    public static final LootContextType SLOT = LootContextTypesAccessor.guardvillager$register("slot", (builder) -> {
+        builder.allow(LootContextParameters.THIS_ENTITY);
     });
 
     public static final Identifier GUARD_MAIN_HAND = new Identifier(GuardVillagers.MODID, "entities/guard_main_hand");

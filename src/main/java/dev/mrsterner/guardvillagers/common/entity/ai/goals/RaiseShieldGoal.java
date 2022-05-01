@@ -39,7 +39,7 @@ public class RaiseShieldGoal extends Goal {
 
     @Override
     public void stop() {
-        if (!GuardVillagers.config.generail.GuardAlwaysShield)
+        if (!GuardVillagers.config.general.GuardAlwaysShield)
             guard.stopUsingItem();
     }
 
@@ -47,7 +47,7 @@ public class RaiseShieldGoal extends Goal {
         LivingEntity target = guard.getTarget();
         if (target != null && guard.shieldCoolDown == 0) {
             boolean ranged = guard.getMainHandStack().getItem() instanceof CrossbowItem || guard.getMainHandStack().getItem() instanceof BowItem;
-            return guard.distanceTo(target) <= 4.0D || target instanceof CreeperEntity || target instanceof RangedAttackMob && target.distanceTo(guard) >= 5.0D && !ranged || target instanceof RavagerEntity || GuardVillagers.config.generail.GuardAlwaysShield;
+            return guard.distanceTo(target) <= 4.0D || target instanceof CreeperEntity || target instanceof RangedAttackMob && target.distanceTo(guard) >= 5.0D && !ranged || target instanceof RavagerEntity || GuardVillagers.config.general.GuardAlwaysShield;
         }
         return false;
     }

@@ -4,6 +4,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import net.minecraft.entity.mob.CreeperEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 public class GuardVillagersConfig implements ConfigData {
 
     @ConfigEntry.Gui.CollapsibleObject
-    public General generail = new General();
+    public General general = new General();
 
     @ConfigEntry.Gui.CollapsibleObject
     public Permission permission = new Permission();
@@ -31,11 +32,12 @@ public class GuardVillagersConfig implements ConfigData {
         public boolean armorerRepairGuardArmor = true;
         @ConfigEntry.Gui.RequiresRestart
         public boolean GuardsOpenDoors = true;
-/*
         @ConfigEntry.Gui.RequiresRestart
         public boolean AttackAllMobs = false;
 
- */
+        @ConfigEntry.Gui.RequiresRestart
+        public List<String> guardAttackMobBlacklist = Arrays.asList("minecraft:creeper");
+
 
         @ConfigEntry.Gui.RequiresRestart
         public boolean giveGuardStuffHOTV = true;

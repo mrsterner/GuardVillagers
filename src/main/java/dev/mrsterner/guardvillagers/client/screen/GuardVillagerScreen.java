@@ -53,10 +53,11 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true, (p_214086_1_) -> {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeInt(guardEntity.getId());
+                buf.writeBoolean(buttonPressed);
                 ClientPlayNetworking.send(ID, buf);
             }));
         }
-        if (!GuardVillagers.config.generail.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+        if (!GuardVillagers.config.general.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false, (p_214086_1_) -> {
                 buttonPressed = !buttonPressed;
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());

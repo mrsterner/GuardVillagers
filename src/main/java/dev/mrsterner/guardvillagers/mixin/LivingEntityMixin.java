@@ -35,11 +35,11 @@ public abstract class LivingEntityMixin extends Entity {
                 return;
             boolean isVillager = entity.getType() == EntityType.VILLAGER || entity instanceof GuardEntity;
             boolean isGolem = isVillager || entity.getType() == EntityType.IRON_GOLEM;
-            if (isGolem && entity2 instanceof GuardEntity && !GuardVillagers.config.generail.guardArrowsHurtVillagers) {
+            if (isGolem && entity2 instanceof GuardEntity && !GuardVillagers.config.general.guardArrowsHurtVillagers) {
                 cir.cancel();
             }
             if (isVillager && entity2 instanceof MobEntity) {
-                List<MobEntity> list = entity2.world.getNonSpectatingEntities(MobEntity.class, entity2.getBoundingBox().expand(GuardVillagers.config.generail.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.generail.GuardVillagerHelpRange));
+                List<MobEntity> list = entity2.world.getNonSpectatingEntities(MobEntity.class, entity2.getBoundingBox().expand(GuardVillagers.config.general.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.general.GuardVillagerHelpRange));
                 for (MobEntity mob : list) {
                     boolean type = mob instanceof GuardEntity || mob.getType() == EntityType.IRON_GOLEM;
                     boolean trueSourceGolem = entity2 instanceof GuardEntity || entity2.getType() == EntityType.IRON_GOLEM;

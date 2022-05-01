@@ -41,7 +41,7 @@ public abstract class ActiveTargetGoalMixin<T extends LivingEntity> extends Trac
         boolean isVillager = target.getType() == EntityType.VILLAGER || target instanceof GuardEntity;
         if (isVillager) {
             List<MobEntity> list = this.mob.world.getNonSpectatingEntities(MobEntity.class, this.mob.getBoundingBox()
-            .expand(GuardVillagers.config.generail.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.generail.GuardVillagerHelpRange));
+            .expand(GuardVillagers.config.general.GuardVillagerHelpRange, 5.0D, GuardVillagers.config.general.GuardVillagerHelpRange));
             for (MobEntity mobEntity : list) {
                 if ((mobEntity instanceof GuardEntity || mob.getType() == EntityType.IRON_GOLEM)
                 && mobEntity.getTarget() == null) {

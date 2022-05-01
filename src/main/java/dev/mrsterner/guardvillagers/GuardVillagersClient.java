@@ -43,31 +43,6 @@ public class GuardVillagersClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
 		EntityRendererRegistry.register(GUARD_VILLAGER, GuardRenderer::new);
 
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					guardEntity.setFollowing(!guardEntity.isFollowing());
-					guardEntity.setOwnerId(player.getUuid());
-					guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
-				}
 
-			});
-		}));
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID_2, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			boolean pressed = buf.readBoolean();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					BlockPos pos = pressed ? null : guardEntity.getBlockPos();
-					if (guardEntity.getBlockPos() != null)
-						guardEntity.setPatrolPos(pos);
-					guardEntity.setPatrolling(pressed);
-				}
-
-			});
-		}));
 	}
 }

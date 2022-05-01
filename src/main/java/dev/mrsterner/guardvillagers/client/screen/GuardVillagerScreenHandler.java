@@ -30,6 +30,8 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
         this(syncId, playerInventory, guardEntity.guardInventory, guardEntity);
     }
 
+
+
     public GuardVillagerScreenHandler(int id, PlayerInventory playerInventory, Inventory inventory, GuardEntity guardEntity) {
         super(GuardVillagers.GUARD_SCREEN_HANDLER, id);
         this.guardInventory = inventory;

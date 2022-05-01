@@ -65,7 +65,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
     }
 
     public boolean checkFriendlyFire() {
-        List<LivingEntity> list = this.entity.world.getNonSpectatingEntities(LivingEntity.class, this.entity.getBoundingBox().expand(4.0D, 1.0D, 4.0D));
+        List<LivingEntity> list = this.entity.world.getNonSpectatingEntities(LivingEntity.class, this.entity.getBoundingBox().expand(5.0D, 1.0D, 5.0D));
         for (LivingEntity guard : list) {
             if (entity != guard) {
                 if (guard != entity.getTarget()) {
@@ -74,8 +74,8 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                         Vec3d vector3d = entity.getRotationVector();
                         Vec3d vector3d1 = guard.getPos().relativize(entity.getPos()).normalize();
                         vector3d1 = new Vec3d(vector3d1.x, vector3d1.y, vector3d1.z);
-                        if (vector3d1.dotProduct(vector3d) < 0.0D && entity.canSee(guard))
-                            return GuardVillagers.config.generail.FriendlyFire;
+                        if (vector3d1.dotProduct(vector3d) < 1.0D && entity.canSee(guard))
+                            return GuardVillagers.config.general.FriendlyFire;
                     }
                 }
             }
