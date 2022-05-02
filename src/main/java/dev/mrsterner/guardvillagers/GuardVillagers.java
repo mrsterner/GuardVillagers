@@ -52,33 +52,7 @@ public class GuardVillagers implements ModInitializer {
 		config = AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
 		FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
 		Registry.register(Registry.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			boolean pressed = buf.readBoolean();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					guardEntity.setFollowing(!guardEntity.isFollowing());
-					guardEntity.setOwnerId(player.getUuid());
-					guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
-				}
 
-			});
-		}));
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID_2, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			boolean pressed = buf.readBoolean();
-			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					BlockPos pos = pressed ? null : guardEntity.getBlockPos();
-					if (guardEntity.getBlockPos() != null)
-						guardEntity.setPatrolPos(pos);
-					guardEntity.setPatrolling(pressed);
-				}
-
-			});
-		}));
 
 
 
