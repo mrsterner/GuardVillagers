@@ -55,6 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
+import net.minecraft.util.math.random.AbstractRandom;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
@@ -164,12 +165,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             entityData = new GuardEntity.GuardData(type);
         }
         this.setGuardVariant(type);
-        this.initEquipment(difficulty);
+        this.initEquipment(world.getRandom(), difficulty);
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
     @Override
-    protected void initEquipment(LocalDifficulty difficulty) {
+    protected void initEquipment(AbstractRandom random, LocalDifficulty localDifficulty) {
         for (EquipmentSlot equipmentslottype : EquipmentSlot.values()) {
             for (ItemStack stack : this.getItemsFromLootTable(equipmentslottype)) {
                 this.equipStack(equipmentslottype, stack);
