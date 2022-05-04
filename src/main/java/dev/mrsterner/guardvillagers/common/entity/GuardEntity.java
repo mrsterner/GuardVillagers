@@ -429,12 +429,13 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(2, new RangedBowAttackPassiveGoal<>(this, 0.5D, 20, 15.0F));
         this.goalSelector.add(2, new GuardMeleeGoal(this, 0.8D, true));
         this.goalSelector.add(3, new GuardEntity.FollowHeroGoal(this));
-        if (GuardVillagers.config.general.GuardsRunFromPolarBears)
+        if (GuardVillagers.config.general.GuardsRunFromPolarBears){
             this.goalSelector.add(3, new FleeEntityGoal<>(this, PolarBearEntity.class, 12.0F, 1.0D, 1.2D));
+        }
         this.goalSelector.add(3, new WanderAroundPointOfInterestGoal(this, 0.5D, false));
         this.goalSelector.add(3, new IronGolemWanderAroundGoal(this, 0.5D));
         this.goalSelector.add(3, new MoveThroughVillageGoal(this, 0.5D, false, 4, () -> false));
-        if (GuardVillagers.config.general.GuardsOpenDoors)
+        if (GuardVillagers.config.general.GuardsOpenDoors){
             this.goalSelector.add(3, new LongDoorInteractGoal(this, true) {
                 @Override
                 public void start() {
@@ -442,12 +443,19 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                     super.start();
                 }
             });
-        if (GuardVillagers.config.general.GuardFormation)
-            this.goalSelector.add(5, new FollowShieldGuards(this)); // phalanx
-        if (GuardVillagers.config.general.ClericHealing)
+        }
+
+        if (GuardVillagers.config.general.GuardFormation){
+            this.goalSelector.add(5, new FollowShieldGuards(this));
+        }
+        if (GuardVillagers.config.general.ClericHealing){
             this.goalSelector.add(6, new RunToClericGoal(this));
-        if (GuardVillagers.config.general.armorerRepairGuardArmor)
+        }
+
+        if (GuardVillagers.config.general.armorerRepairGuardArmor){
             this.goalSelector.add(6, new ArmorerRepairGuardArmorGoal(this));
+        }
+
         this.goalSelector.add(4, new WalkBackToCheckPointGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, MerchantEntity.class, 8.0F));
         this.goalSelector.add(8, new WanderAroundFarGoal(this, 0.5D));

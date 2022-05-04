@@ -31,7 +31,7 @@
   "mixins": [
     "guardvillagers.mixins.json"
   ],
-
+  "accessWidener" : "guardvillagers.accesswidener",
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",
