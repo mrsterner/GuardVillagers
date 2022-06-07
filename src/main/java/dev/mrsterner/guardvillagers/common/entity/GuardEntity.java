@@ -55,7 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.util.math.random.AbstractRandom;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
@@ -170,15 +170,16 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
     @Override
-    protected void initEquipment(AbstractRandom random, LocalDifficulty localDifficulty) {
-        for (EquipmentSlot equipmentslottype : EquipmentSlot.values()) {
-            for (ItemStack stack : this.getItemsFromLootTable(equipmentslottype)) {
-                this.equipStack(equipmentslottype, stack);
+    protected void initEquipment(Random random, LocalDifficulty localDifficulty) {
+        for (EquipmentSlot equipmentSlotType : EquipmentSlot.values()) {
+            for (ItemStack stack : this.getItemsFromLootTable(equipmentSlotType)) {
+                this.equipStack(equipmentSlotType, stack);
             }
         }
         this.handDropChances[EquipmentSlot.MAINHAND.getEntitySlotId()] = 100.0F;
         this.handDropChances[EquipmentSlot.OFFHAND.getEntitySlotId()] = 100.0F;
     }
+
 
     @Override
     protected void pushAway(Entity entity) {
