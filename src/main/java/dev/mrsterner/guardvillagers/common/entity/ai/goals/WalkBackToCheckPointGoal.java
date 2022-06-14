@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 
 public class WalkBackToCheckPointGoal extends Goal {
     private final GuardEntity guard;
@@ -18,7 +19,7 @@ public class WalkBackToCheckPointGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return guard.getPatrolPos() != null && !this.guard.getPatrolPos().isWithinDistance(this.guard.getPos(), 1.0D) && !guard.isFollowing() && guard.isPatrolling();
+        return guard.getPatrolPos() != null && !this.guard.getPatrolPos().isWithinDistance(new Vec3i(this.guard.getPos().x, this.guard.getPos().y,this.guard.getPos().z), 1.0D) && !guard.isFollowing() && guard.isPatrolling();
     }
 
     @Override
@@ -31,13 +32,13 @@ public class WalkBackToCheckPointGoal extends Goal {
         BlockPos blockpos = this.guard.getPatrolPos();
         if (blockpos != null) {
             Vec3d vector3d = Vec3d.ofBottomCenter(blockpos);
-            Vec3d vector3d1 = NoPenaltyTargeting.findTo(this.guard, 16, 3, vector3d, ((float) Math.PI / 10F));
-            if (!this.guard.getPatrolPos().isWithinDistance(this.guard.getPos(), 1.0D) || blockpos != null)
-                if (guard.getMainHandStack().getItem() instanceof RangedWeaponItem) {
-                    this.guard.getNavigation().startMovingTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.speed);
-                } else if (vector3d1 != null && guard.getTarget() == null) {
-                    this.guard.getNavigation().startMovingTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
-                }
+            Vec3d vector3d1 = NoPenaltyTargeting.find(this.guard, 16, 3, vector3d, ((float) Math.PI / 10F));
+            this.guard.getPatrolPos().isWithinDistance(new Vec3i(this.guard.getPos().x, this.guard.getPos().y, this.guard.getPos().z), 1.0D);
+            if (guard.getMainHandStack().getItem() instanceof RangedWeaponItem) {
+                this.guard.getNavigation().startMovingTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.speed);
+            } else if (vector3d1 != null && guard.getTarget() == null) {
+                this.guard.getNavigation().startMovingTo(vector3d1.x, vector3d1.y, vector3d1.z, this.speed);
+            }
         }
     }
 }

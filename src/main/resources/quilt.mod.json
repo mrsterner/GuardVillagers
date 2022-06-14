@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "dev.mrsterner",
+    "id": "guardvillagers",
+    "version": "${version}",
+    "metadata": {
+      "name": "Guard Villagers Quilt",
+      "description": "Guards that help with village pest control ",
+      "contributors": {
+        "Me!": "MrSterner"
+      },
+      "contact": {
+        "homepage": "https://bloomhousemc.com/",
+        "sources": "https://github.com/mrsterner/GuardVillagers"
+      },
+      "icon": "assets/guardvillagers/icon.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": "dev.mrsterner.guardvillagers.GuardVillagers",
+      "client_init": "dev.mrsterner.guardvillagers.GuardVillagersClient",
+      "modmenu": "dev.mrsterner.guardvillagers.client.compat.GuardVillagersModMenu"
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=0.17.0-"
+      },
+      {
+        "id": "quilted_fabric_api",
+        "versions": ">=2.0.0-"
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=1.19"
+      }
+    ]
+  },
+  "mixin": "guardvillagers.mixins.json"
+}

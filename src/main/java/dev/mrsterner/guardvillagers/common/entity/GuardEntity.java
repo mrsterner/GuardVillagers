@@ -55,7 +55,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.random.RandomGenerator;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
 import org.jetbrains.annotations.Nullable;
@@ -169,8 +169,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
+
+
     @Override
-    protected void initEquipment(Random random, LocalDifficulty localDifficulty) {
+    protected void initEquipment(RandomGenerator randomGenerator, LocalDifficulty localDifficulty) {
         for (EquipmentSlot equipmentSlotType : EquipmentSlot.values()) {
             for (ItemStack stack : this.getItemsFromLootTable(equipmentSlotType)) {
                 this.equipStack(equipmentSlotType, stack);
@@ -455,20 +457,20 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(8, new WanderAroundFarGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.targetSelector.add(5, new GuardEntity.DefendVillageGuardGoal(this));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, true));
+        this.targetSelector.add(2, new TargetGoal<>(this, RavagerEntity.class, true));
         this.targetSelector.add(2, (new RevengeGoal(this, GuardEntity.class, IronGolemEntity.class)).setGroupRevenge());
         this.targetSelector.add(2, new RevengeGoal(this, MobEntity.class));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, WitchEntity.class, true));
+        this.targetSelector.add(2, new TargetGoal<>(this, WitchEntity.class, true));
         this.targetSelector.add(3, new HeroHurtByTargetGoal(this));
         this.targetSelector.add(3, new HeroHurtTargetGoal(this));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllagerEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, RaiderEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, IllusionerEntity.class, true));
-        this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
-        this.targetSelector.add(4, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
+        this.targetSelector.add(3, new TargetGoal<>(this, IllagerEntity.class, true));
+        this.targetSelector.add(3, new TargetGoal<>(this, RaiderEntity.class, true));
+        this.targetSelector.add(3, new TargetGoal<>(this, IllusionerEntity.class, true));
+        this.targetSelector.add(3, new TargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
+        this.targetSelector.add(4, new TargetGoal<>(this, ZombieEntity.class, true));
         this.targetSelector.add(4, new UniversalAngerGoal<>(this, false));
         if (GuardVillagers.config.general.AttackAllMobs) {
-           this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagers.config.general.guardAttackMobBlacklist.contains(mob.getSavedEntityId())));
+           this.targetSelector.add(3, new TargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagers.config.general.guardAttackMobBlacklist.contains(mob.getSavedEntityId())));
         }
     }
 

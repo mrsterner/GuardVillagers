@@ -149,13 +149,13 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             Identifier icon = this.requirementsForTexture() ? texture : newTexture;
             RenderSystem.setShaderTexture(0, icon);
             int i = ((TexturedButtonWidgetAccessor)this).v();
-            if (this.isHovered()) {
+            if (this.isHoveredOrFocused()) {
                 i += ((TexturedButtonWidgetAccessor)this).hoveredVOffset();
             }
 
             RenderSystem.enableDepthTest();
             drawTexture(matrixStack, this.x, this.y, (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
-            if (this.isHovered()) {
+            if (this.isHoveredOrFocused()) {
                 this.renderTooltip(matrixStack, mouseX, mouseY);
             }
         }

@@ -6,7 +6,6 @@ import dev.mrsterner.guardvillagers.client.model.GuardVillagerModel;
 import dev.mrsterner.guardvillagers.client.renderer.GuardRenderer;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreen;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
-import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -18,6 +17,8 @@ import net.minecraft.entity.*;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 import static dev.mrsterner.guardvillagers.GuardVillagers.GUARD_SCREEN_HANDLER;
 import static dev.mrsterner.guardvillagers.GuardVillagers.GUARD_VILLAGER;
@@ -35,7 +36,7 @@ public class GuardVillagersClient implements ClientModInitializer {
 
 
 	@Override
-	public void onInitializeClient() {
+	public void onInitializeClient(ModContainer mod) {
 		ScreenRegistry.register(GUARD_SCREEN_HANDLER, GuardVillagerScreen::new);
 		EntityModelLayerRegistry.registerModelLayer(GUARD, GuardVillagerModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_STEVE, GuardSteveModel::createMesh);
