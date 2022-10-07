@@ -558,7 +558,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
     @Override
-    protected void damageShield(float damage) {
+    public void damageShield(float damage) {
         if (canPerformAction(this.activeItemStack,ToolActions.SHIELD_BLOCK)) {
             if (damage >= 3.0F) {
                 int i = 1 + MathHelper.floor(damage);
@@ -837,7 +837,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     }
     @Override
-    protected void damageArmor(DamageSource damageSource, float damage) {
+    public void damageArmor(DamageSource damageSource, float damage) {
         if (damage >= 0.0F) {
             damage = damage / 4.0F;
             if (damage < 1.0F) {
