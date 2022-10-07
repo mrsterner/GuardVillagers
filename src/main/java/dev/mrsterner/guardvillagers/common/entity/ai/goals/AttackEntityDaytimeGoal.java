@@ -11,7 +11,7 @@ public class AttackEntityDaytimeGoal<T extends LivingEntity> extends TargetGoal<
 
     @Override
     public boolean canStart() {
-        float f = this.mob.method_5718();
+        float f = this.mob.getLightLevelDependentValue();
         return !(f >= 0.5F) && super.canStart();
     }
 }
