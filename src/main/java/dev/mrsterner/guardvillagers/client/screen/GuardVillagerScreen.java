@@ -50,15 +50,15 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     protected void init() {
         super.init();
         if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true, (p_214086_1_) -> {
+            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19,  GUARD_FOLLOWING_ICON , GUARD_NOT_FOLLOWING_ICON, true, (button) -> {
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeInt(guardEntity.getId());
                 buf.writeBoolean(buttonPressed);
                 ClientPlayNetworking.send(ID, buf);
             }));
         }
-        if (!GuardVillagers.config.general.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false, (p_214086_1_) -> {
+        if (!GuardVillagers.config.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON , NOT_PATROLLING_ICON, false, (button) -> {
                 buttonPressed = !buttonPressed;
                 PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
                 buf.writeInt(guardEntity.getId());
@@ -70,7 +70,8 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
 
     @Override
     protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        //RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUARD_GUI_TEXTURES);
         int i = (this.width - this.backgroundWidth) / 2;
@@ -137,7 +138,6 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             this.isFollowButton = isFollowButton;
         }
 
-        // This is stupid.
         public boolean requirementsForTexture() {
             boolean following = guardEntity.isFollowing();
             boolean patrol = guardEntity.isPatrolling();
@@ -154,10 +154,9 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             }
 
             RenderSystem.enableDepthTest();
-            drawTexture(matrixStack, this.x, this.y, (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
-            if (this.isHovered()) {
-                this.renderTooltip(matrixStack, mouseX, mouseY);
-            }
+            drawTexture(matrixStack, this.getX(), this.getY(), (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
         }
     }
+
+
 }

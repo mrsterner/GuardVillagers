@@ -1,87 +1,67 @@
 package dev.mrsterner.guardvillagers;
 
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.ConfigData;
-import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import net.minecraft.entity.mob.CreeperEntity;
+
+import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+import eu.midnightdust.lib.config.MidnightConfig;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Config(name = GuardVillagers.MODID)
-public class GuardVillagersConfig implements ConfigData {
+public class GuardVillagersConfig extends MidnightConfig {
 
-    @ConfigEntry.Gui.CollapsibleObject
-    public General general = new General();
+    @Entry
+        public static boolean useSteveModel = false;
+    @Entry
+        public static boolean GuardsRunFromPolarBears = true;
+    @Entry
+        public static boolean GuardFormation = true;
+    @Entry
+        public static boolean ClericHealing = true;
+    @Entry
+        public static boolean armorerRepairGuardArmor = true;
+    @Entry
+        public static boolean GuardsOpenDoors = true;
+    @Entry
+        public static boolean AttackAllMobs = false;
 
-    @ConfigEntry.Gui.CollapsibleObject
-    public Permission permission = new Permission();
-
-
-    public static class General {
-
-        public boolean useSteveModel = false;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean GuardsRunFromPolarBears = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean GuardFormation = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean ClericHealing = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean armorerRepairGuardArmor = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean GuardsOpenDoors = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean AttackAllMobs = false;
-
-        @ConfigEntry.Gui.RequiresRestart
-        public List<String> guardAttackMobBlacklist = Arrays.asList("minecraft:creeper");
+    @Entry
+        public static List<String> guardAttackMobBlacklist = Arrays.asList("minecraft:creeper");
 
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean giveGuardStuffHOTV = true;
+    @Entry
+        public static boolean giveGuardStuffHOTV = true;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean setGuardPatrolHotv = true;
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean GuardAlwaysShield = true;
+    @Entry
+        public static boolean setGuardPatrolHotv = true;
+    @Entry
+        public static boolean GuardAlwaysShield = true;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean FriendlyFire = false;
+    @Entry
+        public static boolean FriendlyFire = false;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean guardArrowsHurtVillagers = false;
+    @Entry
+        public static boolean guardArrowsHurtVillagers = false;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean RaidAnimals = false;
+    @Entry
+        public static boolean RaidAnimals = false;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean WitchesVillager = true;
+    @Entry
+        public static boolean WitchesVillager = true;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean BlackSmithHealing = true;
+    @Entry
+        public static boolean BlackSmithHealing = true;
 
-        @ConfigEntry.Gui.RequiresRestart
-        @ConfigEntry.BoundedDiscrete(max = 100, min = 1)
-        public double GuardVillagerHelpRange = 50.0D;
+    @Entry
+        public static double GuardVillagerHelpRange = 50.0D;
 
-        @ConfigEntry.Gui.RequiresRestart
-        public boolean ConvertVillagerIfHaveHOTV = false;
-
-
-        @ConfigEntry.Gui.RequiresRestart
-        public int amountOfHealthRegenerated = 1;
-
-    }
-
-    public static class Permission {
-        @ConfigEntry.BoundedDiscrete(max = 100, min = 0)
-        public int AmountOfConversions = 5;
-    }
+    @Entry
+        public static boolean ConvertVillagerIfHaveHOTV = false;
 
 
-    public static GuardVillagersConfig get() {
-        return AutoConfig.getConfigHolder(GuardVillagersConfig.class).getConfig();
-    }
+    @Entry
+        public static int amountOfHealthRegenerated = 1;
+
+
+
+
 }

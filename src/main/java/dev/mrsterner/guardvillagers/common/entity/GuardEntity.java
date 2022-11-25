@@ -431,12 +431,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.goalSelector.add(2, new RangedBowAttackPassiveGoal<>(this, 0.5D, 20, 15.0F));
         this.goalSelector.add(2, new GuardMeleeGoal(this, 0.8D, true));
         this.goalSelector.add(3, new GuardEntity.FollowHeroGoal(this));
-        if (GuardVillagers.config.general.GuardsRunFromPolarBears)
+        if (GuardVillagers.config.GuardsRunFromPolarBears)
             this.goalSelector.add(3, new FleeEntityGoal<>(this, PolarBearEntity.class, 12.0F, 1.0D, 1.2D));
         this.goalSelector.add(3, new WanderAroundPointOfInterestGoal(this, 0.5D, false));
         this.goalSelector.add(3, new IronGolemWanderAroundGoal(this, 0.5D));
         this.goalSelector.add(3, new MoveThroughVillageGoal(this, 0.5D, false, 4, () -> false));
-        if (GuardVillagers.config.general.GuardsOpenDoors)
+        if (GuardVillagers.config.GuardsOpenDoors)
             this.goalSelector.add(3, new LongDoorInteractGoal(this, true) {
                 @Override
                 public void start() {
@@ -444,11 +444,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                     super.start();
                 }
             });
-        if (GuardVillagers.config.general.GuardFormation)
+        if (GuardVillagers.config.GuardFormation)
             this.goalSelector.add(5, new FollowShieldGuards(this)); // phalanx
-        if (GuardVillagers.config.general.ClericHealing)
+        if (GuardVillagers.config.ClericHealing)
             this.goalSelector.add(6, new RunToClericGoal(this));
-        if (GuardVillagers.config.general.armorerRepairGuardArmor)
+        if (GuardVillagers.config.armorerRepairGuardArmor)
             this.goalSelector.add(6, new ArmorerRepairGuardArmorGoal(this));
         this.goalSelector.add(4, new WalkBackToCheckPointGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, MerchantEntity.class, 8.0F));
@@ -467,8 +467,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, this::shouldAngerAt));
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
         this.targetSelector.add(4, new UniversalAngerGoal<>(this, false));
-        if (GuardVillagers.config.general.AttackAllMobs) {
-           this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagers.config.general.guardAttackMobBlacklist.contains(mob.getSavedEntityId())));
+        if (GuardVillagers.config.AttackAllMobs) {
+           this.targetSelector.add(3, new ActiveTargetGoal<>(this, MobEntity.class, 5, true, true, (mob) -> mob instanceof Monster && !GuardVillagers.config.guardAttackMobBlacklist.contains(mob.getSavedEntityId())));
         }
     }
 
@@ -529,7 +529,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             --this.shieldCoolDown;
         }
         if (this.getHealth() < this.getMaxHealth() && this.age % 200 == 0) {
-            this.heal(GuardVillagers.config.general.amountOfHealthRegenerated);
+            this.heal(GuardVillagers.config.amountOfHealthRegenerated);
         }
         if (!this.world.isClient())
             this.tickAngerLogic((ServerWorld) this.world, true);
@@ -685,11 +685,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     protected ActionResult interactMob(PlayerEntity player, Hand hand) {
-        boolean configValues = !GuardVillagers.config.general.giveGuardStuffHOTV || !GuardVillagers.config.general.setGuardPatrolHotv
-        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.general.giveGuardStuffHOTV
-        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.general.setGuardPatrolHotv
-        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.general.giveGuardStuffHOTV
-        && GuardVillagers.config.general.setGuardPatrolHotv;
+        boolean configValues = !GuardVillagers.config.giveGuardStuffHOTV || !GuardVillagers.config.setGuardPatrolHotv
+        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.giveGuardStuffHOTV
+        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.setGuardPatrolHotv
+        || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.giveGuardStuffHOTV
+        && GuardVillagers.config.setGuardPatrolHotv;
         boolean inventoryRequirements = !player.shouldCancelInteraction() && this.onGround;
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {

@@ -29,12 +29,12 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     public GuardRenderer(EntityRendererFactory.Context context) {
         super(context, new GuardVillagerModel(context.getPart(GuardVillagersClient.GUARD)), 0.5F);
         this.steve = new GuardSteveModel(context.getPart(GuardVillagersClient.GUARD_STEVE));
-        if (GuardVillagers.config.general.useSteveModel)
+        if (GuardVillagers.config.useSteveModel)
             this.model = steve;
         else
             this.model = normal;
-        this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagers.config.general.useSteveModel ?
-        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagers.config.general.useSteveModel ?
+        this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagers.config.useSteveModel ?
+        new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagers.config.useSteveModel ?
         new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
 
     }
@@ -114,7 +114,7 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
     @Nullable
     @Override
     public Identifier getTexture(GuardEntity entity) {
-        return !GuardVillagers.config.general.useSteveModel
+        return !GuardVillagers.config.useSteveModel
         ? new Identifier(GuardVillagers.MODID,
         "textures/entity/guard/guard_" + entity.getGuardVariant() + ".png")
         : new Identifier(GuardVillagers.MODID,
