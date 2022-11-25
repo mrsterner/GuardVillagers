@@ -1,0 +1,33 @@
+{
+    "entity.guardvillagers.guard": "Guarda",
+    "item.guardvillagers.guard_spawn_egg": "Ovo de Geração de Guarda",
+    "guardinventory.health": "Vida: %s",
+    "guardinventory.armor": "Armadura: %s",
+  
+    "text.autoconfig.guardvillagers.option.general.useSteveModel": "Usar modelo de Steve",
+    "text.autoconfig.guardvillagers.option.general.GuardsRunFromPolarBears": "Guardas fogem do urso polar",
+  
+    "text.autoconfig.guardvillagers.option.general": "Geral",
+    "text.autoconfig.guardvillagers.option.permission": "Permissão",
+  
+    "text.autoconfig.guardvillagers.option.general.GuardFormation": "Formação de guarda",
+    "text.autoconfig.guardvillagers.option.general.ClericHealing": "Cura do Clérigo",
+    "text.autoconfig.guardvillagers.option.general.armorerRepairGuardArmor": "Armoreiro Conserta Guarda Armadura",
+    "text.autoconfig.guardvillagers.option.general.GuardsOpenDoors": "Guardas abrem portas",
+    "text.autoconfig.guardvillagers.option.general.giveGuardStuffHOTV": "Exija que a HOTV dê coisas aos guardas",
+    "text.autoconfig.guardvillagers.option.general.setGuardPatrolHotv": "Exigir que HOTV estabeleça patrulha de guardas",
+    "text.autoconfig.guardvillagers.option.general.GuardAlwaysShield": "Guarda Sempre com Escudo",
+    "text.autoconfig.guardvillagers.option.general.FriendlyFire": "Fogo amigo",
+    "text.autoconfig.guardvillagers.option.general.guardArrowsHurtVillagers": "Flechas de guarda ferem aldeões",
+    "text.autoconfig.guardvillagers.option.general.RaidAnimals": "Raiders atacarão animais",
+    "text.autoconfig.guardvillagers.option.general.WitchesVillager": "As bruxas atacarão os aldeões",
+    "text.autoconfig.guardvillagers.option.general.BlackSmithHealing": "O ferreiro curará golens de ferro",
+    "text.autoconfig.guardvillagers.option.general.ConvertVillagerIfHaveHOTV": "Exigir HOTV para converter o aldeãos",
+    "text.autoconfig.guardvillagers.option.general.guardAttackMobBlacklist": "Lista negra de ataque de guarda",
+    "text.autoconfig.guardvillagers.option.general.GuardVillagerHelpRange": "Intervalo de ajuda de guarda",
+    "text.autoconfig.guardvillagers.option.general.amountOfHealthRegenerated": "Regeneração da guarda",
+  
+    "text.autoconfig.guardvillagers.option.general.AttackAllMobs": "Guarda ataca todos os mobs",
+  
+    "text.autoconfig.guardvillagers.option.permission.AmountOfConversions": "Isso não faz nada agora"
+  }
