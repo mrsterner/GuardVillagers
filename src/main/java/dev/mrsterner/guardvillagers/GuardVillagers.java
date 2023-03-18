@@ -99,8 +99,6 @@ public class GuardVillagers implements ModInitializer {
 			}
 		}
 		guard.copyPositionAndRotation(villagerEntity);
-		guard.limbDistance = villagerEntity.limbDistance;
-		guard.lastLimbDistance = villagerEntity.lastLimbDistance;
 		guard.headYaw = villagerEntity.headYaw;
 		guard.refreshPositionAndAngles(villagerEntity.getX(), villagerEntity.getY(), villagerEntity.getZ(), villagerEntity.getYaw(), villagerEntity.getPitch());
 		guard.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1.0F, 1.0F);

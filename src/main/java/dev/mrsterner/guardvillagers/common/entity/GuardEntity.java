@@ -20,6 +20,7 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -42,6 +43,7 @@ import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -745,7 +747,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.getMainHandStack().getItem() instanceof CrossbowItem)
             this.shoot(this, 6.0F);
         if (this.getMainHandStack().getItem() instanceof BowItem) {
-            ItemStack itemStack = this.getArrowType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
+            ItemStack itemStack = this.getProjectileType(this.getStackInHand(ProjectileUtil.getHandPossiblyHolding(this, Items.BOW)));
             ItemStack hand = this.getActiveItem();
             PersistentProjectileEntity persistentProjectileEntity = ProjectileUtil.createArrowProjectile(this, itemStack, pullProgress);
             int powerLevel = EnchantmentHelper.getLevel(Enchantments.POWER, itemStack);
@@ -769,8 +771,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
+
     @Override
-    public ItemStack getArrowType(ItemStack shootable) {
+    public ItemStack getProjectileType(ItemStack shootable) {
         if (shootable.getItem() instanceof RangedWeaponItem) {
             Predicate<ItemStack> predicate = ((RangedWeaponItem) shootable.getItem()).getHeldProjectiles();
             ItemStack itemstack = RangedWeaponItem.getHeldProjectile(this, predicate);
@@ -845,7 +848,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             }
             for (int i = 0; i < this.guardInventory.size(); ++i) {
                 ItemStack itemstack = this.guardInventory.getStack(i);
-                if ((!damageSource.isFire() || !itemstack.getItem().isFireproof())
+                if ((!damageSource.isIn(DamageTypeTags.IS_FIRE) || !itemstack.getItem().isFireproof())
                 && itemstack.getItem() instanceof ArmorItem) {
                     int j = i;
                     itemstack.damage((int) damage, this, (p_214023_1_) -> {

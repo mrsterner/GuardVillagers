@@ -77,7 +77,7 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
         this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
+        InventoryScreen.drawEntity(matrices, i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
     }
 
 
