@@ -116,30 +116,30 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public void equipStack(EquipmentSlot slotIn, ItemStack stack) {
         super.equipStack(slotIn, stack);
         switch (slotIn) {
-            case CHEST:
+            case CHEST -> {
                 if (this.guardInventory.getStack(1).isEmpty())
-                    this.guardInventory.setStack(1, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case FEET:
+                    this.guardInventory.setStack(1, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case FEET -> {
                 if (this.guardInventory.getStack(3).isEmpty())
-                    this.guardInventory.setStack(3, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case HEAD:
+                    this.guardInventory.setStack(3, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case HEAD -> {
                 if (this.guardInventory.getStack(0).isEmpty())
-                    this.guardInventory.setStack(0, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case LEGS:
+                    this.guardInventory.setStack(0, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case LEGS -> {
                 if (this.guardInventory.getStack(2).isEmpty())
-                    this.guardInventory.setStack(2, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case MAINHAND:
+                    this.guardInventory.setStack(2, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case MAINHAND -> {
                 if (this.guardInventory.getStack(5).isEmpty())
-                    this.guardInventory.setStack(5, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case OFFHAND:
+                    this.guardInventory.setStack(5, ((MobEntityAccessor) this).handItems().get(slotIn.getEntitySlotId()));
+            }
+            case OFFHAND -> {
                 if (this.guardInventory.getStack(4).isEmpty())
-                    this.guardInventory.setStack(4, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
+                    this.guardInventory.setStack(4, ((MobEntityAccessor) this).handItems().get(slotIn.getEntitySlotId()));
+            }
         }
     }
 
