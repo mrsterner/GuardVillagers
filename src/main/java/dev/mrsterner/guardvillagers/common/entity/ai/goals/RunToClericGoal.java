@@ -19,6 +19,10 @@ public class RunToClericGoal extends Goal {
 
     @Override
     public boolean canStart() {
+        if(this.guard.getDataTracker().get(GuardEntity.INTERACTING)){
+            return false;
+        }
+
         List<VillagerEntity> list = this.guard.world.getNonSpectatingEntities(VillagerEntity.class, this.guard.getBoundingBox().expand(10.0D, 3.0D, 10.0D));
         if (!list.isEmpty()) {
             for (VillagerEntity mob : list) {

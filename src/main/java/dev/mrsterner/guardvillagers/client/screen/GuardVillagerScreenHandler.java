@@ -258,6 +258,6 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
         this.guardInventory.onClose(player);
-        this.guardEntity.interacting = false;
+        this.guardEntity.getDataTracker().set(GuardEntity.INTERACTING, false);
     }
 }
