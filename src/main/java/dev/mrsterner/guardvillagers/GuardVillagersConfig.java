@@ -1,7 +1,6 @@
 package dev.mrsterner.guardvillagers;
 
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import eu.midnightdust.lib.config.MidnightConfig;
 
 import java.util.Arrays;
