@@ -24,7 +24,7 @@ public class GuardRunToEatGoal extends WanderAroundGoal {
 
     @Override
     public boolean canStart() {
-        return this.guard.isRunningToEat() && this.getWanderTarget() != null;
+        return this.guard.isRunningToEat() && this.getWanderTarget() != null && !this.guard.getDataTracker().get(GuardEntity.INTERACTING);
     }
 
     @Override
