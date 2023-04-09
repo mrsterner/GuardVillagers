@@ -633,6 +633,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.dataTracker.startTracking(OWNER_UNIQUE_ID, Optional.empty());
         this.dataTracker.startTracking(EATING, false);
         this.dataTracker.startTracking(FOLLOWING, false);
+        this.dataTracker.startTracking(INTERACTING, false);
         this.dataTracker.startTracking(GUARD_POS, Optional.empty());
         this.dataTracker.startTracking(PATROLLING, false);
         this.dataTracker.startTracking(RUNNING_TO_EAT, false);
