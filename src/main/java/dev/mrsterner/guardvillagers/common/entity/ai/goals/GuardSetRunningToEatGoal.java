@@ -16,7 +16,7 @@ public class GuardSetRunningToEatGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        return !guard.isRunningToEat() && guard.getHealth() < guard.getMaxHealth() / 2 && GuardEatFoodGoal.isConsumable(guard.getOffHandStack()) && !guard.isEating() && guard.getTarget() != null;
+        return !guard.isRunningToEat() && guard.getHealth() < guard.getMaxHealth() / 2 && GuardEatFoodGoal.isConsumable(guard.getOffHandStack()) && !guard.isEating() && guard.getTarget() != null && !this.guard.getDataTracker().get(GuardEntity.INTERACTING);
     }
 
     @Override

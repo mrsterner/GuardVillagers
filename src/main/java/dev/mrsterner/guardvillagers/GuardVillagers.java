@@ -59,21 +59,22 @@ public class GuardVillagers implements ModInitializer {
 		UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
 			ItemStack itemStack = player.getStackInHand(hand);
 			if ((itemStack.getItem() instanceof SwordItem || itemStack.getItem() instanceof CrossbowItem) && player.isSneaking()) {
-				Entity target = hitResult.getEntity();
-				if (target instanceof VillagerEntity villagerEntity) {
-					if (!villagerEntity.isBaby()) {
-						if (villagerEntity.getVillagerData().getProfession() == VillagerProfession.NONE || villagerEntity.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
-							if (!GuardVillagers.config.general.ConvertVillagerIfHaveHOTV || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.general.ConvertVillagerIfHaveHOTV) {
-								convertVillager(villagerEntity, player, world);
-								if (!player.getAbilities().creativeMode)
-									itemStack.decrement(1);
-								return ActionResult.SUCCESS;
+				if (hitResult != null) {
+					Entity target = hitResult.getEntity();
+					if (target instanceof VillagerEntity villagerEntity) {
+						if (!villagerEntity.isBaby()) {
+							if (villagerEntity.getVillagerData().getProfession() == VillagerProfession.NONE || villagerEntity.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
+								if (!GuardVillagers.config.general.ConvertVillagerIfHaveHOTV || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.general.ConvertVillagerIfHaveHOTV) {
+									convertVillager(villagerEntity, player, world);
+									if (!player.getAbilities().creativeMode)
+										itemStack.decrement(1);
+									return ActionResult.SUCCESS;
+								}
 							}
 						}
 					}
 				}
 			}
-
 			return ActionResult.PASS;
 		});
 	}

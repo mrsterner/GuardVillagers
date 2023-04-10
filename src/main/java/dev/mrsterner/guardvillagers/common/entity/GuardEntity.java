@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.FuzzyTargeting;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -54,6 +55,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.village.VillagerType;
 import net.minecraft.world.*;
@@ -77,6 +79,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     private static final TrackedData<Boolean> EATING = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> KICKING = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     private static final TrackedData<Boolean> FOLLOWING = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> INTERACTING = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     protected static final TrackedData<Optional<UUID>> OWNER_UNIQUE_ID = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
     private static final Map<EntityPose, EntityDimensions> SIZE_BY_POSE = ImmutableMap.<EntityPose, EntityDimensions>builder()
     .put(EntityPose.STANDING, EntityDimensions.changing(0.6F, 1.95F)).put(EntityPose.SLEEPING, SLEEPING_DIMENSIONS)
@@ -89,7 +92,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public int kickTicks;
     public int shieldCoolDown;
     public int kickCoolDown;
-    public boolean interacting;
     private int remainingPersistentAngerTime;
     private static final UniformIntProvider angerTime = TimeHelper.betweenSeconds(20, 39);
     private UUID persistentAngerTarget;
@@ -110,33 +112,41 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
     @Override
+    public boolean canMoveVoluntarily() {
+        if(this.world.getServer() != null){
+            return !this.dataTracker.get(INTERACTING);
+        }
+        return super.canMoveVoluntarily();
+    }
+
+    @Override
     public void equipStack(EquipmentSlot slotIn, ItemStack stack) {
         super.equipStack(slotIn, stack);
         switch (slotIn) {
-            case CHEST:
+            case CHEST -> {
                 if (this.guardInventory.getStack(1).isEmpty())
-                    this.guardInventory.setStack(1, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case FEET:
+                    this.guardInventory.setStack(1, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case FEET -> {
                 if (this.guardInventory.getStack(3).isEmpty())
-                    this.guardInventory.setStack(3, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case HEAD:
+                    this.guardInventory.setStack(3, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case HEAD -> {
                 if (this.guardInventory.getStack(0).isEmpty())
-                    this.guardInventory.setStack(0, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case LEGS:
+                    this.guardInventory.setStack(0, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case LEGS -> {
                 if (this.guardInventory.getStack(2).isEmpty())
-                    this.guardInventory.setStack(2, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case MAINHAND:
+                    this.guardInventory.setStack(2, ((MobEntityAccessor) this).armorItems().get(slotIn.getEntitySlotId()));
+            }
+            case MAINHAND -> {
                 if (this.guardInventory.getStack(5).isEmpty())
-                    this.guardInventory.setStack(5, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
-            case OFFHAND:
+                    this.guardInventory.setStack(5, ((MobEntityAccessor) this).handItems().get(slotIn.getEntitySlotId()));
+            }
+            case OFFHAND -> {
                 if (this.guardInventory.getStack(4).isEmpty())
-                    this.guardInventory.setStack(4, ((MobEntityAccessor)this).armorItems().get(slotIn.getEntitySlotId()));
-                break;
+                    this.guardInventory.setStack(4, ((MobEntityAccessor) this).handItems().get(slotIn.getEntitySlotId()));
+            }
         }
     }
 
@@ -151,7 +161,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public boolean isImmobile() {
-        return this.interacting || super.isImmobile();
+        return this.dataTracker.get(INTERACTING) || super.isImmobile();
     }
 
     @Nullable
@@ -258,7 +268,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.setGuardVariant(nbt.getInt("Type"));
         this.kickTicks = nbt.getInt("KickTicks");
         this.setFollowing(nbt.getBoolean("Following"));
-        this.interacting = nbt.getBoolean("Interacting");
+        this.setInteracting(nbt.getBoolean("Interacting"));
         this.setEating(nbt.getBoolean("Eating"));
         this.setPatrolling(nbt.getBoolean("Patrolling"));
         this.setRunningToEat(nbt.getBoolean("RunningToEat"));
@@ -304,7 +314,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         nbt.putInt("ShieldCooldown", this.shieldCoolDown);
         nbt.putInt("KickCooldown", this.kickCoolDown);
         nbt.putBoolean("Following", this.isFollowing());
-        nbt.putBoolean("Interacting", this.interacting);
+        nbt.putBoolean("Interacting", this.dataTracker.get(INTERACTING));
         nbt.putBoolean("Eating", this.isEating());
         nbt.putBoolean("Patrolling", this.isPatrolling());
         nbt.putBoolean("RunningToEat", this.isRunningToEat());
@@ -327,6 +337,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             nbt.putInt("PatrolPosZ", this.getPatrolPos().getZ());
         }
         this.readAngerFromNbt(this.world, nbt);
+    }
+
+    public void setInteracting(boolean interacting) {
+        this.dataTracker.set(INTERACTING, interacting);
     }
 
     public void setOwnerId(@Nullable UUID p_184754_1_) {
@@ -458,7 +472,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
         this.goalSelector.add(4, new WalkBackToCheckPointGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, MerchantEntity.class, 8.0F));
-        this.goalSelector.add(8, new WanderAroundFarGoal(this, 0.5D));
+        this.goalSelector.add(8, new WanderAroundFarGuardGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.targetSelector.add(5, new GuardEntity.DefendVillageGuardGoal(this));
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, RavagerEntity.class, true));
@@ -625,6 +639,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.dataTracker.startTracking(OWNER_UNIQUE_ID, Optional.empty());
         this.dataTracker.startTracking(EATING, false);
         this.dataTracker.startTracking(FOLLOWING, false);
+        this.dataTracker.startTracking(INTERACTING, false);
         this.dataTracker.startTracking(GUARD_POS, Optional.empty());
         this.dataTracker.startTracking(PATROLLING, false);
         this.dataTracker.startTracking(RUNNING_TO_EAT, false);
@@ -699,8 +714,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         boolean inventoryRequirements = !player.shouldCancelInteraction() && this.onGround;
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {
-                    this.openGui(player);
-                    return ActionResult.success(this.world.isClient());
+                this.setInteracting(true);
+                this.openGui(player);
+                return ActionResult.success(this.world.isClient());
             }
         }
         return super.interactMob(player, hand);
@@ -730,7 +746,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     public void openGui(PlayerEntity player) {
         if (player.world != null && !this.world.isClient()) {
-            this.interacting = true;
             player.openHandledScreen(new GuardScreenHandlerFactory());
         }
     }
@@ -947,40 +962,62 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
         @Override
         public void tick() {
-            if (guard.getOwner() != null) {
-                guard.getNavigation().startMovingTo(guard.getOwner(), 0.5D);
+            if (guard.getOwner() != null && guard.getOwner().distanceTo(guard) > 3.0D) {
+                guard.getNavigation().startMovingTo(guard.getOwner(), 0.7D);
+                guard.getLookControl().lookAt(guard.getOwner());
+            } else {
+                guard.getNavigation().stop();
             }
         }
 
         @Override
         public boolean shouldContinue() {
-            return guard.isFollowing() && this.canStart();
+            return this.canStart();
         }
 
         @Override
         public boolean canStart() {
-            List<PlayerEntity> list = this.guard.world.getNonSpectatingEntities(PlayerEntity.class, this.guard.getBoundingBox().expand(10.0D));
-            if (!list.isEmpty()) {
-                for (PlayerEntity mob : list) {
-                    if (!mob.isInvisible() && mob.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-                        guard.setOwnerId(mob.getUuid());
-                        return guard.isFollowing();
-                    }
-                }
-            }
-            return false;
+            return guard.isFollowing() && guard.getOwner() != null;
         }
 
         @Override
         public void stop() {
             this.guard.getNavigation().stop();
-            if (guard.getOwner() != null && !guard.getOwner().hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-                guard.setOwnerId(null);
-                guard.setFollowing(false);
-            }
         }
     }
 
+    public static class WanderAroundFarGuardGoal extends WanderAroundGoal {
+        public GuardEntity guardEntity;
+        protected final float probability;
+
+        public WanderAroundFarGuardGoal(GuardEntity pathAwareEntity, double d) {
+            this(pathAwareEntity, d, 0.001F);
+        }
+
+        public WanderAroundFarGuardGoal(GuardEntity mob, double speed, float probability) {
+            super(mob, speed);
+            this.probability = probability;
+            this.guardEntity = mob;
+        }
+
+        @Override
+        public boolean canStart() {
+            if(guardEntity.getDataTracker().get(INTERACTING)){
+                return false;
+            }
+            return super.canStart();
+        }
+
+        @Nullable
+        protected Vec3d getWanderTarget() {
+            if (this.mob.isInsideWaterOrBubbleColumn()) {
+                Vec3d vec3d = FuzzyTargeting.find(this.mob, 15, 7);
+                return vec3d == null ? super.getWanderTarget() : vec3d;
+            } else {
+                return this.mob.getRandom().nextFloat() >= this.probability ? FuzzyTargeting.find(this.mob, 10, 7) : super.getWanderTarget();
+            }
+        }
+    }
 
     public static class GuardMeleeGoal extends MeleeAttackGoal {
         public final GuardEntity guard;
