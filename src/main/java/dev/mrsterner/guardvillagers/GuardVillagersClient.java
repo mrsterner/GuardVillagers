@@ -62,9 +62,10 @@ public class GuardVillagersClient implements ClientModInitializer {
 			server.execute(() -> {
 				Entity entity = player.world.getEntityById(entityId);
 				if(entity instanceof GuardEntity guardEntity){
-					BlockPos pos = pressed ? null : guardEntity.getBlockPos();
-					if (guardEntity.getBlockPos() != null)
+					BlockPos pos = guardEntity.getBlockPos();
+					if (guardEntity.getBlockPos() != null){
 						guardEntity.setPatrolPos(pos);
+					}
 					guardEntity.setPatrolling(pressed);
 				}
 
