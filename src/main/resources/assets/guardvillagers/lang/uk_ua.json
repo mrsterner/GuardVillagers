@@ -1,0 +1,57 @@
+{
+  "entity.guardvillagers.guard": "Сторожовий",
+  "item.guardvillagers.guard_spawn_egg": "Яйце виклику сторожового",
+  "guardinventory.health": "Здоров'я: %s",
+  "guardinventory.armor": "Броня: %s",
+
+  "text.autoconfig.guardvillagers.option.general.useSteveModel": "Використовувати модель Стіва",
+  "text.autoconfig.guardvillagers.option.general.GuardsRunFromPolarBears": "Сторожові тікають від білих ведмедів",
+
+  "text.autoconfig.guardvillagers.option.general": "Загальні",
+  "text.autoconfig.guardvillagers.option.permission": "Дозволи",
+
+  "text.autoconfig.guardvillagers.option.general.GuardFormation": "Формування сторожового",
+  "text.autoconfig.guardvillagers.option.general.ClericHealing": "Церковники лікують сторожових",
+  "text.autoconfig.guardvillagers.option.general.armorerRepairGuardArmor": "Латники лагодять обладунки сторожових",
+  "text.autoconfig.guardvillagers.option.general.GuardsOpenDoors": "Сторожові можуть відкривають двері",
+  "text.autoconfig.guardvillagers.option.general.giveGuardStuffHOTV": "Вимагає HOTV, щод давати сторожовим речі",
+  "text.autoconfig.guardvillagers.option.general.setGuardPatrolHotv": "Вимагає HOTV, встановити патруль сторожових",
+  "text.autoconfig.guardvillagers.option.general.GuardAlwaysShield": "Сторожові завжди захищаються",
+  "text.autoconfig.guardvillagers.option.general.FriendlyFire": "Дружній вогонь",
+  "text.autoconfig.guardvillagers.option.general.guardArrowsHurtVillagers": "Стріли сторожових шкодять селянам",
+  "text.autoconfig.guardvillagers.option.general.RaidAnimals": "Рейдери атакують тварин",
+  "text.autoconfig.guardvillagers.option.general.WitchesVillager": "Відьми атакують селян",
+  "text.autoconfig.guardvillagers.option.general.BlackSmithHealing": "Коваль лагодить залізних ґолемів",
+  "text.autoconfig.guardvillagers.option.general.ConvertVillagerIfHaveHOTV": "Вимагає HOTV для конвертації селян",
+  "text.autoconfig.guardvillagers.option.general.guardAttackMobBlacklist": "Чорний список сутностей сторожового",
+  "text.autoconfig.guardvillagers.option.general.GuardVillagerHelpRange": "Діапазон допомоги сторожових",
+  "text.autoconfig.guardvillagers.option.general.amountOfHealthRegenerated": "Регенерація сторожового",
+
+  "text.autoconfig.guardvillagers.option.general.AttackAllMobs": "Сторожовий атакує всіх мобів",
+
+  "text.autoconfig.guardvillagers.option.permission.AmountOfConversions": "Це поки що ні за що не відповідає",
+
+  "guardvillagers.midnightconfig.title": "Guard Villagers",
+
+  "guardvillagers.midnightconfig.useSteveModel": "Використовувати модель Стіва",
+  "guardvillagers.midnightconfig.GuardsRunFromPolarBears": "Сторожові тікають від білих ведмедів",
+
+  "guardvillagers.midnightconfig.GuardFormation": "Генерація сторожових",
+  "guardvillagers.midnightconfig.ClericHealing": "Церковники лікують сторожових",
+  "guardvillagers.midnightconfig.armorerRepairGuardArmor": "Латники лагодять обладунки сторожових",
+  "guardvillagers.midnightconfig.GuardsOpenDoors": "Сторожові можуть відкривають двері",
+  "guardvillagers.midnightconfig.giveGuardStuffHOTV": "Вимагає HOTV, щод давати сторожовим речі",
+  "guardvillagers.midnightconfig.setGuardPatrolHotv": "Вимагає HOTV, встановити патруль сторожових",
+  "guardvillagers.midnightconfig.GuardAlwaysShield": "Сторожові завжди захищаються",
+  "guardvillagers.midnightconfig.FriendlyFire": "Дружній вогонь",
+  "guardvillagers.midnightconfig.guardArrowsHurtVillagers": "Стріли сторожових шкодять селянам",
+  "guardvillagers.midnightconfig.RaidAnimals": "Рейдери атакують тварин",
+  "guardvillagers.midnightconfig.WitchesVillager": "Відьми атакують селян",
+  "guardvillagers.midnightconfig.BlackSmithHealing": "Коваль лагодить залізних ґолемів",
+  "guardvillagers.midnightconfig.ConvertVillagerIfHaveHOTV": "Вимагає HOTV для конвертації селян",
+  "guardvillagers.midnightconfig.guardAttackMobBlacklist": "Чорний список сутностей сторожового",
+  "guardvillagers.midnightconfig.GuardVillagerHelpRange": "Діапазон допомоги сторожових",
+  "guardvillagers.midnightconfig.amountOfHealthRegenerated": "Регенерація сторожового",
+
+  "guardvillagers.midnightconfig.AttackAllMobs": "Сторожовий атакує всіх мобів"
+}
