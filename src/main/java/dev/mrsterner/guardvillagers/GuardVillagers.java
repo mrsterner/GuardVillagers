@@ -91,13 +91,13 @@ public class GuardVillagers implements ModInitializer {
 		GuardEntity guard = GUARD_VILLAGER.create(world);
 		if (guard == null)
 			return;
-		if (player.world.isClient()) {
+		if (player.getWorld().isClient()) {
 			ParticleEffect particleEffect = ParticleTypes.HAPPY_VILLAGER;
 			for (int i = 0; i < 10; ++i) {
 				double d0 = villagerEntity.getRandom().nextGaussian() * 0.02D;
 				double d1 = villagerEntity.getRandom().nextGaussian() * 0.02D;
 				double d2 = villagerEntity.getRandom().nextGaussian() * 0.02D;
-				villagerEntity.world.addParticle(particleEffect, villagerEntity.getX() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), villagerEntity.getY() + 0.5D + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth()),
+				villagerEntity.getWorld().addParticle(particleEffect, villagerEntity.getX() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), villagerEntity.getY() + 0.5D + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth()),
 				villagerEntity.getZ() + (double) (villagerEntity.getRandom().nextFloat() * villagerEntity.getWidth() * 2.0F) - (double) villagerEntity.getWidth(), d0, d1, d2);
 			}
 		}
@@ -108,7 +108,7 @@ public class GuardVillagers implements ModInitializer {
 		guard.equipStack(EquipmentSlot.MAINHAND, itemstack.copy());
 		guard.guardInventory.setStack(5, itemstack.copy());
 
-		int i = GuardEntity.getRandomTypeForBiome(guard.world, guard.getBlockPos());
+		int i = GuardEntity.getRandomTypeForBiome(guard.getWorld(), guard.getBlockPos());
 		guard.setGuardVariant(i);
 		guard.setPersistent();
 		guard.setCustomName(villagerEntity.getCustomName());

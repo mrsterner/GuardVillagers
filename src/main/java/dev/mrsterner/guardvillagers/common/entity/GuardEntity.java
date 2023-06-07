@@ -40,6 +40,7 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -156,7 +157,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public boolean canMoveVoluntarily() {
-        if(this.world.getServer() != null){
+        if(this.getWorld().getServer() != null){
             return !this.dataTracker.get(INTERACTING);
         }
         return super.canMoveVoluntarily();
@@ -306,8 +307,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             }
         }
 
-        if (!world.isClient())
-            this.readAngerFromNbt(this.world, nbt);
+        if (!getWorld().isClient())
+            this.readAngerFromNbt(this.getWorld(), nbt);
     }
 
     @Override
@@ -340,7 +341,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             nbt.putInt("PatrolPosY", this.getPatrolPos().getY());
             nbt.putInt("PatrolPosZ", this.getPatrolPos().getZ());
         }
-        this.readAngerFromNbt(this.world, nbt);
+        this.readAngerFromNbt(this.getWorld(), nbt);
     }
 
     public void setOwnerId(@Nullable UUID p_184754_1_) {
@@ -408,9 +409,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public LivingEntity getOwner() {
         try {
             UUID uuid = this.getOwnerId();
-            return (uuid == null || uuid != null && this.world.getPlayerByUuid(uuid) != null
-            && !this.world.getPlayerByUuid(uuid).hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) ? null
-            : this.world.getPlayerByUuid(uuid);
+            return (uuid == null || uuid != null && this.getWorld().getPlayerByUuid(uuid) != null
+            && !this.getWorld().getPlayerByUuid(uuid).hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) ? null
+            : this.getWorld().getPlayerByUuid(uuid);
         } catch (IllegalArgumentException illegalargumentexception) {
             return null;
         }
@@ -421,7 +422,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.isKicking()) {
             ((LivingEntity) target).takeKnockback(1.0F, Math.sin(this.getYaw() * ((float) Math.PI / 180F)), (-Math.cos(this.getYaw() * ((float) Math.PI / 180F))));
             this.kickTicks = 10;
-            this.world.sendEntityStatus(this, (byte) 4);
+            this.getWorld().sendEntityStatus(this, (byte) 4);
             this.lookAtEntity(target, 90.0F, 90.0F);
         }
         ItemStack hand = this.getMainHandStack();
@@ -490,17 +491,17 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public void onDeath(DamageSource source) {
-        if ((this.world.getDifficulty() == Difficulty.NORMAL || this.world.getDifficulty() == Difficulty.HARD)
+        if ((this.getWorld().getDifficulty() == Difficulty.NORMAL || this.getWorld().getDifficulty() == Difficulty.HARD)
         && source.getSource() instanceof ZombieEntity) {
-            if (this.world.getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
+            if (this.getWorld().getDifficulty() != Difficulty.HARD && this.random.nextBoolean()) {
                 return;
             }
             ZombieVillagerEntity zombieguard = this.convertTo(EntityType.ZOMBIE_VILLAGER, true);
-            zombieguard.initialize((ServerWorldAccess) this.world,
-            this.world.getLocalDifficulty(zombieguard.getBlockPos()), SpawnReason.CONVERSION,
+            zombieguard.initialize((ServerWorldAccess) this.getWorld(),
+            this.getWorld().getLocalDifficulty(zombieguard.getBlockPos()), SpawnReason.CONVERSION,
             new ZombieEntity.ZombieData(false, true), null);
             if (!this.isSilent())
-                this.world.syncWorldEvent(null, 1026, this.getBlockPos(), 0);
+                this.getWorld().syncWorldEvent(null, 1026, this.getBlockPos(), 0);
             this.discard();
         }
         super.onDeath(source);
@@ -547,8 +548,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.getHealth() < this.getMaxHealth() && this.age % 200 == 0) {
             this.heal(GuardVillagers.config.amountOfHealthRegenerated);
         }
-        if (!this.world.isClient())
-            this.tickAngerLogic((ServerWorld) this.world, true);
+        if (!this.getWorld().isClient())
+            this.tickAngerLogic((ServerWorld) this.getWorld(), true);
         this.tickHandSwing();
         super.tickMovement();
     }
@@ -587,7 +588,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                         this.equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                     }
                     this.activeItemStack = ItemStack.EMPTY;
-                    this.playSound(SoundEvents.ITEM_SHIELD_BREAK, 0.8F, 0.8F + this.world.random.nextFloat() * 0.4F);
+                    this.playSound(SoundEvents.ITEM_SHIELD_BREAK, 0.8F, 0.8F + this.getWorld().random.nextFloat() * 0.4F);
                 }
             }
         }
@@ -622,7 +623,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.random.nextFloat() < chance) {
             this.shieldCoolDown = 100;
             this.stopUsingItem();
-            this.world.sendEntityStatus(this, (byte) 30);
+            this.getWorld().sendEntityStatus(this, (byte) 30);
         }
     }
 
@@ -665,8 +666,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     public List<ItemStack> getItemsFromLootTable(EquipmentSlot slot) {
         if (EQUIPMENT_SLOT_ITEMS.containsKey(slot)) {
-            LootTable loot = this.world.getServer().getLootManager().getTable(EQUIPMENT_SLOT_ITEMS.get(slot));
-            LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.THIS_ENTITY, this).random(this.getRandom());
+            LootTable loot = this.getWorld().getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
+            LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld) this.getWorld())).add(LootContextParameters.THIS_ENTITY, this);
             return loot.generateLoot(lootcontext$builder.build(GuardLootTables.SLOT));
         }
         return null;
@@ -707,14 +708,14 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.setGuardPatrolHotv
         || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.giveGuardStuffHOTV
         && GuardVillagers.config.setGuardPatrolHotv;
-        boolean inventoryRequirements = !player.shouldCancelInteraction() && this.onGround;
+        boolean inventoryRequirements = !player.shouldCancelInteraction() && this.isOnGround();
         if (configValues && inventoryRequirements) {
             if (this.getTarget() != player && this.canMoveVoluntarily()) {
                 this.setInteracting(true);
                 if(player instanceof ServerPlayerEntity splayer){
                     this.openGui(splayer);
                 }
-                return ActionResult.success(this.world.isClient());
+                return ActionResult.success(this.getWorld().isClient());
             }
         }
         return super.interactMob(player, hand);
@@ -743,9 +744,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
     public void openGui(PlayerEntity player) {
-        if (player.world != null) {
+        if (player.getWorld() != null) {
             setInteracting(true);
-            if(!this.world.isClient()){
+            if(!this.getWorld().isClient()){
                 player.openHandledScreen(new GuardScreenHandlerFactory());
             }
         }
@@ -784,9 +785,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             double e = target.getBodyY(0.3333333333333333D) - persistentProjectileEntity.getY();
             double f = target.getZ() - this.getZ();
             double g = Math.sqrt(d * d + f * f);
-            persistentProjectileEntity.setVelocity(d, e + g * 0.20000000298023224D, f, 1.6F, (float)(14 - this.world.getDifficulty().getId() * 4));
+            persistentProjectileEntity.setVelocity(d, e + g * 0.20000000298023224D, f, 1.6F, (float)(14 - this.getWorld().getDifficulty().getId() * 4));
             this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
-            this.world.spawnEntity(persistentProjectileEntity);
+            this.getWorld().spawnEntity(persistentProjectileEntity);
             hand.damage(1, this, (entity) -> entity.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
         }
     }
@@ -886,7 +887,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             if (witchEntity == null)
                 return;
             witchEntity.copyPositionAndRotation(this);
-            witchEntity.initialize(serverWorld, world.getLocalDifficulty(witchEntity.getBlockPos()), SpawnReason.CONVERSION, null, null);
+            witchEntity.initialize(serverWorld, getWorld().getLocalDifficulty(witchEntity.getBlockPos()), SpawnReason.CONVERSION, null, null);
             witchEntity.setAiDisabled(this.isAiDisabled());
             witchEntity.setCustomName(this.getCustomName());
             witchEntity.setCustomNameVisible(this.isCustomNameVisible());
@@ -924,8 +925,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         @Override
         public boolean canStart() {
             Box axisalignedbb = this.guard.getBoundingBox().expand(10.0D, 8.0D, 10.0D);
-            List<VillagerEntity> list = guard.world.getNonSpectatingEntities(VillagerEntity.class, axisalignedbb);
-            List<PlayerEntity> list1 = guard.world.getNonSpectatingEntities(PlayerEntity.class, axisalignedbb);
+            List<VillagerEntity> list = guard.getWorld().getNonSpectatingEntities(VillagerEntity.class, axisalignedbb);
+            List<PlayerEntity> list1 = guard.getWorld().getNonSpectatingEntities(PlayerEntity.class, axisalignedbb);
             for (VillagerEntity livingentity : list) {
                 for (PlayerEntity playerentity : list1) {
                     int i = livingentity.getReputation(playerentity);

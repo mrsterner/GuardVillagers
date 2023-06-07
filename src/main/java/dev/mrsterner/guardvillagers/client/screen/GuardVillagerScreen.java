@@ -8,6 +8,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -17,6 +18,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -41,7 +43,6 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         super(handler, inventory, handler.guardEntity.getDisplayName());
         this.titleX = 80;
         this.playerInventoryTitleX = 100;
-        this.passEvents = false;
         this.player = inventory.player;
         guardEntity = handler.guardEntity;
     }
@@ -69,25 +70,24 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     }
 
     @Override
-    protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        //RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUARD_GUI_TEXTURES);
+        //RenderSystem.setShaderTexture(0, GUARD_GUI_TEXTURES);
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
-        this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        InventoryScreen.drawEntity(matrices, i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
+        ctx.drawTexture(GUARD_GUI_TEXTURES, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        InventoryScreen.drawEntity(ctx, i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
     }
 
 
 
     @Override
-    protected void drawForeground(MatrixStack matrixStack, int x, int y) {
-        super.drawForeground(matrixStack, x, y);
+    protected void drawForeground(DrawContext ctx, int x, int y) {
+        super.drawForeground(ctx, x, y);
         int health = MathHelper.ceil(guardEntity.getHealth());
         int armor = guardEntity.getArmor();
-        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
+        RenderSystem.setShaderTexture(0, PlayerScreenHandler.GUI_ICONS_TEXTURE);
         int statusU = guardEntity.hasStatusEffect(StatusEffects.POISON) ? 4 : 0;
         //Health
         for (int i = 0; i < 10; i++) {

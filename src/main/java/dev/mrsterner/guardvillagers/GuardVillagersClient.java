@@ -47,7 +47,7 @@ public class GuardVillagersClient implements ClientModInitializer {
 			int entityId = buf.readInt();
 			boolean pressed = buf.readBoolean();
 			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
+				Entity entity = player.getWorld().getEntityById(entityId);
 				if(entity instanceof GuardEntity guardEntity){
 					guardEntity.setFollowing(!guardEntity.isFollowing());
 					guardEntity.setOwnerId(player.getUuid());
@@ -60,7 +60,7 @@ public class GuardVillagersClient implements ClientModInitializer {
 			int entityId = buf.readInt();
 			boolean pressed = buf.readBoolean();
 			server.execute(() -> {
-				Entity entity = player.world.getEntityById(entityId);
+				Entity entity = player.getWorld().getEntityById(entityId);
 				if(entity instanceof GuardEntity guardEntity){
 					BlockPos pos = guardEntity.getBlockPos();
 					if (guardEntity.getBlockPos() != null){
