@@ -29,7 +29,7 @@ public class GuardEatFoodGoal extends Goal {
 
     @Override
     public boolean shouldContinue() {
-        List<LivingEntity> list = this.guard.world.getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
+        List<LivingEntity> list = this.guard.getWorld().getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {

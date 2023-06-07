@@ -37,7 +37,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	//Cloth Config
+	//MidnightLib
 	modImplementation "maven.modrinth:midnightlib:${project.midnightlib_version}"
 
 	//Modmenu

@@ -44,7 +44,7 @@ public class GuardRunToEatGoal extends WanderAroundGoal {
             startedRunning = false;
             this.guard.getNavigation().stop();
         }
-        List<LivingEntity> list = this.guard.world.getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
+        List<LivingEntity> list = this.guard.getWorld().getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {
@@ -59,7 +59,7 @@ public class GuardRunToEatGoal extends WanderAroundGoal {
 
     @Override
     protected Vec3d getWanderTarget() {
-        List<LivingEntity> list = this.guard.world.getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
+        List<LivingEntity> list = this.guard.getWorld().getNonSpectatingEntities(LivingEntity.class, this.guard.getBoundingBox().expand(5.0D, 3.0D, 5.0D));
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {

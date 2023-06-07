@@ -65,7 +65,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
     }
 
     public boolean checkFriendlyFire() {
-        List<LivingEntity> list = this.entity.world.getNonSpectatingEntities(LivingEntity.class, this.entity.getBoundingBox().expand(5.0D, 1.0D, 5.0D));
+        List<LivingEntity> list = this.entity.getWorld().getNonSpectatingEntities(LivingEntity.class, this.entity.getBoundingBox().expand(5.0D, 1.0D, 5.0D));
         for (LivingEntity guard : list) {
             if (entity != guard) {
                 if (guard != entity.getTarget()) {
@@ -100,11 +100,11 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
                 --this.seeTicks;
             }
 
-            if (this.entity.getPose() == EntityPose.STANDING && this.entity.world.random.nextInt(4) == 0 && entity.age % 50 == 0) {
+            if (this.entity.getPose() == EntityPose.STANDING && this.entity.getWorld().random.nextInt(4) == 0 && entity.age % 50 == 0) {
                 this.entity.setPose(EntityPose.CROUCHING);
             }
 
-            if (this.entity.getPose() == EntityPose.CROUCHING && this.entity.world.random.nextInt(4) == 0 && entity.age % 100 == 0) {
+            if (this.entity.getPose() == EntityPose.CROUCHING && this.entity.getWorld().random.nextInt(4) == 0 && entity.age % 100 == 0) {
                 this.entity.setPose(EntityPose.STANDING);
             }
 

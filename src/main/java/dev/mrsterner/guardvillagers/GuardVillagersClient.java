@@ -3,6 +3,8 @@ package dev.mrsterner.guardvillagers;
 import dev.mrsterner.guardvillagers.client.model.GuardArmorModel;
 import dev.mrsterner.guardvillagers.client.model.GuardSteveModel;
 import dev.mrsterner.guardvillagers.client.model.GuardVillagerModel;
+import dev.mrsterner.guardvillagers.client.network.GuardFollowPacket;
+import dev.mrsterner.guardvillagers.client.network.GuardPatrolPacket;
 import dev.mrsterner.guardvillagers.client.renderer.GuardRenderer;
 import dev.mrsterner.guardvillagers.client.screen.GuardVillagerScreen;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
@@ -12,12 +14,16 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
+import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.*;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.function.Function;
 
 import static dev.mrsterner.guardvillagers.GuardVillagers.GUARD_SCREEN_HANDLER;
 import static dev.mrsterner.guardvillagers.GuardVillagers.GUARD_VILLAGER;
@@ -43,19 +49,9 @@ public class GuardVillagersClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
 		EntityRendererRegistry.register(GUARD_VILLAGER, GuardRenderer::new);
 
-		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID, ((server, player, handler, buf, responseSender) -> {
-			int entityId = buf.readInt();
-			boolean pressed = buf.readBoolean();
-			server.execute(() -> {
-				Entity entity = player.getWorld().getEntityById(entityId);
-				if(entity instanceof GuardEntity guardEntity){
-					guardEntity.setFollowing(!guardEntity.isFollowing());
-					guardEntity.setOwnerId(player.getUuid());
-					guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
-				}
+		ServerPlayNetworking.registerGlobalReceiver(GuardFollowPacket.PACKET_TYPE, GuardFollowPacket::handle);
+		ServerPlayNetworking.registerGlobalReceiver(GuardPatrolPacket.PACKET_TYPE, GuardPatrolPacket::handle);
 
-			});
-		}));
 		ServerPlayNetworking.registerGlobalReceiver(GuardVillagerScreen.ID_2, ((server, player, handler, buf, responseSender) -> {
 			int entityId = buf.readInt();
 			boolean pressed = buf.readBoolean();

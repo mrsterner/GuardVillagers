@@ -2,13 +2,18 @@ package dev.mrsterner.guardvillagers.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.mrsterner.guardvillagers.GuardVillagers;
+import dev.mrsterner.guardvillagers.GuardVillagersConfig;
+import dev.mrsterner.guardvillagers.client.network.GuardFollowPacket;
+import dev.mrsterner.guardvillagers.client.network.GuardPatrolPacket;
 import dev.mrsterner.guardvillagers.common.entity.GuardEntity;
 import dev.mrsterner.guardvillagers.mixin.TexturedButtonWidgetAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
@@ -30,8 +35,9 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/not_following_icons.png");
     private static final Identifier PATROL_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/patrollingui.png");
     private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/notpatrollingui.png");
-    public static final Identifier ID = new Identifier(GuardVillagers.MODID, "guard_follow");
+
     public static final Identifier ID_2 = new Identifier(GuardVillagers.MODID, "guard_patroll");
+    private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
     private PlayerEntity player;
     private GuardEntity guardEntity;
     private float mousePosX;
@@ -50,22 +56,20 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     @Override
     protected void init() {
         super.init();
-        if (player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19,  GUARD_FOLLOWING_ICON , GUARD_NOT_FOLLOWING_ICON, true, (button) -> {
-                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                buf.writeInt(guardEntity.getId());
-                buf.writeBoolean(buttonPressed);
-                ClientPlayNetworking.send(ID, buf);
-            }));
+        if (!GuardVillagersConfig.followHero || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19,  GUARD_FOLLOWING_ICON , GUARD_NOT_FOLLOWING_ICON, true,
+                    (button) -> {
+                        ClientPlayNetworking.send(new GuardFollowPacket(guardEntity.getId()));
+                    })
+            );
         }
-        if (!GuardVillagers.config.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON , NOT_PATROLLING_ICON, false, (button) -> {
-                buttonPressed = !buttonPressed;
-                PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-                buf.writeInt(guardEntity.getId());
-                buf.writeBoolean(buttonPressed);
-                ClientPlayNetworking.send(ID_2, buf);
-            }));
+        if (!GuardVillagersConfig.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
+            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON , NOT_PATROLLING_ICON, false,
+                    (button) -> {
+                        buttonPressed = !buttonPressed;
+                        ClientPlayNetworking.send(new GuardPatrolPacket(guardEntity.getId(), buttonPressed));
+                    })
+            );
         }
     }
 
@@ -87,42 +91,41 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         super.drawForeground(ctx, x, y);
         int health = MathHelper.ceil(guardEntity.getHealth());
         int armor = guardEntity.getArmor();
-        RenderSystem.setShaderTexture(0, PlayerScreenHandler.GUI_ICONS_TEXTURE);
         int statusU = guardEntity.hasStatusEffect(StatusEffects.POISON) ? 4 : 0;
         //Health
         for (int i = 0; i < 10; i++) {
-            drawTexture(matrixStack, (i * 8) + 80, 20, 16, 0, 9, 9);
+            ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16, 0, 9, 9);
         }
         for (int i = 0; i < health/2; i++) {
             if(health % 2 != 0 && health/2 == i + 1){
-                drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9,9);
-                drawTexture(matrixStack, ((i + 1) * 8) + 80, 20, 16 + 9*(5 + statusU), 0, 9,9);
+                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9,9);
+                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 20, 16 + 9*(5 + statusU), 0, 9,9);
             }else{
-                drawTexture(matrixStack,  (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9, 9);
+                ctx.drawTexture(ICONS,  (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9, 9);
                }
         }
         //Armor
         for (int i = 0; i < 10; i++) {
-            drawTexture(matrixStack, (i * 8) + 80, 30, 16, 9, 9, 9);
+            ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16, 9, 9, 9);
         }
         for (int i = 0; i < armor/2; i++) {
             if(armor % 2 != 0 && armor/2 == i + 1){
-                drawTexture(matrixStack, (i * 8) + 80, 30, 16 + 9*2, 9, 9,9);
-                drawTexture(matrixStack, ((i + 1) * 8) + 80, 30, 16 + 9*1, 9, 9,9);
+                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9*2, 9, 9,9);
+                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 30, 16 + 9*1, 9, 9,9);
             }else{
-                drawTexture(matrixStack,  (i * 8) + 80, 30, 16 + 9*2, 9, 9, 9);
+                ctx.drawTexture(ICONS,  (i * 8) + 80, 30, 16 + 9*2, 9, 9, 9);
             }
         }
 
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
+    public void render(DrawContext ctx, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(ctx);
         this.mousePosX = (float) mouseX;
         this.mousePosY = (float) mouseY;
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.drawMouseoverTooltip(matrixStack, mouseX, mouseY);
+        super.render(ctx, mouseX, mouseY, partialTicks);
+        this.drawMouseoverTooltip(ctx, mouseX, mouseY);
     }
 
 
@@ -145,16 +148,15 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         }
 
         @Override
-        public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        public void renderButton(DrawContext ctx, int mouseX, int mouseY, float partialTicks) {
             Identifier icon = this.requirementsForTexture() ? texture : newTexture;
-            RenderSystem.setShaderTexture(0, icon);
             int i = ((TexturedButtonWidgetAccessor)this).v();
             if (this.isHovered()) {
                 i += ((TexturedButtonWidgetAccessor)this).hoveredVOffset();
             }
 
             RenderSystem.enableDepthTest();
-            drawTexture(matrixStack, this.getX(), this.getY(), (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
+            ctx.drawTexture(icon, this.getX(), this.getY(), (float) ((TexturedButtonWidgetAccessor)this).v(), (float) i, this.width, this.height, ((TexturedButtonWidgetAccessor)this).textureWidth(), ((TexturedButtonWidgetAccessor)this).textureHeight());
         }
     }
 

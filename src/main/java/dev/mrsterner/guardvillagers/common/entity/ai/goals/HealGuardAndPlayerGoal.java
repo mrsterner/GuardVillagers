@@ -51,7 +51,7 @@ public class HealGuardAndPlayerGoal extends Goal {
         if (((VillagerEntity) this.healer).getVillagerData().getProfession() != VillagerProfession.CLERIC || this.healer.isSleeping()) {
             return false;
         }
-        List<LivingEntity> list = this.healer.world.getNonSpectatingEntities(LivingEntity.class, this.healer.getBoundingBox().expand(10.0D, 3.0D, 10.0D));
+        List<LivingEntity> list = this.healer.getWorld().getNonSpectatingEntities(LivingEntity.class, this.healer.getBoundingBox().expand(10.0D, 3.0D, 10.0D));
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {
@@ -124,11 +124,11 @@ public class HealGuardAndPlayerGoal extends Goal {
         } else {
             potion = Potions.REGENERATION;
         }
-        PotionEntity potionentity = new PotionEntity(healer.world, healer);
+        PotionEntity potionentity = new PotionEntity(healer.getWorld(), healer);
         potionentity.setItem(PotionUtil.setPotion(new ItemStack(Items.SPLASH_POTION), potion));
         potionentity.setPitch(-20.0F);
         potionentity.setVelocity(d0, d1 + (double) (f * 0.2F), d2, 0.75F, 8.0F);
-        healer.world.playSound((PlayerEntity) null, healer.getX(), healer.getY(), healer.getZ(), SoundEvents.ENTITY_SPLASH_POTION_BREAK, healer.getSoundCategory(), 1.0F, 0.8F + healer.getRandom().nextFloat() * 0.4F);
-        healer.world.spawnEntity(potionentity);
+        healer.getWorld().playSound((PlayerEntity) null, healer.getX(), healer.getY(), healer.getZ(), SoundEvents.ENTITY_SPLASH_POTION_BREAK, healer.getSoundCategory(), 1.0F, 0.8F + healer.getRandom().nextFloat() * 0.4F);
+        healer.getWorld().spawnEntity(potionentity);
     }
 }

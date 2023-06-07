@@ -31,7 +31,7 @@ public class HealGolemGoal extends Goal {
         && (((VillagerEntity) this.healer).getVillagerData().getProfession() != VillagerProfession.ARMORER) || this.healer.isSleeping()) {
             return false;
         }
-        List<IronGolemEntity> list = this.healer.world.getNonSpectatingEntities(IronGolemEntity.class, this.healer.getBoundingBox().expand(10.0D));
+        List<IronGolemEntity> list = this.healer.getWorld().getNonSpectatingEntities(IronGolemEntity.class, this.healer.getBoundingBox().expand(10.0D));
         if (!list.isEmpty()) {
             for (IronGolemEntity golem : list) {
                 if (!golem.isInvisible() && golem.isAlive() && golem.getType() == EntityType.IRON_GOLEM) { // Check if the entity is an Iron Golem, not any other golem.

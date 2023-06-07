@@ -19,7 +19,7 @@ public class ArmorerRepairGuardArmorGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        List<VillagerEntity> list = this.guard.world.getNonSpectatingEntities(VillagerEntity.class, this.guard.getBoundingBox().expand(10.0D, 3.0D, 10.0D));
+        List<VillagerEntity> list = this.guard.getWorld().getNonSpectatingEntities(VillagerEntity.class, this.guard.getBoundingBox().expand(10.0D, 3.0D, 10.0D));
         if (!list.isEmpty()) {
             for (VillagerEntity mob : list) {
                 if (mob != null) {

@@ -61,7 +61,6 @@ public class GuardVillagersConfig extends MidnightConfig {
     @Entry
         public static int amountOfHealthRegenerated = 1;
 
-
-
-
+    @Entry
+        public static boolean followHero = true;
 }
