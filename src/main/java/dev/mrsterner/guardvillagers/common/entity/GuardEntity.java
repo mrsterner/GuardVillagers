@@ -38,6 +38,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.*;
+import net.minecraft.loot.LootManager;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameterSet;
@@ -47,6 +48,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -517,9 +519,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         } else {
             if (!this.activeItemStack.isEmpty() && this.isUsingItem()) {
                 this.spawnConsumptionEffects(this.activeItemStack, 16);
-                if (this.activeItemStack.isFood())
+                if (this.activeItemStack.isFood()) {
                     this.heal(this.activeItemStack.getItem().getFoodComponent().getHunger());
                     this.activeItemStack.decrement(1);
+                } else {
+                    this.activeItemStack.decrement(1);
+                }
                 this.stopUsingItem();
             }
         }
@@ -666,9 +671,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     public List<ItemStack> getItemsFromLootTable(EquipmentSlot slot) {
         if (EQUIPMENT_SLOT_ITEMS.containsKey(slot)) {
-            LootTable loot = this.getWorld().getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
-            LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld) this.getWorld())).add(LootContextParameters.THIS_ENTITY, this);
-            return loot.generateLoot(lootcontext$builder.build(GuardLootTables.SLOT));
+            MinecraftServer server = this.getWorld().getServer();
+            if (server != null && getWorld() instanceof ServerWorld serverWorld) {
+                LootTable loot = server.getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
+                LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder(serverWorld)).add(LootContextParameters.THIS_ENTITY, this);
+                return loot.generateLoot(lootcontext$builder.build(GuardLootTables.SLOT));
+            }
         }
         return null;
     }

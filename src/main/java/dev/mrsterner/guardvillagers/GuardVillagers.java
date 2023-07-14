@@ -60,7 +60,7 @@ public class GuardVillagers implements ModInitializer {
 					if (target instanceof VillagerEntity villagerEntity) {
 						if (!villagerEntity.isBaby()) {
 							if (villagerEntity.getVillagerData().getProfession() == VillagerProfession.NONE || villagerEntity.getVillagerData().getProfession() == VillagerProfession.NITWIT) {
-								if (!GuardVillagers.config.ConvertVillagerIfHaveHOTV || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagers.config.ConvertVillagerIfHaveHOTV) {
+								if (!GuardVillagersConfig.ConvertVillagerIfHaveHOTV || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && GuardVillagersConfig.ConvertVillagerIfHaveHOTV) {
 									convertVillager(villagerEntity, player, world);
 									if (!player.getAbilities().creativeMode)
 										itemStack.decrement(1);
@@ -78,7 +78,7 @@ public class GuardVillagers implements ModInitializer {
 	}
 
 	public static boolean hotvChecker(PlayerEntity player) {
-		return player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) || !config.giveGuardStuffHOTV;
+		return player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) || !GuardVillagersConfig.giveGuardStuffHOTV;
 	}
 
 	public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {

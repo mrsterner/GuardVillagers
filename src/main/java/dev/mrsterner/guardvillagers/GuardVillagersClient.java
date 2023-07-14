@@ -16,6 +16,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.*;
 import net.minecraft.network.PacketByteBuf;
@@ -42,7 +43,7 @@ public class GuardVillagersClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ScreenRegistry.register(GUARD_SCREEN_HANDLER, GuardVillagerScreen::new);
+		HandledScreens.register(GUARD_SCREEN_HANDLER, GuardVillagerScreen::new);
 		EntityModelLayerRegistry.registerModelLayer(GUARD, GuardVillagerModel::createBodyLayer);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_STEVE, GuardSteveModel::createMesh);
 		EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_OUTER, GuardArmorModel::createOuterArmorLayer);

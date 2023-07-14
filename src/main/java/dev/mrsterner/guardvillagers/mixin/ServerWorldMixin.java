@@ -10,6 +10,7 @@ import dev.mrsterner.guardvillagers.common.events.GuardVillagersEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -29,7 +30,7 @@ public class ServerWorldMixin {
     @Inject(method = "addEntity", at = @At("HEAD"))
     private void onSpawnedEvent(Entity entity, CallbackInfoReturnable<Boolean> cir){
         GuardVillagersEvents.ON_SPAWNED_ENTITY_EVENT.invoker().onSpawned((ServerWorld) (Object) this, entity);
-        if (GuardVillagers.config.RaidAnimals) {
+        if (GuardVillagersConfig.RaidAnimals) {
             if (entity instanceof RaiderEntity raiderEntity)
                 if (raiderEntity.hasActiveRaid()) {
                     ((MobEntityAccessor)raiderEntity).targetSelector().add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
@@ -52,21 +53,21 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagers.config.WitchesVillager)
+            if (GuardVillagersConfig.WitchesVillager)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(2, new FleeEntityGoal<>(villagerEntity, WitchEntity.class, 6.0F, 1.0D, 1.2D));
         }
 
         if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagers.config.BlackSmithHealing)
+            if (GuardVillagersConfig.BlackSmithHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGolemGoal(villagerEntity));
-            if (GuardVillagers.config.ClericHealing)
+            if (GuardVillagersConfig.ClericHealing)
                 ((MobEntityAccessor)villagerEntity).goalSelector().add(1, new HealGuardAndPlayerGoal(villagerEntity, 1.0D, 100, 0, 10.0F));
         }
 
         if (entity instanceof IronGolemEntity golem) {
 
             RevengeGoal tolerateFriendlyFire = new RevengeGoal(golem, GuardEntity.class).setGroupRevenge();
-            ((MobEntityAccessor)golem).targetSelector().getGoals().stream().map(it -> it.getGoal()).filter(it -> it instanceof RevengeGoal).findFirst().ifPresent(angerGoal -> {
+            ((MobEntityAccessor)golem).targetSelector().getGoals().stream().map(PrioritizedGoal::getGoal).filter(it -> it instanceof RevengeGoal).findFirst().ifPresent(angerGoal -> {
                 ((MobEntityAccessor)golem).targetSelector().remove(angerGoal);
                 ((MobEntityAccessor)golem).targetSelector().add(2, tolerateFriendlyFire);
             });
@@ -81,7 +82,7 @@ public class ServerWorldMixin {
         }
 
         if (entity instanceof WitchEntity witch) {
-            if (GuardVillagers.config.WitchesVillager) {
+            if (GuardVillagersConfig.WitchesVillager) {
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, VillagerEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, IronGolemEntity.class, true));
                 ((MobEntityAccessor)witch).targetSelector().add(3, new ActiveTargetGoal<>(witch, GuardEntity.class, true));
