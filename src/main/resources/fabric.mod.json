@@ -1,0 +1,36 @@
+{
+	"schemaVersion": 1,
+	"id": "guardvillagers",
+	"version": "${version}",
+	"name": "GuardVillagers",
+	"description": "Better village pest controll!",
+	"authors": [
+		"MrSterner"
+	],
+	"contact": {
+	},
+	"license": "MIT",
+	"icon": "assets/guardvillagers/icon.png",
+	"environment": "*",
+	"accessWidener": "guardvillagers.accesswidener",
+	"entrypoints": {
+		"main": [
+			"dev.sterner.GuardVillagers"
+		],
+		"client": [
+			"dev.sterner.GuardVillagersClient"
+		]
+	},
+	"mixins": [
+		"guardvillagers.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.21",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

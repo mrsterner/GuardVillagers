@@ -1,0 +1,28 @@
+{
+  "entity.guardvillagers.guard": "Guard",
+  "item.guardvillagers.guard_spawn_egg": "Guard Spawn Egg",
+  "guardinventory.health": "Health: %s",
+  "guardinventory.armor": "Armor: %s",
+
+  "guardvillagers.midnightconfig.useSteveModel": "Use Steve Model",
+  "guardvillagers.midnightconfig.guardsRunFromPolarBears": "Guards Run From Polar Bear",
+
+  "guardvillagers.midnightconfig.guardFormation": "Guard Formation",
+  "guardvillagers.midnightconfig.clericHealing": "Cleric Healing",
+  "guardvillagers.midnightconfig.armorerRepairGuardArmor": "Armorer Repair Guard Armor",
+  "guardvillagers.midnightconfig.guardsOpenDoors": "Guards Open Doors",
+  "guardvillagers.midnightconfig.giveGuardStuffHotv": "Require HOTV To Give Guards Stuff",
+  "guardvillagers.midnightconfig.setGuardPatrolHotv": "Require HOTV To Set Guards Patrol",
+  "guardvillagers.midnightconfig.guardAlwaysShield": "Guard Always Shield",
+  "guardvillagers.midnightconfig.friendlyFire": "Friendly Fire",
+  "guardvillagers.midnightconfig.guardArrowsHurtVillagers": "Guard Arrows Hurt Villagers",
+  "guardvillagers.midnightconfig.raidAnimals": "Raiders Will Attack Animals",
+  "guardvillagers.midnightconfig.witchesVillager": "Witches Will Attack Villagers",
+  "guardvillagers.midnightconfig.blackSmithHealing": "Blacksmith Will Heal Iron Golems",
+  "guardvillagers.midnightconfig.convertVillagerIfHaveHotv": "Require HOTV To Convert Villagers",
+  "guardvillagers.midnightconfig.guardAttackMobBlacklist": "Guard Attack Blacklist",
+  "guardvillagers.midnightconfig.guardVillagerHelpRange": "Guard Help Range",
+  "guardvillagers.midnightconfig.amountOfHealthRegenerated": "Guard Regen",
+
+  "guardvillagers.midnightconfig.attackAllMobs": "Guard Attack All Mobs"
+}

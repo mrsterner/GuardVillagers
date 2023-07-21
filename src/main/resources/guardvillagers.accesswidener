@@ -1,0 +1,10 @@
+accessWidener v1 named
+accessible field net/minecraft/entity/mob/MobEntity armorItems Lnet/minecraft/util/collection/DefaultedList;
+accessible field net/minecraft/entity/mob/MobEntity handItems Lnet/minecraft/util/collection/DefaultedList;
+accessible method net/minecraft/entity/LivingEntity knockback (Lnet/minecraft/entity/LivingEntity;)V
+accessible field net/minecraft/entity/ai/goal/MeleeAttackGoal path Lnet/minecraft/entity/ai/pathing/Path;
+accessible field net/minecraft/entity/passive/VillagerEntity gossipStartTime J
+accessible method net/minecraft/entity/Entity getSavedEntityId ()Ljava/lang/String;
+accessible method net/minecraft/loot/context/LootContextTypes register (Ljava/lang/String;Ljava/util/function/Consumer;)Lnet/minecraft/loot/context/LootContextType;
+accessible field net/minecraft/entity/mob/MobEntity targetSelector Lnet/minecraft/entity/ai/goal/GoalSelector;
+accessible field net/minecraft/entity/mob/MobEntity goalSelector Lnet/minecraft/entity/ai/goal/GoalSelector;
