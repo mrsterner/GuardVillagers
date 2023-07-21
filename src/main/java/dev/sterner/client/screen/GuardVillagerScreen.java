@@ -29,8 +29,8 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     private static final Identifier NOT_PATROLLING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/notpatrollingui.png");
 
     private static final Identifier ICONS = new Identifier("textures/gui/icons.png");
-    private PlayerEntity player;
-    private GuardEntity guardEntity;
+    private final PlayerEntity player;
+    private final GuardEntity guardEntity;
     private float mousePosX;
     private float mousePosY;
     private boolean buttonPressed;
@@ -47,14 +47,14 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
     protected void init() {
         super.init();
         if (!GuardVillagersConfig.followHero || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19,  GUARD_FOLLOWING_ICON , GUARD_NOT_FOLLOWING_ICON, true,
+            this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true,
                     (button) -> {
                         ClientPlayNetworking.send(new GuardFollowPacket(guardEntity.getId()));
                     })
             );
         }
         if (!GuardVillagersConfig.setGuardPatrolHotv || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
-            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON , NOT_PATROLLING_ICON, false,
+            this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false,
                     (button) -> {
                         buttonPressed = !buttonPressed;
                         ClientPlayNetworking.send(new GuardPatrolPacket(guardEntity.getId(), buttonPressed));
@@ -83,24 +83,24 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         for (int i = 0; i < 10; i++) {
             ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16, 0, 9, 9);
         }
-        for (int i = 0; i < health/2; i++) {
-            if(health % 2 != 0 && health/2 == i + 1){
-                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9,9);
-                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 20, 16 + 9*(5 + statusU), 0, 9,9);
-            }else{
-                ctx.drawTexture(ICONS,  (i * 8) + 80, 20, 16 + 9*(4 + statusU), 0, 9, 9);
+        for (int i = 0; i < health / 2; i++) {
+            if (health % 2 != 0 && health / 2 == i + 1) {
+                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
+                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 20, 16 + 9 * (5 + statusU), 0, 9, 9);
+            } else {
+                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
             }
         }
         //Armor
         for (int i = 0; i < 10; i++) {
             ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16, 9, 9, 9);
         }
-        for (int i = 0; i < armor/2; i++) {
-            if(armor % 2 != 0 && armor/2 == i + 1){
-                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9*2, 9, 9,9);
-                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 30, 16 + 9*1, 9, 9,9);
-            }else{
-                ctx.drawTexture(ICONS,  (i * 8) + 80, 30, 16 + 9*2, 9, 9, 9);
+        for (int i = 0; i < armor / 2; i++) {
+            if (armor % 2 != 0 && armor / 2 == i + 1) {
+                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
+                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 30, 16 + 9, 9, 9, 9);
+            } else {
+                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
             }
         }
 
@@ -117,11 +117,11 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
 
 
     class GuardGuiButton extends TexturedButtonWidget {
-        private Identifier texture;
-        private Identifier newTexture;
-        private boolean isFollowButton;
+        private final Identifier texture;
+        private final Identifier newTexture;
+        private final boolean isFollowButton;
 
-        public GuardGuiButton(int xIn, int yIn, int widthIn, int heightIn, int xTexStartIn, int yTexStartIn, int yDiffTextIn, Identifier resourceLocationIn, Identifier newTexture, boolean isFollowButton, PressAction pressAction ) {
+        public GuardGuiButton(int xIn, int yIn, int widthIn, int heightIn, int xTexStartIn, int yTexStartIn, int yDiffTextIn, Identifier resourceLocationIn, Identifier newTexture, boolean isFollowButton, PressAction pressAction) {
             super(xIn, yIn, widthIn, heightIn, xTexStartIn, yTexStartIn, yDiffTextIn, resourceLocationIn, pressAction);
             this.texture = resourceLocationIn;
             this.newTexture = newTexture;

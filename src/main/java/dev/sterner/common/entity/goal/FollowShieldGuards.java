@@ -49,7 +49,7 @@ public class FollowShieldGuards extends Goal {
 
     @Nullable
     protected Vec3d getPosition() {
-        return NoPenaltyTargeting.findTo(this.taskOwner, 16, 7, this.guardtofollow.getPos(), (double)((float)Math.PI / 2F));
+        return NoPenaltyTargeting.findTo(this.taskOwner, 16, 7, this.guardtofollow.getPos(), (float) Math.PI / 2F);
     }
 
     @Override

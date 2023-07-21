@@ -55,7 +55,7 @@ public class HealGuardAndPlayerGoal extends Goal {
         if (!list.isEmpty()) {
             for (LivingEntity mob : list) {
                 if (mob != null) {
-                    if (mob instanceof VillagerEntity && mob.isAlive() && mob.getHealth() < mob.getMaxHealth() && mob != healer|| mob.getType() == GuardVillagers.GUARD_VILLAGER && mob != null && mob.isAlive() && mob.getHealth() < mob.getMaxHealth()
+                    if (mob instanceof VillagerEntity && mob.isAlive() && mob.getHealth() < mob.getMaxHealth() && mob != healer || mob.getType() == GuardVillagers.GUARD_VILLAGER && mob != null && mob.isAlive() && mob.getHealth() < mob.getMaxHealth()
                             || mob instanceof PlayerEntity && mob.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE) && !((PlayerEntity) mob).getAbilities().creativeMode && mob.getHealth() < mob.getMaxHealth()) {
                         this.mob = mob;
                         return true;
@@ -108,7 +108,7 @@ public class HealGuardAndPlayerGoal extends Goal {
             this.throwPotion(mob, distanceFactor);
             this.rangedAttackTime = MathHelper.floor(f * (float) (this.maxRangedAttackTime - this.attackIntervalMin) + (float) this.attackIntervalMin);
         } else if (this.rangedAttackTime < 0) {
-            this.rangedAttackTime = MathHelper.floor(MathHelper.lerp(Math.sqrt(d0) / (double)this.attackRadius, (double)this.attackIntervalMin, (double)this.maxAttackDistance));
+            this.rangedAttackTime = MathHelper.floor(MathHelper.lerp(Math.sqrt(d0) / (double) this.attackRadius, this.attackIntervalMin, this.maxAttackDistance));
         }
     }
 
@@ -128,7 +128,7 @@ public class HealGuardAndPlayerGoal extends Goal {
         potionentity.setItem(PotionUtil.setPotion(new ItemStack(Items.SPLASH_POTION), potion));
         potionentity.setPitch(-20.0F);
         potionentity.setVelocity(d0, d1 + (double) (f * 0.2F), d2, 0.75F, 8.0F);
-        healer.getWorld().playSound((PlayerEntity) null, healer.getX(), healer.getY(), healer.getZ(), SoundEvents.ENTITY_SPLASH_POTION_THROW, healer.getSoundCategory(), 1.0F, 0.8F + healer.getRandom().nextFloat() * 0.4F);
+        healer.getWorld().playSound(null, healer.getX(), healer.getY(), healer.getZ(), SoundEvents.ENTITY_SPLASH_POTION_THROW, healer.getSoundCategory(), 1.0F, 0.8F + healer.getRandom().nextFloat() * 0.4F);
         healer.getWorld().spawnEntity(potionentity);
     }
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuardVillagersConfig extends MidnightConfig {
-    
+
     @Entry
     public static int reputationRequirementToBeAttacked = -100;
     @Entry
@@ -61,4 +61,6 @@ public class GuardVillagersConfig extends MidnightConfig {
     public static boolean illagersRunFromPolarBears = true;
     @Entry
     public static boolean villagersRunFromPolarBears = true;
+    @Entry
+    public static boolean guardArrowsHurtVillagers = true;
 }

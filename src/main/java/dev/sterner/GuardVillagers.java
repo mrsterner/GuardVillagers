@@ -6,23 +6,22 @@ import dev.sterner.common.entity.goal.HealGolemGoal;
 import dev.sterner.common.entity.goal.HealGuardAndPlayerGoal;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
 import eu.midnightdust.lib.config.MidnightConfig;
+import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
 import net.fabricmc.api.ModInitializer;
-
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.FleeEntityGoal;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.ai.goal.RevengeGoal;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
@@ -44,8 +43,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.spawner.Spawner;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -59,14 +56,14 @@ public class GuardVillagers implements ModInitializer {
     public static final EntityType<GuardEntity> GUARD_VILLAGER = Registry.register(Registries.ENTITY_TYPE, new Identifier(GuardVillagers.MODID, "guard"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, GuardEntity::new).dimensions(EntityDimensions.fixed(0.6f, 1.8f)).build());
 
-    public static final Item GUARD_SPAWN_EGG = new SpawnEggItem(GUARD_VILLAGER ,5651507, 8412749, new Item.Settings());
+    public static final Item GUARD_SPAWN_EGG = new SpawnEggItem(GUARD_VILLAGER, 5651507, 8412749, new Item.Settings());
 
     public static Hand getHandWith(LivingEntity livingEntity, Predicate<Item> itemPredicate) {
         return itemPredicate.test(livingEntity.getMainHandStack().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
 
     @Override
-	public void onInitialize() {
+    public void onInitialize() {
         MidnightConfig.init(MODID, GuardVillagersConfig.class);
         FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
         Registry.register(Registries.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
@@ -76,7 +73,35 @@ public class GuardVillagers implements ModInitializer {
 
         LivingEntityEvents.NATURAL_SPAWN.register(this::addGoals);
         LivingEntityEvents.SET_TARGET.register(this::target);
+        LivingEntityDamageEvents.HURT.register(this::onDamage);
         UseEntityCallback.EVENT.register(this::villagerConvert);
+    }
+
+    private void onDamage(LivingEntityDamageEvents.HurtEvent hurtEvent) {
+        LivingEntity entity = hurtEvent.damaged;
+        Entity trueSource = hurtEvent.damageSource.getAttacker();
+        if (entity == null || trueSource == null)
+            return;
+
+        boolean isVillager = entity.getType() == EntityType.VILLAGER || entity.getType() == GuardVillagers.GUARD_VILLAGER;
+        boolean isGolem = isVillager || entity.getType() == EntityType.IRON_GOLEM;
+        if (isGolem && trueSource.getType() == GuardVillagers.GUARD_VILLAGER && !GuardVillagersConfig.guardArrowsHurtVillagers) {
+            hurtEvent.damageAmount = 0;
+            hurtEvent.setCanceled(true);
+        }
+        if (isVillager && hurtEvent.damageSource.getAttacker() instanceof MobEntity) {
+            List<MobEntity> list = trueSource.getWorld().getNonSpectatingEntities(MobEntity.class, trueSource.getBoundingBox().expand(GuardVillagersConfig.guardVillagerHelpRange, 5.0D, GuardVillagersConfig.guardVillagerHelpRange));
+            for (MobEntity mob : list) {
+                boolean type = mob.getType() == GUARD_VILLAGER || mob.getType() == EntityType.IRON_GOLEM;
+                boolean trueSourceGolem = trueSource.getType() == GUARD_VILLAGER || trueSource.getType() == EntityType.IRON_GOLEM;
+                if (!trueSourceGolem && type && mob.getTarget() == null)
+                    mob.setTarget((MobEntity) hurtEvent.damageSource.getAttacker());
+            }
+        }
+    }
+
+    private void onDamage(LivingEntity livingEntity, DamageSource damageSource, float v) {
+
     }
 
     private void target(MobEntity mob, @Nullable LivingEntity target) {
@@ -173,7 +198,7 @@ public class GuardVillagers implements ModInitializer {
 
         if (GuardVillagersConfig.attackAllMobs) {
             if (entity instanceof HostileEntity && !(entity instanceof SpiderEntity)) {
-                MobEntity mob = (MobEntity) entity;
+                MobEntity mob = entity;
                 mob.targetSelector.add(2, new ActiveTargetGoal<>(mob, GuardEntity.class, false));
             }
             if (entity instanceof SpiderEntity spider) {
@@ -214,7 +239,7 @@ public class GuardVillagers implements ModInitializer {
         }
 
         if (entity instanceof ZombieEntity zombie) {
-            zombie.targetSelector.add(3,new ActiveTargetGoal<>(zombie, GuardEntity.class, false));
+            zombie.targetSelector.add(3, new ActiveTargetGoal<>(zombie, GuardEntity.class, false));
         }
 
         if (entity instanceof RavagerEntity ravager) {

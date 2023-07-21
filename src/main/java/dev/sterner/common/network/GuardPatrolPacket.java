@@ -26,7 +26,7 @@ public class GuardPatrolPacket implements FabricPacket {
         boolean pressed = packet.pressed;
 
         Entity entity = serverPlayerEntity.getWorld().getEntityById(entityId);
-        if(entity instanceof GuardEntity guardEntity) {
+        if (entity instanceof GuardEntity guardEntity) {
             BlockPos pos = guardEntity.getBlockPos();
             if (guardEntity.getBlockPos() != null) {
                 guardEntity.setPatrolPos(pos);

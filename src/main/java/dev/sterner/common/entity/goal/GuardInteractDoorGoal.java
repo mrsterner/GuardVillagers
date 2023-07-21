@@ -10,7 +10,7 @@ import net.minecraft.util.Hand;
 import java.util.List;
 
 public class GuardInteractDoorGoal extends LongDoorInteractGoal {
-    private GuardEntity guard;
+    private final GuardEntity guard;
 
     public GuardInteractDoorGoal(GuardEntity pMob, boolean pCloseDoor) {
         super(pMob, pCloseDoor);

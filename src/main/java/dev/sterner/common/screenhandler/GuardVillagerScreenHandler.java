@@ -59,8 +59,8 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             }
 
             @Override
-            public Pair< Identifier,  Identifier>  getBackgroundSprite() {
-                return Pair.of( PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE);
+            public Pair<Identifier, Identifier> getBackgroundSprite() {
+                return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE);
             }
         });
         this.addSlot(new Slot(guardInventory, 1, 8, 26) {
@@ -86,8 +86,8 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             }
 
             @Override
-            public Pair< Identifier,  Identifier>  getBackgroundSprite() {
-                return Pair.of( PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE);
+            public Pair<Identifier, Identifier> getBackgroundSprite() {
+                return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE);
             }
         });
         this.addSlot(new Slot(guardInventory, 2, 8, 44) {
@@ -113,7 +113,7 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             }
 
             @Override
-            public Pair< Identifier,  Identifier>  getBackgroundSprite() {
+            public Pair<Identifier, Identifier> getBackgroundSprite() {
                 return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE);
             }
         });
@@ -140,8 +140,8 @@ public class GuardVillagerScreenHandler extends ScreenHandler {
             }
 
             @Override
-            public Pair< Identifier,  Identifier>  getBackgroundSprite() {
-                return Pair.of( PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE);
+            public Pair<Identifier, Identifier> getBackgroundSprite() {
+                return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE);
             }
         });
         this.addSlot(new Slot(guardInventory, 4, 77, 62) {

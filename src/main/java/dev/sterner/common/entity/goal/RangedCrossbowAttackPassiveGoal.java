@@ -8,7 +8,6 @@ import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.TimeHelper;
@@ -165,7 +164,7 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathAwareEntity & RangedA
         List<Entity> list = this.mob.getWorld().getOtherEntities(this.mob, this.mob.getBoundingBox().expand(5.0D));
         for (Entity guard : list) {
             if (guard != this.mob.getTarget()) {
-                boolean isVillager = ((GuardEntity)this.mob).getOwner() == guard || guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD_VILLAGER || guard.getType() == EntityType.IRON_GOLEM;
+                boolean isVillager = ((GuardEntity) this.mob).getOwner() == guard || guard.getType() == EntityType.VILLAGER || guard.getType() == GuardVillagers.GUARD_VILLAGER || guard.getType() == EntityType.IRON_GOLEM;
                 if (isVillager) {
                     Vec3d vector3d = this.mob.getRotationVector();
                     Vec3d vector3d1 = guard.getPos().relativize(this.mob.getPos()).normalize();

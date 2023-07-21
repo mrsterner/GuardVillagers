@@ -5,7 +5,6 @@ import dev.sterner.client.model.GuardSteveModel;
 import dev.sterner.client.model.GuardVillagerModel;
 import dev.sterner.client.renderer.GuardRenderer;
 import dev.sterner.client.screen.GuardVillagerScreen;
-import dev.sterner.common.entity.GuardEntity;
 import dev.sterner.common.network.GuardFollowPacket;
 import dev.sterner.common.network.GuardPatrolPacket;
 import net.fabricmc.api.ClientModInitializer;
@@ -14,13 +13,10 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
 
 import static dev.sterner.GuardVillagers.*;
 

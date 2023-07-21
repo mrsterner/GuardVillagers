@@ -12,6 +12,6 @@ public class AttackEntityDaytimeGoal<T extends LivingEntity> extends ActiveTarge
     @Override
     public boolean canStart() {
         float f = this.mob.getBrightnessAtEyes();
-        return f >= 0.5F ? false : super.canStart();
+        return !(f >= 0.5F) && super.canStart();
     }
 }

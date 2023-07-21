@@ -3,10 +3,8 @@
   "item.guardvillagers.guard_spawn_egg": "Guard Spawn Egg",
   "guardinventory.health": "Health: %s",
   "guardinventory.armor": "Armor: %s",
-
   "guardvillagers.midnightconfig.useSteveModel": "Use Steve Model",
   "guardvillagers.midnightconfig.guardsRunFromPolarBears": "Guards Run From Polar Bear",
-
   "guardvillagers.midnightconfig.guardFormation": "Guard Formation",
   "guardvillagers.midnightconfig.clericHealing": "Cleric Healing",
   "guardvillagers.midnightconfig.armorerRepairGuardArmor": "Armorer Repair Guard Armor",
@@ -23,6 +21,5 @@
   "guardvillagers.midnightconfig.guardAttackMobBlacklist": "Guard Attack Blacklist",
   "guardvillagers.midnightconfig.guardVillagerHelpRange": "Guard Help Range",
   "guardvillagers.midnightconfig.amountOfHealthRegenerated": "Guard Regen",
-
   "guardvillagers.midnightconfig.attackAllMobs": "Guard Attack All Mobs"
 }

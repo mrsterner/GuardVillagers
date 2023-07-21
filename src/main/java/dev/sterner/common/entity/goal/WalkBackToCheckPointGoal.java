@@ -32,7 +32,7 @@ public class WalkBackToCheckPointGoal extends Goal {
         BlockPos blockpos = this.guard.getPatrolPos();
         if (blockpos != null) {
             Vec3d vector3d = Vec3d.ofBottomCenter(blockpos);
-            Vec3d vector3d1 = NoPenaltyTargeting.findTo(this.guard, 16, 3, vector3d,  (float) Math.PI / 10F);
+            Vec3d vector3d1 = NoPenaltyTargeting.findTo(this.guard, 16, 3, vector3d, (float) Math.PI / 10F);
             this.guard.getPatrolPos().isWithinDistance(this.guard.getBlockPos(), 1.0D);
             if (guard.getMainHandStack().getItem() instanceof RangedWeaponItem) {
                 this.guard.getNavigation().startMovingTo(blockpos.getX(), blockpos.getY(), blockpos.getZ(), this.speed);

@@ -24,14 +24,14 @@ public class GuardFollowPacket implements FabricPacket {
         int entityId = guardFollowPacket.id;
 
         Entity entity = serverPlayerEntity.getWorld().getEntityById(entityId);
-        if(entity instanceof GuardEntity guardEntity){
+        if (entity instanceof GuardEntity guardEntity) {
             guardEntity.setFollowing(!guardEntity.isFollowing());
             guardEntity.setOwnerId(serverPlayerEntity.getUuid());
-            guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1,1);
+            guardEntity.playSound(SoundEvents.ENTITY_VILLAGER_YES, 1, 1);
         }
     }
 
-    public static GuardFollowPacket read(PacketByteBuf buf){
+    public static GuardFollowPacket read(PacketByteBuf buf) {
         int id = buf.readInt();
         return new GuardFollowPacket(id);
     }

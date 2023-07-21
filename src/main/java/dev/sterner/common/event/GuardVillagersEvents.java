@@ -13,6 +13,7 @@ public class GuardVillagersEvents {
             listener.onSpawned(serverWorld, entity);
         }
     });
+
     @FunctionalInterface
     public interface OnSpawned {
         void onSpawned(ServerWorld serverWorld, Entity entity);

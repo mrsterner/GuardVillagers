@@ -17,7 +17,10 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.RangedAttackMob;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.MobNavigation;
-import net.minecraft.entity.attribute.*;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
@@ -67,7 +70,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener, InteractionObserver{
+public class GuardEntity extends PathAwareEntity implements CrossbowUser, RangedAttackMob, Angerable, InventoryChangedListener, InteractionObserver {
     protected static final TrackedData<Optional<UUID>> OWNER_UNIQUE_ID = DataTracker.registerData(GuardEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
     private static final UUID MODIFIER_UUID = UUID.fromString("5CD17E52-A79A-43D3-A529-90FDE04B181E");
     private static final EntityAttributeModifier USE_ITEM_SPEED_PENALTY = new EntityAttributeModifier(MODIFIER_UUID, "Use item speed penalty", -0.25D, EntityAttributeModifier.Operation.ADDITION);
@@ -104,7 +107,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         super(type, world);
         this.guardInventory.addListener(this);
         this.setPersistent();
-        if (GuardVillagersConfig.guardEntitysOpenDoors) ((MobNavigation) this.getNavigation()).setCanPathThroughDoors(true);
+        if (GuardVillagersConfig.guardEntitysOpenDoors)
+            ((MobNavigation) this.getNavigation()).setCanPathThroughDoors(true);
     }
 
     public static int slotToInventoryIndex(EquipmentSlot slot) {
@@ -336,7 +340,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
         return ItemStack.EMPTY;
     }
-    
+
 
     public VillagerGossips getGossips() {
         return this.gossips;
@@ -551,11 +555,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.handDropChances[EquipmentSlot.MAINHAND.getEntitySlotId()] = 100.0F;
         this.handDropChances[EquipmentSlot.OFFHAND.getEntitySlotId()] = 100.0F;
     }
-    
+
     public List<ItemStack> getStacksFromLootTable(EquipmentSlot slot) {
         if (EQUIPMENT_SLOT_ITEMS.containsKey(slot)) {
             LootTable loot = getWorld().getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
-            LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld)getWorld()).add(LootContextParameters.THIS_ENTITY, this));
+            LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld) getWorld()).add(LootContextParameters.THIS_ENTITY, this));
             return loot.generateLoot(lootcontext$builder.build(GuardEntityLootTables.SLOT));
         }
         return null;
@@ -588,7 +592,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (GuardVillagersConfig.guardEntitysOpenDoors) this.goalSelector.add(3, new GuardInteractDoorGoal(this, true));
         if (GuardVillagersConfig.guardEntityFormation) this.goalSelector.add(5, new FollowShieldGuards(this));
         if (GuardVillagersConfig.clericHealing) this.goalSelector.add(6, new RunToClericGoal(this));
-        if (GuardVillagersConfig.armorerRepairGuardEntityArmor) this.goalSelector.add(6, new ArmorerRepairGuardArmorGoal(this));
+        if (GuardVillagersConfig.armorerRepairGuardEntityArmor)
+            this.goalSelector.add(6, new ArmorerRepairGuardArmorGoal(this));
         this.goalSelector.add(4, new WalkBackToCheckPointGoal(this, 0.5D));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 0.5D));
         this.goalSelector.add(8, new LookAtEntityGoal(this, MerchantEntity.class, 8.0F));
@@ -623,11 +628,11 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             ItemStack hand = this.getActiveItem();
             PersistentProjectileEntity persistentProjectileEntity = ProjectileUtil.createArrowProjectile(this, itemStack, pullProgress);
             int powerLevel = EnchantmentHelper.getLevel(Enchantments.POWER, itemStack);
-            if (powerLevel > 0){
+            if (powerLevel > 0) {
                 persistentProjectileEntity.setDamage(persistentProjectileEntity.getDamage() + (double) powerLevel * 0.5D + 0.5D);
             }
             int punchLevel = EnchantmentHelper.getLevel(Enchantments.PUNCH, itemStack);
-            if (punchLevel > 0){
+            if (punchLevel > 0) {
                 persistentProjectileEntity.setPunch(punchLevel);
             }
             if (EnchantmentHelper.getLevel(Enchantments.FLAME, itemStack) > 0)
@@ -636,7 +641,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             double e = target.getBodyY(0.3333333333333333D) - persistentProjectileEntity.getY();
             double f = target.getZ() - this.getZ();
             double g = Math.sqrt(d * d + f * f);
-            persistentProjectileEntity.setVelocity(d, e + g * 0.20000000298023224D, f, 1.6F, (float)(14 - this.getWorld().getDifficulty().getId() * 4));
+            persistentProjectileEntity.setVelocity(d, e + g * 0.20000000298023224D, f, 1.6F, (float) (14 - this.getWorld().getDifficulty().getId() * 4));
             this.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
             this.getWorld().spawnEntity(persistentProjectileEntity);
             hand.damage(1, this, (entity) -> entity.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
@@ -708,8 +713,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     @Override
     public void tickRiding() {
         super.tickRiding();
-        if (this.getVehicle() instanceof PathAwareEntity) {
-            PathAwareEntity creatureentity = (PathAwareEntity) this.getVehicle();
+        if (this.getVehicle() instanceof PathAwareEntity creatureentity) {
             this.bodyYaw = creatureentity.bodyYaw;
         }
     }
@@ -727,10 +731,10 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     public void setTarget(LivingEntity entity) {
-        if (entity instanceof GuardEntity || entity instanceof VillagerEntity || entity instanceof IronGolemEntity) return;
+        if (entity instanceof GuardEntity || entity instanceof VillagerEntity || entity instanceof IronGolemEntity)
+            return;
         super.setTarget(entity);
     }
-
 
 
     public void gossip(VillagerEntity villager, long gameTime) {
@@ -795,7 +799,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             }
             for (int i = 0; i < this.guardInventory.size(); ++i) {
                 ItemStack itemstack = this.guardInventory.getStack(i);
-                if ((!damageSource.isOf(DamageTypes.ON_FIRE)|| !itemstack.getItem().isFireproof()) && itemstack.getItem() instanceof ArmorItem) {
+                if ((!damageSource.isOf(DamageTypes.ON_FIRE) || !itemstack.getItem().isFireproof()) && itemstack.getItem() instanceof ArmorItem) {
                     int j = i;
                     itemstack.damage((int) damage, this, (p_214023_1_) -> {
                         p_214023_1_.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, j));
@@ -854,7 +858,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             player.closeHandledScreen();
         }
         this.interacting = true;
-        if(!this.getWorld().isClient()){
+        if (!this.getWorld().isClient()) {
             player.openHandledScreen(new GuardScreenHandlerFactory());
         }
     }
