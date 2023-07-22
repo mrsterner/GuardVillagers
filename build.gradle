@@ -36,13 +36,13 @@ dependencies {
 	//MidnightLib
 	modImplementation include ("maven.modrinth:midnightlib:${project.midnightlib_version}")
 
-	modImplementation ("io.github.fabricators_of_create.Porting-Lib:common:${project.port_lib_version}+1.20")
-	modImplementation ("io.github.fabricators_of_create.Porting-Lib:extensions:${project.port_lib_version}+1.20")
-	modImplementation ("io.github.fabricators_of_create.Porting-Lib:base:${project.port_lib_version}+1.20")
-	modImplementation ("io.github.fabricators_of_create.Porting-Lib:tool_actions:${project.port_lib_version}+1.20")
-	modImplementation ("io.github.fabricators_of_create.Porting-Lib:entity:${project.port_lib_version}+1.20")
+	modApi include("io.github.fabricators_of_create.Porting-Lib:common:${project.port_lib_version}+1.20")
+	modApi include("io.github.fabricators_of_create.Porting-Lib:extensions:${project.port_lib_version}+1.20")
+	modApi include("io.github.fabricators_of_create.Porting-Lib:base:${project.port_lib_version}+1.20")
+	modApi include("io.github.fabricators_of_create.Porting-Lib:tool_actions:${project.port_lib_version}+1.20")
+	modApi include("io.github.fabricators_of_create.Porting-Lib:entity:${project.port_lib_version}+1.20")
 
-	modImplementation include("com.electronwill.night-config:core:${project.night_config_version}")
+	//modImplementation include("com.electronwill.night-config:core:${project.night_config_version}")
 
 }
 
