@@ -33,6 +33,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -62,12 +63,20 @@ public class GuardVillagers implements ModInitializer {
         return itemPredicate.test(livingEntity.getMainHandStack().getItem()) ? Hand.MAIN_HAND : Hand.OFF_HAND;
     }
 
+    public static SoundEvent GUARD_AMBIENT = SoundEvent.of(new Identifier(MODID, "entity.guard.ambient"));
+    public static SoundEvent GUARD_HURT = SoundEvent.of(new Identifier(MODID, "entity.guard.hurt"));
+    public static SoundEvent GUARD_DEATH = SoundEvent.of(new Identifier(MODID, "entity.guard.death"));
+
     @Override
     public void onInitialize() {
         MidnightConfig.init(MODID, GuardVillagersConfig.class);
         FabricDefaultAttributeRegistry.register(GUARD_VILLAGER, GuardEntity.createAttributes());
+
         Registry.register(Registries.ITEM, new Identifier(MODID, "guard_spawn_egg"), GUARD_SPAWN_EGG);
         Registry.register(Registries.SCREEN_HANDLER, new Identifier("guard_screen"), GUARD_SCREEN_HANDLER);
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.ambient"), GUARD_AMBIENT);
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.hurt"), GUARD_HURT);
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.death"), GUARD_DEATH);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(GUARD_SPAWN_EGG));
 
