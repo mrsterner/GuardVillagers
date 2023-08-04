@@ -4,6 +4,8 @@ import dev.sterner.common.entity.GuardEntity;
 import dev.sterner.common.entity.goal.AttackEntityDaytimeGoal;
 import dev.sterner.common.entity.goal.HealGolemGoal;
 import dev.sterner.common.entity.goal.HealGuardAndPlayerGoal;
+import dev.sterner.common.network.GuardFollowPacket;
+import dev.sterner.common.network.GuardPatrolPacket;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
 import eu.midnightdust.lib.config.MidnightConfig;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents;
@@ -11,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEn
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -33,6 +36,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -52,6 +56,9 @@ public class GuardVillagers implements ModInitializer {
 
     public static final ScreenHandlerType<GuardVillagerScreenHandler> GUARD_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(GuardVillagerScreenHandler::new);
 
+    public static SoundEvent GUARD_AMBIENT = SoundEvent.of(new Identifier(MODID, "entity.guard.ambient"));
+    public static SoundEvent GUARD_HURT = SoundEvent.of(new Identifier(MODID, "entity.guard.hurt"));
+    public static SoundEvent GUARD_DEATH = SoundEvent.of(new Identifier(MODID, "entity.guard.death"));
 
     public static final EntityType<GuardEntity> GUARD_VILLAGER = Registry.register(Registries.ENTITY_TYPE, new Identifier(GuardVillagers.MODID, "guard"),
             FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, GuardEntity::new).dimensions(EntityDimensions.fixed(0.6f, 1.8f)).build());
@@ -75,6 +82,13 @@ public class GuardVillagers implements ModInitializer {
         LivingEntityEvents.SET_TARGET.register(this::target);
         LivingEntityDamageEvents.HURT.register(this::onDamage);
         UseEntityCallback.EVENT.register(this::villagerConvert);
+
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.ambient"), GUARD_AMBIENT);
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.hurt"), GUARD_HURT);
+        Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.death"), GUARD_DEATH);
+
+        ServerPlayNetworking.registerGlobalReceiver(GuardFollowPacket.PACKET_TYPE, GuardFollowPacket::handle);
+        ServerPlayNetworking.registerGlobalReceiver(GuardPatrolPacket.PACKET_TYPE, GuardPatrolPacket::handle);
     }
 
     private void onDamage(LivingEntityDamageEvents.HurtEvent hurtEvent) {
@@ -205,7 +219,6 @@ public class GuardVillagers implements ModInitializer {
                 spider.targetSelector.add(3, new AttackEntityDaytimeGoal<>(spider, GuardEntity.class));
             }
         }
-
 
         if (entity instanceof IllagerEntity illager) {
             if (GuardVillagersConfig.illagersRunFromPolarBears) {

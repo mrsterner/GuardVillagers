@@ -3,7 +3,7 @@ package dev.sterner.common.entity;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Dynamic;
-import dev.sterner.GuardVillagersClient;
+import dev.sterner.GuardVillagers;
 import dev.sterner.GuardVillagersConfig;
 import dev.sterner.common.entity.goal.*;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
@@ -178,7 +178,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return GuardVillagersClient.GUARD_AMBIENT;
+        return GuardVillagers.GUARD_AMBIENT;
     }
 
     @Override
@@ -186,13 +186,13 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.isBlocking()) {
             return SoundEvents.ITEM_SHIELD_BLOCK;
         } else {
-            return GuardVillagersClient.GUARD_HURT;
+            return GuardVillagers.GUARD_HURT;
         }
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return GuardVillagersClient.GUARD_DEATH;
+        return GuardVillagers.GUARD_DEATH;
     }
 
     @Override
