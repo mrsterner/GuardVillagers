@@ -3,6 +3,8 @@
   "package": "dev.sterner.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ActiveTargetGoalMixin",
+    "ServerWorldMixin",
     "VillagerTaskListProviderMixin"
   ],
   "injectors": {

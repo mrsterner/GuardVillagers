@@ -36,8 +36,7 @@ public class GuardRenderer extends BipedEntityRenderer<GuardEntity, BipedEntityM
             this.model = normal;
         this.addFeature(new ArmorFeatureRenderer<>(this, !GuardVillagersConfig.useSteveModel ?
                 new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_INNER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_INNER_ARMOR)), !GuardVillagersConfig.useSteveModel ?
-                new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR)),
-                context.getModelManager()));
+                new GuardArmorModel(context.getPart(GuardVillagersClient.GUARD_ARMOR_OUTER)) : new BipedEntityModel<>(context.getPart(EntityModelLayers.PLAYER_OUTER_ARMOR))));
 
     }
 

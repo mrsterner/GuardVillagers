@@ -4,24 +4,27 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.sterner.GuardVillagers;
 import dev.sterner.GuardVillagersConfig;
 import dev.sterner.common.entity.GuardEntity;
-import dev.sterner.common.network.GuardFollowPacket;
-import dev.sterner.common.network.GuardPatrolPacket;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandler> {
 
+    public static final Identifier ID = new Identifier(GuardVillagers.MODID, "guard_follow");
+    public static final Identifier ID_2 = new Identifier(GuardVillagers.MODID, "guard_patroll");
     private static final Identifier GUARD_GUI_TEXTURES = new Identifier(GuardVillagers.MODID, "textures/gui/inventory.png");
     private static final Identifier GUARD_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/following_icons.png");
     private static final Identifier GUARD_NOT_FOLLOWING_ICON = new Identifier(GuardVillagers.MODID, "textures/gui/not_following_icons.png");
@@ -49,7 +52,10 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         if (!GuardVillagersConfig.followHero || player.hasStatusEffect(StatusEffects.HERO_OF_THE_VILLAGE)) {
             this.addDrawableChild(new GuardGuiButton(this.x + 100, this.height / 2 - 40, 20, 18, 0, 0, 19, GUARD_FOLLOWING_ICON, GUARD_NOT_FOLLOWING_ICON, true,
                     (button) -> {
-                        ClientPlayNetworking.send(new GuardFollowPacket(guardEntity.getId()));
+                        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                        buf.writeInt(guardEntity.getId());
+                        buf.writeBoolean(buttonPressed);
+                        ClientPlayNetworking.send(ID, buf);
                     })
             );
         }
@@ -57,62 +63,67 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
             this.addDrawableChild(new GuardGuiButton(this.x + 120, this.height / 2 - 40, 20, 18, 0, 0, 19, PATROL_ICON, NOT_PATROLLING_ICON, false,
                     (button) -> {
                         buttonPressed = !buttonPressed;
-                        ClientPlayNetworking.send(new GuardPatrolPacket(guardEntity.getId(), buttonPressed));
+                        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+                        buf.writeInt(guardEntity.getId());
+                        buf.writeBoolean(buttonPressed);
+                        ClientPlayNetworking.send(ID_2, buf);
                     })
             );
         }
     }
 
     @Override
-    protected void drawBackground(DrawContext ctx, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, GUARD_GUI_TEXTURES);
         int i = (this.width - this.backgroundWidth) / 2;
         int j = (this.height - this.backgroundHeight) / 2;
-        ctx.drawTexture(GUARD_GUI_TEXTURES, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        InventoryScreen.drawEntity(ctx, i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
+        this.drawTexture(matrixStack, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
+        InventoryScreen.drawEntity(i + 51, j + 75, 30, (float) (i + 51) - this.mousePosX, (float) (j + 75 - 50) - this.mousePosY, this.guardEntity);
     }
 
     @Override
-    protected void drawForeground(DrawContext ctx, int x, int y) {
-        super.drawForeground(ctx, x, y);
+    protected void drawForeground(MatrixStack matrixStack, int x, int y) {
+        super.drawForeground(matrixStack, x, y);
         int health = MathHelper.ceil(guardEntity.getHealth());
         int armor = guardEntity.getArmor();
+        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         int statusU = guardEntity.hasStatusEffect(StatusEffects.POISON) ? 4 : 0;
         //Health
         for (int i = 0; i < 10; i++) {
-            ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16, 0, 9, 9);
+            this.drawTexture(matrixStack, (i * 8) + 80, 20, 16, 0, 9, 9);
         }
         for (int i = 0; i < health / 2; i++) {
             if (health % 2 != 0 && health / 2 == i + 1) {
-                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
-                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 20, 16 + 9 * (5 + statusU), 0, 9, 9);
+                this.drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
+                this.drawTexture(matrixStack, ((i + 1) * 8) + 80, 20, 16 + 9 * (5 + statusU), 0, 9, 9);
             } else {
-                ctx.drawTexture(ICONS, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
+                this.drawTexture(matrixStack, (i * 8) + 80, 20, 16 + 9 * (4 + statusU), 0, 9, 9);
             }
         }
         //Armor
         for (int i = 0; i < 10; i++) {
-            ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16, 9, 9, 9);
+            this.drawTexture(matrixStack, (i * 8) + 80, 30, 16, 9, 9, 9);
         }
         for (int i = 0; i < armor / 2; i++) {
             if (armor % 2 != 0 && armor / 2 == i + 1) {
-                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
-                ctx.drawTexture(ICONS, ((i + 1) * 8) + 80, 30, 16 + 9, 9, 9, 9);
+                this.drawTexture(matrixStack, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
+                this.drawTexture(matrixStack, ((i + 1) * 8) + 80, 30, 16 + 9, 9, 9, 9);
             } else {
-                ctx.drawTexture(ICONS, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
+                this.drawTexture(matrixStack, (i * 8) + 80, 30, 16 + 9 * 2, 9, 9, 9);
             }
         }
 
     }
 
     @Override
-    public void render(DrawContext ctx, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(ctx);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(matrixStack);
         this.mousePosX = (float) mouseX;
         this.mousePosY = (float) mouseY;
-        super.render(ctx, mouseX, mouseY, partialTicks);
-        this.drawMouseoverTooltip(ctx, mouseX, mouseY);
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.drawMouseoverTooltip(matrixStack, mouseX, mouseY);
     }
 
 
@@ -135,15 +146,16 @@ public class GuardVillagerScreen extends HandledScreen<GuardVillagerScreenHandle
         }
 
         @Override
-        public void renderButton(DrawContext ctx, int mouseX, int mouseY, float partialTicks) {
+        public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             Identifier icon = this.requirementsForTexture() ? texture : newTexture;
+            RenderSystem.setShaderTexture(0, icon);
             int i = this.v;
             if (this.isHovered()) {
                 i += this.hoveredVOffset;
             }
 
             RenderSystem.enableDepthTest();
-            ctx.drawTexture(icon, this.getX(), this.getY(), (float) v, (float) i, this.width, this.height, textureWidth, textureHeight);
+            drawTexture(matrixStack, this.x, this.y, (float) v, (float) i, this.width, this.height, textureWidth, textureHeight);
         }
     }
 

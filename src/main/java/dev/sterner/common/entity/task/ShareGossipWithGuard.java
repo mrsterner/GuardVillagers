@@ -6,11 +6,11 @@ import dev.sterner.common.entity.GuardEntity;
 import net.minecraft.entity.ai.brain.MemoryModuleState;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
 import net.minecraft.entity.ai.brain.task.LookTargetUtil;
-import net.minecraft.entity.ai.brain.task.MultiTickTask;
+import net.minecraft.entity.ai.brain.task.Task;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.server.world.ServerWorld;
 
-public class ShareGossipWithGuard extends MultiTickTask<VillagerEntity> {
+public class ShareGossipWithGuard extends Task<VillagerEntity> {
     public ShareGossipWithGuard() {
         super(ImmutableMap.of(MemoryModuleType.INTERACTION_TARGET, MemoryModuleState.VALUE_PRESENT, MemoryModuleType.VISIBLE_MOBS, MemoryModuleState.VALUE_PRESENT));
     }
@@ -27,13 +27,13 @@ public class ShareGossipWithGuard extends MultiTickTask<VillagerEntity> {
 
     @Override
     protected void run(ServerWorld serverWorld, VillagerEntity villagerEntity, long time) {
-        GuardEntity guard = (GuardEntity) villagerEntity.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get();
+        GuardEntity guard = (GuardEntity) villagerEntity.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get();
         LookTargetUtil.lookAtAndWalkTowardsEachOther(villagerEntity, guard, 0.5F);
     }
 
     @Override
     protected void keepRunning(ServerWorld serverWorld, VillagerEntity villagerEntity, long time) {
-        GuardEntity guard = (GuardEntity) villagerEntity.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get();
+        GuardEntity guard = (GuardEntity) villagerEntity.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get();
         if (villagerEntity.squaredDistanceTo(guard) < 5.0D) {
             LookTargetUtil.lookAtAndWalkTowardsEachOther(villagerEntity, guard, 0.5F);
             guard.gossip(villagerEntity, time);

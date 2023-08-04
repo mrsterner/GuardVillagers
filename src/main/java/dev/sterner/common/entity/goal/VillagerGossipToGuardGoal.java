@@ -22,7 +22,7 @@ public class VillagerGossipToGuardGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        if (this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get() instanceof GuardEntity guard) {
+        if (this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get() instanceof GuardEntity guard) {
             this.guard = guard;
             long gameTime = guard.getWorld().getTime();
             if (!nearbyVillagersInteractingWithGuards() && (gameTime < this.guard.lastGossipTime || gameTime >= this.guard.lastGossipTime + 1200L))
@@ -33,7 +33,7 @@ public class VillagerGossipToGuardGoal extends Goal {
 
     @Override
     public boolean shouldContinue() {
-        return !nearbyVillagersInteractingWithGuards() && guard.getTarget() == null && this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard);
+        return !nearbyVillagersInteractingWithGuards() && guard.getTarget() == null && this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class VillagerGossipToGuardGoal extends Goal {
     @Override
     public void tick() {
         this.villager.getBrain().remember(MemoryModuleType.INTERACTION_TARGET, guard);
-        if (!nearbyVillagersInteractingWithGuards() && this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard)) {
+        if (!nearbyVillagersInteractingWithGuards() && this.villager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && this.villager.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard)) {
             LookTargetUtil.lookAt(villager, guard);
             if (this.villager.distanceTo(guard) > 2.0D) {
                 this.villager.getNavigation().startMovingTo(guard, 0.5D);
@@ -64,11 +64,11 @@ public class VillagerGossipToGuardGoal extends Goal {
 
     private boolean nearbyVillagersInteractingWithGuards() {
         if (villager.getBrain().hasMemoryModule(MemoryModuleType.MOBS)) {
-            Optional<List<LivingEntity>> list = villager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.MOBS);
+            Optional<List<LivingEntity>> list = villager.getBrain().getOptionalMemory(MemoryModuleType.MOBS);
             for (LivingEntity entity : list.get()) {
                 if (entity instanceof VillagerEntity nearbyVillager) {
                     if (nearbyVillager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET))
-                        return nearbyVillager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && nearbyVillager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard);
+                        return nearbyVillager.getBrain().hasMemoryModule(MemoryModuleType.INTERACTION_TARGET) && nearbyVillager.getBrain().getOptionalMemory(MemoryModuleType.INTERACTION_TARGET).get().equals(guard);
                 }
             }
         }

@@ -1,7 +1,7 @@
 package dev.sterner.common.entity.goal;
 
 import dev.sterner.common.entity.GuardEntity;
-import io.github.fabricators_of_create.porting_lib.tool.ToolActions;
+import io.github.fabricators_of_create.porting_lib.util.ToolActions;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.Goal;

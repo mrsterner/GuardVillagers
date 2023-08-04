@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Dynamic;
 import dev.sterner.GuardVillagers;
-import dev.sterner.GuardVillagersClient;
 import dev.sterner.GuardVillagersConfig;
 import dev.sterner.common.entity.goal.*;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
 import io.github.fabricators_of_create.porting_lib.item.ShieldBlockItem;
-import io.github.fabricators_of_create.porting_lib.tool.ToolActions;
 import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
+import io.github.fabricators_of_create.porting_lib.util.ToolActions;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -23,7 +22,6 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -44,9 +42,10 @@ import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
-import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
@@ -309,7 +308,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             nbt.putInt("PatrolPosY", this.getPatrolPos().getY());
             nbt.putInt("PatrolPosZ", this.getPatrolPos().getZ());
         }
-        nbt.put("Gossips", this.gossips.serialize(NbtOps.INSTANCE));
+        nbt.put("Gossips", this.gossips.serialize(NbtOps.INSTANCE).getValue());
         this.writeAngerToNbt(nbt);
     }
 
@@ -559,8 +558,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     public List<ItemStack> getStacksFromLootTable(EquipmentSlot slot) {
         if (EQUIPMENT_SLOT_ITEMS.containsKey(slot)) {
-            LootTable loot = getWorld().getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
-            LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld) getWorld()).add(LootContextParameters.THIS_ENTITY, this));
+            LootTable loot = getWorld().getServer().getLootManager().getTable(EQUIPMENT_SLOT_ITEMS.get(slot));
+            LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld) this.world)).parameter(LootContextParameters.THIS_ENTITY, this).random(this.getRandom());
             return loot.generateLoot(lootcontext$builder.build(GuardEntityLootTables.SLOT));
         }
         return null;
@@ -683,7 +682,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     }
 
 
-    @Override
     public ItemStack getProjectileType(ItemStack shootable) {
         if (shootable.getItem() instanceof RangedWeaponItem) {
             Predicate<ItemStack> predicate = ((RangedWeaponItem) shootable.getItem()).getHeldProjectiles();
@@ -800,7 +798,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
             }
             for (int i = 0; i < this.guardInventory.size(); ++i) {
                 ItemStack itemstack = this.guardInventory.getStack(i);
-                if ((!damageSource.isOf(DamageTypes.ON_FIRE) || !itemstack.getItem().isFireproof()) && itemstack.getItem() instanceof ArmorItem) {
+                if ((!damageSource.isFire() || !itemstack.getItem().isFireproof()) && itemstack.getItem() instanceof ArmorItem) {
                     int j = i;
                     itemstack.damage((int) damage, this, (p_214023_1_) -> {
                         p_214023_1_.sendEquipmentBreakStatus(EquipmentSlot.fromTypeIndex(EquipmentSlot.Type.ARMOR, j));
