@@ -34,7 +34,6 @@ public class GuardVillagersClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(GUARD_ARMOR_INNER, GuardArmorModel::createInnerArmorLayer);
         EntityRendererRegistry.register(GUARD_VILLAGER, GuardRenderer::new);
 
-        ServerPlayNetworking.registerGlobalReceiver(GuardFollowPacket.PACKET_TYPE, GuardFollowPacket::handle);
-        ServerPlayNetworking.registerGlobalReceiver(GuardPatrolPacket.PACKET_TYPE, GuardPatrolPacket::handle);
+
     }
 }

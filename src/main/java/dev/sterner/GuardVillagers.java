@@ -4,6 +4,8 @@ import dev.sterner.common.entity.GuardEntity;
 import dev.sterner.common.entity.goal.AttackEntityDaytimeGoal;
 import dev.sterner.common.entity.goal.HealGolemGoal;
 import dev.sterner.common.entity.goal.HealGuardAndPlayerGoal;
+import dev.sterner.common.network.GuardFollowPacket;
+import dev.sterner.common.network.GuardPatrolPacket;
 import dev.sterner.common.screenhandler.GuardVillagerScreenHandler;
 import eu.midnightdust.lib.config.MidnightConfig;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents;
@@ -11,6 +13,7 @@ import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEn
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -77,6 +80,9 @@ public class GuardVillagers implements ModInitializer {
         Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.ambient"), GUARD_AMBIENT);
         Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.hurt"), GUARD_HURT);
         Registry.register(Registries.SOUND_EVENT, new Identifier(MODID, "entity.guard.death"), GUARD_DEATH);
+
+        ServerPlayNetworking.registerGlobalReceiver(GuardFollowPacket.PACKET_TYPE, GuardFollowPacket::handle);
+        ServerPlayNetworking.registerGlobalReceiver(GuardPatrolPacket.PACKET_TYPE, GuardPatrolPacket::handle);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(GUARD_SPAWN_EGG));
 
