@@ -15,10 +15,10 @@
   "accessWidener": "guardvillagers.accesswidener",
   "entrypoints": {
     "main": [
-      "dev.sterner.GuardVillagers"
+      "dev.sterner.guardvillagers.GuardVillagers"
     ],
     "client": [
-      "dev.sterner.GuardVillagersClient"
+      "dev.sterner.guardvillagers.GuardVillagersClient"
     ]
   },
   "mixins": [
