@@ -99,6 +99,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public int shieldCoolDown;
     public int kickCoolDown;
     public boolean interacting;
+    protected boolean spawnWithArmor;
     private int remainingPersistentAngerTime;
     private UUID persistentAngerTarget;
     private LazyOptional<?> itemHandler;
@@ -225,6 +226,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.kickCoolDown = nbt.getInt("ShieldCooldown");
         this.lastGossipDecayTime = nbt.getLong("LastGossipDecay");
         this.lastGossipTime = nbt.getLong("LastGossipTime");
+        this.spawnWithArmor = nbt.getBoolean("SpawnWithArmor");
         if (nbt.contains("PatrolPosX")) {
             int x = nbt.getInt("PatrolPosX");
             int y = nbt.getInt("PatrolPosY");
@@ -287,6 +289,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         nbt.putBoolean("Following", this.isFollowing());
         nbt.putBoolean("Interacting", this.interacting);
         nbt.putBoolean("Patrolling", this.isPatrolling());
+        nbt.putBoolean("SpawnWithArmor", this.spawnWithArmor);
         nbt.putLong("LastGossipTime", this.lastGossipTime);
         nbt.putLong("LastGossipDecay", this.lastGossipDecayTime);
         if (this.getOwnerId() != null) {
@@ -436,6 +439,14 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (this.getHealth() < this.getMaxHealth() && this.age % 200 == 0) {
             this.heal(GuardVillagersConfig.amountOfHealthRegenerated);
         }
+        if (spawnWithArmor && this.getWorld() instanceof ServerWorld serverWorld) {
+            for (EquipmentSlot equipmentslottype : EquipmentSlot.values()) {
+                for (ItemStack stack : this.getStacksFromLootTable(equipmentslottype, serverWorld)) {
+                    this.equipStack(equipmentslottype, stack);
+                }
+            }
+            this.spawnWithArmor = false;
+        }
         if (!getWorld().isClient) this.tickAngerLogic((ServerWorld) getWorld(), true);
         this.tickHandSwing();
         super.tickMovement();
@@ -547,18 +558,14 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
 
     @Override
     protected void initEquipment(Random random, LocalDifficulty localDifficulty) {
-        for (EquipmentSlot equipmentslottype : EquipmentSlot.values()) {
-            for (ItemStack stack : this.getStacksFromLootTable(equipmentslottype)) {
-                this.equipStack(equipmentslottype, stack);
-            }
-        }
         this.handDropChances[EquipmentSlot.MAINHAND.getEntitySlotId()] = 100.0F;
         this.handDropChances[EquipmentSlot.OFFHAND.getEntitySlotId()] = 100.0F;
+        this.spawnWithArmor = true;
     }
 
-    public List<ItemStack> getStacksFromLootTable(EquipmentSlot slot) {
+    public List<ItemStack> getStacksFromLootTable(EquipmentSlot slot, ServerWorld serverWorld) {
         if (EQUIPMENT_SLOT_ITEMS.containsKey(slot)) {
-            LootTable loot = getWorld().getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
+            LootTable loot = serverWorld.getServer().getLootManager().getLootTable(EQUIPMENT_SLOT_ITEMS.get(slot));
             LootContextParameterSet.Builder lootcontext$builder = (new LootContextParameterSet.Builder((ServerWorld) getWorld()).add(LootContextParameters.THIS_ENTITY, this));
             return loot.generateLoot(lootcontext$builder.build(GuardEntityLootTables.SLOT));
         }
