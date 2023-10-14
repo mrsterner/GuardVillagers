@@ -505,7 +505,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         if (itemstack.canPerformAction(ToolActions.SHIELD_BLOCK)) {
 
             EntityAttributeInstance modifiableattributeinstance = this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-            modifiableattributeinstance.removeModifier(USE_ITEM_SPEED_PENALTY);
+            modifiableattributeinstance.removeModifier(USE_ITEM_SPEED_PENALTY.getId());
             modifiableattributeinstance.addTemporaryModifier(USE_ITEM_SPEED_PENALTY);
         }
     }
@@ -514,7 +514,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public void stopUsingItem() {
         super.stopUsingItem();
         if (this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).hasModifier(USE_ITEM_SPEED_PENALTY))
-            this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(USE_ITEM_SPEED_PENALTY);
+            this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(USE_ITEM_SPEED_PENALTY.getId());
     }
 
     public void disableShield(boolean increase) {
@@ -625,8 +625,9 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         return false;
     }
 
+
     @Override
-    public void attack(LivingEntity target, float pullProgress) {
+    public void shootAt(LivingEntity target, float pullProgress) {
         this.shieldCoolDown = 8;
         if (this.getMainHandStack().getItem() instanceof CrossbowItem)
             this.shoot(this, 6.0F);
@@ -725,10 +726,14 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
+
+/*
     @Override
     public double getHeightOffset() {
         return -0.35D;
     }
+
+ */
 
 
     @Override
@@ -874,6 +879,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         this.dataTracker.set(GUARD_VARIANT, i);
     }
 
+
+
     private class GuardScreenHandlerFactory implements ExtendedScreenHandlerFactory {
         private GuardEntity guard() {
             return GuardEntity.this;
@@ -988,7 +995,13 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
     }
 
+    @Override
+    public boolean isInAttackRange(LivingEntity entity) {
+        return super.isInAttackRange(entity);
+    }
+
     public static class GuardEntityMeleeGoal extends MeleeAttackGoal {
+        private static final double DEFAULT_ATTACK_REACH = Math.sqrt(2.04F) - (double) 0.6F;
         public final GuardEntity guard;
 
         public GuardEntityMeleeGoal(GuardEntity guard, double speedIn, boolean useLongMemory) {
@@ -1020,14 +1033,8 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
         }
 
         @Override
-        protected double getSquaredMaxAttackDistance(LivingEntity attackTarget) {
-            return super.getSquaredMaxAttackDistance(attackTarget) * 3.55D;
-        }
-
-        @Override
-        protected void attack(LivingEntity enemy, double distToEnemySqr) {
-            double d0 = this.getSquaredMaxAttackDistance(enemy);
-            if (distToEnemySqr <= d0 && this.getCooldown() <= 0) {
+        protected void attack(LivingEntity enemy) {
+            if (canAttack(enemy)) {
                 this.resetCooldown();
                 this.guard.stopUsingItem();
                 if (guard.shieldCoolDown == 0) this.guard.shieldCoolDown = 8;
@@ -1035,5 +1042,26 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
                 this.guard.tryAttack(enemy);
             }
         }
+
+        @Override
+        protected boolean canAttack(LivingEntity mob) {
+            return this.isCooledDown() && this.mobHitBox(this.mob).expand(0.8).intersects(this.mobHitBox(mob)) && this.mob.getVisibilityCache().canSee(mob);
+        }
+
+        protected Box mobHitBox(LivingEntity mob) {
+            Entity entity = mob.getVehicle();
+            Box aabb;
+            if (entity != null) {
+                Box aabb1 = entity.getBoundingBox();
+                Box aabb2 = mob.getBoundingBox();
+                aabb = new Box(Math.min(aabb2.minX, aabb1.minX), aabb2.minY, Math.min(aabb2.minZ, aabb1.minZ), Math.max(aabb2.maxX, aabb1.maxX), aabb2.maxY, Math.max(aabb2.maxZ, aabb1.maxZ));
+            } else {
+                aabb = mob.getBoundingBox();
+            }
+
+            return aabb.expand(DEFAULT_ATTACK_REACH, 0.0D, DEFAULT_ATTACK_REACH);
+        }
+
+
     }
 }

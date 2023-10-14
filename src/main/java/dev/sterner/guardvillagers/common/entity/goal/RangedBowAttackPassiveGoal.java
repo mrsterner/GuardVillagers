@@ -118,7 +118,7 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
                     int i = this.entity.getItemUseTime();
                     if (i >= 20) {
                         this.entity.stopUsingItem();
-                        this.entity.attack(livingentity, BowItem.getPullProgress(i));
+                        this.entity.shootAt(livingentity, BowItem.getPullProgress(i));
                         this.attackTime = this.attackCooldown;
                     }
                 }
