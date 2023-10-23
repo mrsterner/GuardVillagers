@@ -8,9 +8,9 @@ import dev.sterner.guardvillagers.common.network.GuardFollowPacket;
 import dev.sterner.guardvillagers.common.network.GuardPatrolPacket;
 import dev.sterner.guardvillagers.common.screenhandler.GuardVillagerScreenHandler;
 import eu.midnightdust.lib.config.MidnightConfig;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityDamageEvents;
 import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -87,35 +87,30 @@ public class GuardVillagers implements ModInitializer {
 
         LivingEntityEvents.NATURAL_SPAWN.register(this::addGoals);
         LivingEntityEvents.SET_TARGET.register(this::target);
-        LivingEntityDamageEvents.HURT.register(this::onDamage);
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onDamage);
         UseEntityCallback.EVENT.register(this::villagerConvert);
     }
 
-    private void onDamage(LivingEntityDamageEvents.HurtEvent hurtEvent) {
-        LivingEntity entity = hurtEvent.damaged;
-        Entity trueSource = hurtEvent.damageSource.getAttacker();
-        if (entity == null || trueSource == null)
-            return;
-
+    private boolean onDamage(LivingEntity entity, DamageSource source, float amount) {
+        Entity attacker = source.getAttacker();
+        if (entity == null || attacker == null)
+            return true;
+        boolean shouldDamage = true;
         boolean isVillager = entity.getType() == EntityType.VILLAGER || entity.getType() == GuardVillagers.GUARD_VILLAGER;
         boolean isGolem = isVillager || entity.getType() == EntityType.IRON_GOLEM;
-        if (isGolem && trueSource.getType() == GuardVillagers.GUARD_VILLAGER && !GuardVillagersConfig.guardArrowsHurtVillagers) {
-            hurtEvent.damageAmount = 0;
-            hurtEvent.setCanceled(true);
+        if (isGolem && attacker.getType() == GuardVillagers.GUARD_VILLAGER && !GuardVillagersConfig.guardArrowsHurtVillagers) {
+            shouldDamage = false;
         }
-        if (isVillager && hurtEvent.damageSource.getAttacker() instanceof MobEntity) {
-            List<MobEntity> list = trueSource.getWorld().getNonSpectatingEntities(MobEntity.class, trueSource.getBoundingBox().expand(GuardVillagersConfig.guardVillagerHelpRange, 5.0D, GuardVillagersConfig.guardVillagerHelpRange));
+        if (isVillager && attacker instanceof MobEntity) {
+            List<MobEntity> list = attacker.getWorld().getNonSpectatingEntities(MobEntity.class, attacker.getBoundingBox().expand(GuardVillagersConfig.guardVillagerHelpRange, 5.0D, GuardVillagersConfig.guardVillagerHelpRange));
             for (MobEntity mob : list) {
                 boolean type = mob.getType() == GUARD_VILLAGER || mob.getType() == EntityType.IRON_GOLEM;
-                boolean trueSourceGolem = trueSource.getType() == GUARD_VILLAGER || trueSource.getType() == EntityType.IRON_GOLEM;
+                boolean trueSourceGolem = attacker.getType() == GUARD_VILLAGER || attacker.getType() == EntityType.IRON_GOLEM;
                 if (!trueSourceGolem && type && mob.getTarget() == null)
-                    mob.setTarget((MobEntity) hurtEvent.damageSource.getAttacker());
+                    mob.setTarget((MobEntity) attacker);
             }
         }
-    }
-
-    private void onDamage(LivingEntity livingEntity, DamageSource damageSource, float v) {
-
+        return shouldDamage;
     }
 
     private void target(MobEntity mob, @Nullable LivingEntity target) {
