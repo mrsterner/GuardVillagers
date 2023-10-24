@@ -1,14 +1,10 @@
 package dev.sterner.guardvillagers;
 
 import dev.sterner.guardvillagers.common.entity.GuardEntity;
-import dev.sterner.guardvillagers.common.entity.goal.AttackEntityDaytimeGoal;
-import dev.sterner.guardvillagers.common.entity.goal.HealGolemGoal;
-import dev.sterner.guardvillagers.common.entity.goal.HealGuardAndPlayerGoal;
 import dev.sterner.guardvillagers.common.network.GuardFollowPacket;
 import dev.sterner.guardvillagers.common.network.GuardPatrolPacket;
 import dev.sterner.guardvillagers.common.screenhandler.GuardVillagerScreenHandler;
 import eu.midnightdust.lib.config.MidnightConfig;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
@@ -17,19 +13,13 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.brain.MemoryModuleType;
-import net.minecraft.entity.ai.goal.ActiveTargetGoal;
-import net.minecraft.entity.ai.goal.FleeEntityGoal;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
-import net.minecraft.entity.ai.goal.RevengeGoal;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.raid.RaiderEntity;
 import net.minecraft.item.*;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -44,8 +34,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.spawner.Spawner;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -85,7 +73,6 @@ public class GuardVillagers implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(GUARD_SPAWN_EGG));
 
-        LivingEntityEvents.SET_TARGET.register(this::target);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onDamage);
         UseEntityCallback.EVENT.register(this::villagerConvert);
     }
@@ -110,25 +97,6 @@ public class GuardVillagers implements ModInitializer {
             }
         }
         return shouldDamage;
-    }
-
-    private void target(MobEntity mob, @Nullable LivingEntity target) {
-        if (target == null || mob instanceof GuardEntity) {
-            return;
-        }
-        boolean isVillager = target.getType() == EntityType.VILLAGER || target instanceof GuardEntity;
-        if (isVillager) {
-            List<MobEntity> list = mob.getWorld().getNonSpectatingEntities(MobEntity.class, mob.getBoundingBox().expand(GuardVillagersConfig.guardVillagerHelpRange, 5.0D, GuardVillagersConfig.guardVillagerHelpRange));
-            for (MobEntity mobEntity : list) {
-                if ((mobEntity instanceof GuardEntity || mob.getType() == EntityType.IRON_GOLEM) && mobEntity.getTarget() == null) {
-                    mobEntity.setTarget(mob);
-                }
-            }
-        }
-
-        if (mob instanceof IronGolemEntity golem && target instanceof GuardEntity) {
-            golem.setTarget(null);
-        }
     }
 
     private ActionResult villagerConvert(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {

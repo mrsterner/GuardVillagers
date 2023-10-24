@@ -55,7 +55,6 @@ public abstract class ServerWorldMixin extends World implements StructureWorldAc
             }
         }
 
-
         if (entity instanceof IllagerEntity illager) {
             if (GuardVillagersConfig.illagersRunFromPolarBears) {
                 illager.goalSelector.add(2, new FleeEntityGoal<>(illager, PolarBearEntity.class, 6.0F, 1.0D, 1.2D));
@@ -69,9 +68,7 @@ public abstract class ServerWorldMixin extends World implements StructureWorldAc
                 villagerEntity.goalSelector.add(2, new FleeEntityGoal<>(villagerEntity, PolarBearEntity.class, 6.0F, 1.0D, 1.2D));
             if (GuardVillagersConfig.witchesVillager)
                 villagerEntity.goalSelector.add(2, new FleeEntityGoal<>(villagerEntity, WitchEntity.class, 6.0F, 1.0D, 1.2D));
-        }
 
-        if (entity instanceof VillagerEntity villagerEntity) {
             if (GuardVillagersConfig.blackSmithHealing)
                 villagerEntity.goalSelector.add(1, new HealGolemGoal(villagerEntity));
             if (GuardVillagersConfig.clericHealing)
@@ -79,7 +76,6 @@ public abstract class ServerWorldMixin extends World implements StructureWorldAc
         }
 
         if (entity instanceof IronGolemEntity golem) {
-
             RevengeGoal tolerateFriendlyFire = new RevengeGoal(golem, GuardEntity.class).setGroupRevenge();
             golem.targetSelector.getGoals().stream().map(PrioritizedGoal::getGoal).filter(it -> it instanceof RevengeGoal).findFirst().ifPresent(angerGoal -> {
                 golem.targetSelector.remove(angerGoal);
