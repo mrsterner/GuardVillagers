@@ -2,7 +2,6 @@ package dev.sterner.guardvillagers.mixin;
 
 import dev.sterner.guardvillagers.GuardVillagersConfig;
 import dev.sterner.guardvillagers.common.entity.GuardEntity;
-import io.github.fabricators_of_create.porting_lib.entity.events.living.LivingEntityEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Targeter;
