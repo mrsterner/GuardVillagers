@@ -85,7 +85,6 @@ public class GuardVillagers implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> entries.add(GUARD_SPAWN_EGG));
 
-        LivingEntityEvents.NATURAL_SPAWN.register(this::addGoals);
         LivingEntityEvents.SET_TARGET.register(this::target);
         ServerLivingEntityEvents.ALLOW_DAMAGE.register(this::onDamage);
         UseEntityCallback.EVENT.register(this::villagerConvert);
@@ -195,79 +194,6 @@ public class GuardVillagers implements ModInitializer {
         villagerEntity.releaseTicketFor(MemoryModuleType.JOB_SITE);
         villagerEntity.releaseTicketFor(MemoryModuleType.MEETING_POINT);
         villagerEntity.discard();
-    }
-
-    private TriState addGoals(MobEntity entity, double x, double y, double z, WorldAccess worldAccess, @Nullable Spawner spawner, SpawnReason spawnReason) {
-        if (GuardVillagersConfig.raidAnimals) {
-            if (entity instanceof RaiderEntity raiderEntity)
-                if (raiderEntity.hasActiveRaid()) {
-                    raiderEntity.targetSelector.add(5, new ActiveTargetGoal<>(raiderEntity, AnimalEntity.class, false));
-                }
-        }
-
-        if (GuardVillagersConfig.attackAllMobs) {
-            if (entity instanceof HostileEntity && !(entity instanceof SpiderEntity)) {
-                MobEntity mob = entity;
-                mob.targetSelector.add(2, new ActiveTargetGoal<>(mob, GuardEntity.class, false));
-            }
-            if (entity instanceof SpiderEntity spider) {
-                spider.targetSelector.add(3, new AttackEntityDaytimeGoal<>(spider, GuardEntity.class));
-            }
-        }
-
-
-        if (entity instanceof IllagerEntity illager) {
-            if (GuardVillagersConfig.illagersRunFromPolarBears) {
-                illager.goalSelector.add(2, new FleeEntityGoal<>(illager, PolarBearEntity.class, 6.0F, 1.0D, 1.2D));
-            }
-
-            illager.targetSelector.add(2, new ActiveTargetGoal<>(illager, GuardEntity.class, false));
-        }
-
-        if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagersConfig.villagersRunFromPolarBears)
-                villagerEntity.goalSelector.add(2, new FleeEntityGoal<>(villagerEntity, PolarBearEntity.class, 6.0F, 1.0D, 1.2D));
-            if (GuardVillagersConfig.witchesVillager)
-                villagerEntity.goalSelector.add(2, new FleeEntityGoal<>(villagerEntity, WitchEntity.class, 6.0F, 1.0D, 1.2D));
-        }
-
-        if (entity instanceof VillagerEntity villagerEntity) {
-            if (GuardVillagersConfig.blackSmithHealing)
-                villagerEntity.goalSelector.add(1, new HealGolemGoal(villagerEntity));
-            if (GuardVillagersConfig.clericHealing)
-                villagerEntity.goalSelector.add(1, new HealGuardAndPlayerGoal(villagerEntity, 1.0D, 100, 0, 10.0F));
-        }
-
-        if (entity instanceof IronGolemEntity golem) {
-
-            RevengeGoal tolerateFriendlyFire = new RevengeGoal(golem, GuardEntity.class).setGroupRevenge();
-            golem.targetSelector.getGoals().stream().map(PrioritizedGoal::getGoal).filter(it -> it instanceof RevengeGoal).findFirst().ifPresent(angerGoal -> {
-                golem.targetSelector.remove(angerGoal);
-                golem.targetSelector.add(2, tolerateFriendlyFire);
-            });
-        }
-
-        if (entity instanceof ZombieEntity zombie) {
-            zombie.targetSelector.add(3, new ActiveTargetGoal<>(zombie, GuardEntity.class, false));
-        }
-
-        if (entity instanceof RavagerEntity ravager) {
-            ravager.targetSelector.add(2, new ActiveTargetGoal<>(ravager, GuardEntity.class, false));
-        }
-
-        if (entity instanceof WitchEntity witch) {
-            if (GuardVillagersConfig.witchesVillager) {
-                witch.targetSelector.add(3, new ActiveTargetGoal<>(witch, VillagerEntity.class, true));
-                witch.targetSelector.add(3, new ActiveTargetGoal<>(witch, IronGolemEntity.class, true));
-                witch.targetSelector.add(3, new ActiveTargetGoal<>(witch, GuardEntity.class, true));
-            }
-        }
-
-        if (entity instanceof CatEntity cat) {
-            cat.goalSelector.add(1, new FleeEntityGoal<>(cat, IllagerEntity.class, 12.0F, 1.0D, 1.2D));
-        }
-
-        return TriState.DEFAULT;
     }
 
     public static boolean hotvChecker(PlayerEntity player, GuardEntity guard) {

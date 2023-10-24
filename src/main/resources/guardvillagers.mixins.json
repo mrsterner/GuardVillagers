@@ -3,7 +3,8 @@
   "package": "dev.sterner.guardvillagers.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "VillagerTaskListProviderMixin"
+    "VillagerTaskListProviderMixin",
+    "ServerWorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
