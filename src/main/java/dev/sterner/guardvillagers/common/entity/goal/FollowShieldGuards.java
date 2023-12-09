@@ -1,10 +1,10 @@
 package dev.sterner.guardvillagers.common.entity.goal;
 
 import dev.sterner.guardvillagers.common.entity.GuardEntity;
-import io.github.fabricators_of_create.porting_lib.tool.ToolActions;
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class FollowShieldGuards extends Goal {
         List<? extends GuardEntity> list = this.taskOwner.getWorld().getNonSpectatingEntities(this.taskOwner.getClass(), this.taskOwner.getBoundingBox().expand(8.0D, 8.0D, 8.0D));
         if (!list.isEmpty()) {
             for (GuardEntity guard : list) {
-                if (!guard.isInvisible() && guard.getOffHandStack().canPerformAction(ToolActions.SHIELD_BLOCK) && guard.isBlocking()
+                if (!guard.isInvisible() && guard.getOffHandStack().getItem() == Items.SHIELD && guard.isBlocking() // Might create compatibility problems
                         && this.taskOwner.getWorld().getTargets(GuardEntity.class, NEARBY_GUARDS.setBaseMaxDistance(3.0D), guard,
                                 this.taskOwner.getBoundingBox().expand(5.0D))
                         .size() < 5) {
