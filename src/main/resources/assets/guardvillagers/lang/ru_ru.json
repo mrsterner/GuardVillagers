@@ -1,0 +1,33 @@
+{
+  "entity.guardvillagers.guard": "Стражник",
+  "item.guardvillagers.guard_spawn_egg": "Яйцо призыва стражника",
+  "guardinventory.health": "Здоровье: %s",
+  "guardinventory.armor": "Броня: %s",
+
+  "text.autoconfig.guardvillagers.option.general.useSteveModel": "Использовать модель и скин Стива",
+  "text.autoconfig.guardvillagers.option.general.GuardsRunFromPolarBears": "Стражники убегают от полярных медведей",
+
+  "text.autoconfig.guardvillagers.option.general": "Общие",
+  "text.autoconfig.guardvillagers.option.permission": "Разрешение",
+
+  "text.autoconfig.guardvillagers.option.general.GuardFormation": "Построение стражников",
+  "text.autoconfig.guardvillagers.option.general.ClericHealing": "Священник лечит",
+  "text.autoconfig.guardvillagers.option.general.armorerRepairGuardArmor": "Бронник чинит броню стражников",
+  "text.autoconfig.guardvillagers.option.general.GuardsOpenDoors": "Стражники умеют открывать двери",
+  "text.autoconfig.guardvillagers.option.general.giveGuardStuffHOTV": "Герой деревни необходим для редактирования снаряжения стражников",
+  "text.autoconfig.guardvillagers.option.general.setGuardPatrolHotv": "Герой деревни необходим для установки режима патруля стражникам",
+  "text.autoconfig.guardvillagers.option.general.GuardAlwaysShield": "Стражники всегда появляются с щитом",
+  "text.autoconfig.guardvillagers.option.general.FriendlyFire": "Дружественный огонь",
+  "text.autoconfig.guardvillagers.option.general.guardArrowsHurtVillagers": "Стрелы стражников наносят урон крестьянам",
+  "text.autoconfig.guardvillagers.option.general.RaidAnimals": "Разбойники атакуют всех животных",
+  "text.autoconfig.guardvillagers.option.general.WitchesVillager": "Ведьмы атакуют крестьян",
+  "text.autoconfig.guardvillagers.option.general.BlackSmithHealing": "Кузнец исцеляет железных големов",
+  "text.autoconfig.guardvillagers.option.general.ConvertVillagerIfHaveHOTV": "Герой деревни необходим для нанимания крестьян",
+  "text.autoconfig.guardvillagers.option.general.guardAttackMobBlacklist": "Чёрный список мобов, атакуемых стражниками",
+  "text.autoconfig.guardvillagers.option.general.GuardVillagerHelpRange": "Диапазон помощи стражников",
+  "text.autoconfig.guardvillagers.option.general.amountOfHealthRegenerated": "Пассивное исцеление стражников",
+
+  "text.autoconfig.guardvillagers.option.general.AttackAllMobs": "Стражники атакуют всех мобов",
+
+  "text.autoconfig.guardvillagers.option.permission.AmountOfConversions": "Сейчас эта настройка ничего не делает"
+}
