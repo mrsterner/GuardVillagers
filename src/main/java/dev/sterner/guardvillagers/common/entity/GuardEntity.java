@@ -7,9 +7,6 @@ import dev.sterner.guardvillagers.GuardVillagers;
 import dev.sterner.guardvillagers.GuardVillagersConfig;
 import dev.sterner.guardvillagers.common.screenhandler.GuardVillagerScreenHandler;
 import dev.sterner.guardvillagers.common.entity.goal.*;
-import io.github.fabricators_of_create.porting_lib.item.ShieldBlockItem;
-import io.github.fabricators_of_create.porting_lib.util.LazyOptional;
-import io.github.fabricators_of_create.porting_lib.util.ToolActions;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -100,7 +97,6 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public boolean interacting;
     private int remainingPersistentAngerTime;
     private UUID persistentAngerTarget;
-    private LazyOptional<?> itemHandler;
 
     public GuardEntity(EntityType<? extends GuardEntity> type, World world) {
         super(type, world);
@@ -463,12 +459,12 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     @Override
     protected void takeShieldHit(LivingEntity entityIn) {
         super.takeShieldHit(entityIn);
-        if (entityIn.getMainHandStack().getItem() instanceof ShieldBlockItem) this.disableShield(true);
+        if (entityIn.getMainHandStack().getItem() instanceof AxeItem) this.disableShield(true);
     }
 
     @Override
     public void damageShield(float amount) {
-        if (this.activeItemStack.getItem().canPerformAction(this.activeItemStack, ToolActions.SHIELD_BLOCK)) {
+        if (this.activeItemStack.getItem() == Items.SHIELD) { // Might create compatibility problems with other mods that add shields
             if (amount >= 3.0F) {
                 int i = 1 + MathHelper.floor(amount);
                 Hand hand = this.getActiveHand();
@@ -490,7 +486,7 @@ public class GuardEntity extends PathAwareEntity implements CrossbowUser, Ranged
     public void setCurrentHand(Hand hand) {
         super.setCurrentHand(hand);
         ItemStack itemstack = this.getStackInHand(hand);
-        if (itemstack.canPerformAction(ToolActions.SHIELD_BLOCK)) {
+        if (itemstack.getItem() == Items.SHIELD) { // See above
 
             EntityAttributeInstance modifiableattributeinstance = this.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             modifiableattributeinstance.removeModifier(USE_ITEM_SPEED_PENALTY);
