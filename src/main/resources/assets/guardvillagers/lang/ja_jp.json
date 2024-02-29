@@ -21,5 +21,8 @@
   "guardvillagers.midnightconfig.guardAttackMobBlacklist": "護衛が攻撃しないモブ",
   "guardvillagers.midnightconfig.guardVillagerHelpRange": "護衛が活動する範囲",
   "guardvillagers.midnightconfig.amountOfHealthRegenerated": "護衛の再生",
-  "guardvillagers.midnightconfig.attackAllMobs": "護衛が全てのモブを攻撃する"
+  "guardvillagers.midnightconfig.attackAllMobs": "護衛が全てのモブを攻撃する",
+  "subtitles.entity.guard.ambient": "護衛がつぶやく",
+  "subtitles.entity.guard.hurt": "護衛がダメージを受ける",
+  "subtitles.entity.guard.death": "護衛が死ぬ"
 }
