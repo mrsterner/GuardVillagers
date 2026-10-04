@@ -1,7 +1,6 @@
 package dev.sterner.guardvillagers.common.entity.task;
 
 import com.google.common.collect.ImmutableMap;
-import dev.sterner.guardvillagers.GuardVillagers;
 import dev.sterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.Behavior;
@@ -31,7 +30,7 @@ public class ShareGossipWithGuard extends Behavior<Villager> {
     protected void start(ServerLevel serverWorld, Villager villagerEntity, long time) {
         GuardEntity guard = (GuardEntity) villagerEntity.getBrain()
                 .getMemory(MemoryModuleType.INTERACTION_TARGET).get();
-        walkTowardsEachOther(villagerEntity, guard, 0.5F, 2);
+        walkTowardsEachOther(villagerEntity, guard, 0.5F);
     }
 
     @Override
@@ -39,7 +38,7 @@ public class ShareGossipWithGuard extends Behavior<Villager> {
         GuardEntity guard = (GuardEntity) villagerEntity.getBrain()
                 .getMemory(MemoryModuleType.INTERACTION_TARGET).get();
         if (villagerEntity.distanceToSqr(guard) < 5.0D) {
-            walkTowardsEachOther(villagerEntity, guard, 0.5F, 2);
+            walkTowardsEachOther(villagerEntity, guard, 0.5F);
             guard.gossip(villagerEntity, time);
         }
     }
@@ -49,7 +48,7 @@ public class ShareGossipWithGuard extends Behavior<Villager> {
         villagerEntity.getBrain().eraseMemory(MemoryModuleType.INTERACTION_TARGET);
     }
 
-    private void walkTowardsEachOther(Villager villager, GuardEntity guard, float speed, int completionRange) {
+    private void walkTowardsEachOther(Villager villager, GuardEntity guard, float speed) {
         villager.getLookControl().setLookAt(guard, 30.0f, 30.0f);
         guard.getLookControl().setLookAt(villager, 30.0f, 30.0f);
         villager.getNavigation().moveTo(guard, speed);

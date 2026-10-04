@@ -12,6 +12,7 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.SwingAnimation;
 
 public class RepairGolemTask extends WorkAtPoi {
     private IronGolem golem;
@@ -65,7 +66,7 @@ public class RepairGolemTask extends WorkAtPoi {
         if (healer.distanceTo(golem) <= 2.0D) {
             this.hasStartedHealing = true;
             healer.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_INGOT));
-            healer.swing(InteractionHand.MAIN_HAND);
+            healer.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
             golem.heal(15.0F);
             float pitch = 1.0F + (golem.getRandom().nextFloat() - golem.getRandom().nextFloat()) * 0.2F;
             golem.playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0F, pitch);

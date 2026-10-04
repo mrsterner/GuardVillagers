@@ -1,7 +1,5 @@
 package dev.sterner.guardvillagers.client.model;
 
-
-import dev.sterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;

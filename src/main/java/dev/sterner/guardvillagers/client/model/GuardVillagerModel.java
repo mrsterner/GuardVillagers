@@ -1,6 +1,5 @@
 package dev.sterner.guardvillagers.client.model;
 
-import dev.sterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
 public class GuardVillagerModel extends HumanoidModel<GuardBipedRenderState> {
-    public ModelPart Nose = this.head.getChild("nose");
     public ModelPart quiver = this.body.getChild("quiver");
     public ModelPart ArmLShoulderPad = this.rightArm.getChild("shoulderPad_left");
     public ModelPart ArmRShoulderPad = this.leftArm.getChild("shoulderPad_right");

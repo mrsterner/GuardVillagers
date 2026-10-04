@@ -1,6 +1,5 @@
 package dev.sterner.guardvillagers.client.model;
 
-
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;

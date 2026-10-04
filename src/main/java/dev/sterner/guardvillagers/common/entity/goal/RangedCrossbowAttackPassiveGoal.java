@@ -154,9 +154,8 @@ public class RangedCrossbowAttackPassiveGoal<T extends PathfinderMob & RangedAtt
                 }
             } else if (this.crossbowState == CrossbowState.READY_TO_ATTACK && canSee) {
                 this.mob.performRangedAttack(livingentity, 1.0F);
-                ItemStack itemstack1 = this.mob.getItemInHand(GuardVillagers.getHandWith(this.mob, item -> item instanceof CrossbowItem));
-                ((LivingEntity)this.mob).startUsingItem(ProjectileUtil.getWeaponHoldingHand(livingentity, Items.CROSSBOW));
-                ((CrossbowAttackMob)this.mob).setChargingCrossbow(false);
+                this.mob.startUsingItem(ProjectileUtil.getWeaponHoldingHand(livingentity, Items.CROSSBOW));
+                this.mob.setChargingCrossbow(false);
                 this.crossbowState = CrossbowState.UNCHARGED;
             }
         }

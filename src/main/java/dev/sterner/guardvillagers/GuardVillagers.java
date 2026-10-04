@@ -37,6 +37,7 @@ import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.Nullable;
@@ -101,7 +102,7 @@ public class GuardVillagers implements ModInitializer {
         UseEntityCallback.EVENT.register(this::villagerConvert);
 
         ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
-            if (entity instanceof Villager villagerEntity && villagerEntity.assignProfessionWhenSpawned()) {
+            if (entity instanceof Villager villagerEntity) {
                 var spawnChance = Mth.clamp(GuardVillagersConfig.spawnChancePerVillager, 0f, 1f);
                 if (world.getRandom().nextFloat() < spawnChance) {
                     GuardEntity guardEntity = GUARD_VILLAGER.create(world, EntitySpawnReason.MOB_SUMMONED);
@@ -175,7 +176,7 @@ public class GuardVillagers implements ModInitializer {
     }
 
     private void convertVillager(Villager villagerEntity, Player player, Level world) {
-        player.swing(InteractionHand.MAIN_HAND);
+        player.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
         ItemStack itemstack = player.getItemBySlot(EquipmentSlot.MAINHAND);
         GuardEntity guard = GUARD_VILLAGER.create(world, EntitySpawnReason.MOB_SUMMONED);
         if (guard == null)

@@ -11,7 +11,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 public class FollowShieldGuards extends Goal {
-    private static final TargetingConditions NEARBY_GUARDS = TargetingConditions.forNonCombat().range(8.0D).ignoreLineOfSight();
     private final GuardEntity taskOwner;
     private GuardEntity guardtofollow;
     private double x;

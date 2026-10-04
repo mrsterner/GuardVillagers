@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.OpenDoorGoal;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 
@@ -25,7 +26,7 @@ public class GuardInteractDoorGoal extends OpenDoorGoal {
     public void start() {
         if (areOtherMobsComingThroughDoor(guard)) {
             super.start();
-            guard.swing(InteractionHand.MAIN_HAND);
+            guard.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
         }
     }
 

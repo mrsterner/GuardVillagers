@@ -1,6 +1,5 @@
 package dev.sterner.guardvillagers.client.model;
 
-import dev.sterner.guardvillagers.common.entity.GuardEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;

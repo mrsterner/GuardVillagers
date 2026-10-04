@@ -14,6 +14,7 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.SwingAnimation;
 
 public class HealGolemGoal extends Goal {
     public final Mob healer;
@@ -73,7 +74,7 @@ public class HealGolemGoal extends Goal {
         healer.getNavigation().moveTo(golem, 0.5);
         if (healer.distanceTo(golem) <= 2.0D) {
             this.hasStartedHealing = true;
-            healer.swing(InteractionHand.MAIN_HAND);
+            healer.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
             golem.heal(15.0F);
             float f1 = 1.0F + (golem.getRandom().nextFloat() - golem.getRandom().nextFloat()) * 0.2F;
             golem.playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0F, f1);

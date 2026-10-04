@@ -21,7 +21,6 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
-import org.jetbrains.annotations.Nullable;
 
 public class GuardRenderer extends HumanoidMobRenderer<GuardEntity, GuardBipedRenderState, HumanoidModel<GuardBipedRenderState>> {
 

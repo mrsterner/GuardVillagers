@@ -36,34 +36,34 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
 
         @Override
         public boolean canUse() {
-            if (((Mob)this.actor).getTarget() == null) {
+            if (this.actor.getTarget() == null) {
                 return false;
             }
             return this.isHoldingBow();
         }
 
         protected boolean isHoldingBow() {
-            return ((LivingEntity)this.actor).isHolding(Items.BOW);
+            return this.actor.isHolding(Items.BOW);
         }
 
         @Override
         public boolean canContinueToUse() {
-            return (this.canUse() || !((Mob)this.actor).getNavigation().isDone()) && this.isHoldingBow();
+            return (this.canUse() || !this.actor.getNavigation().isDone()) && this.isHoldingBow();
         }
 
         @Override
         public void start() {
             super.start();
-            ((Mob)this.actor).setAggressive(true);
+            this.actor.setAggressive(true);
         }
 
         @Override
         public void stop() {
             super.stop();
-            ((Mob)this.actor).setAggressive(false);
+            this.actor.setAggressive(false);
             this.targetSeeingTicker = 0;
             this.cooldown = -1;
-            ((LivingEntity)this.actor).stopUsingItem();
+            this.actor.stopUsingItem();
         }
 
         @Override
@@ -78,25 +78,25 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
             if (livingEntity == null) {
                 return;
             }
-            double d = ((Entity)this.actor).distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
-            boolean bl = ((Mob)this.actor).getSensing().hasLineOfSight(livingEntity);
-            boolean bl3 = bl2 = this.targetSeeingTicker > 0;
+            double d = this.actor.distanceToSqr(livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+            boolean bl = this.actor.getSensing().hasLineOfSight(livingEntity);
+            bl2 = this.targetSeeingTicker > 0;
             if (bl != bl2) {
                 this.targetSeeingTicker = 0;
             }
             this.targetSeeingTicker = bl ? ++this.targetSeeingTicker : --this.targetSeeingTicker;
             if (d > (double)this.squaredRange || this.targetSeeingTicker < 20) {
-                ((Mob)this.actor).getNavigation().moveTo(livingEntity, this.speed);
+                this.actor.getNavigation().moveTo(livingEntity, this.speed);
                 this.combatTicks = -1;
             } else {
-                ((Mob)this.actor).getNavigation().stop();
+                this.actor.getNavigation().stop();
                 ++this.combatTicks;
             }
             if (this.combatTicks >= 20) {
-                if ((double)((Entity)this.actor).getRandom().nextFloat() < 0.3) {
+                if ((double) this.actor.getRandom().nextFloat() < 0.3) {
                     boolean bl4 = this.movingToLeft = !this.movingToLeft;
                 }
-                if ((double)((Entity)this.actor).getRandom().nextFloat() < 0.3) {
+                if ((double) this.actor.getRandom().nextFloat() < 0.3) {
                     this.backward = !this.backward;
                 }
                 this.combatTicks = 0;
@@ -107,27 +107,27 @@ public class RangedBowAttackPassiveGoal<T extends GuardEntity & RangedAttackMob>
                 } else if (d < (double)(this.squaredRange * 0.25f)) {
                     this.backward = true;
                 }
-                ((Mob)this.actor).getMoveControl().strafe(this.backward ? -0.5f : 0.5f, this.movingToLeft ? 0.5f : -0.5f);
-                Entity entity = ((Entity)this.actor).getControlledVehicle();
+                this.actor.getMoveControl().strafe(this.backward ? -0.5f : 0.5f, this.movingToLeft ? 0.5f : -0.5f);
+                Entity entity = this.actor.getControlledVehicle();
                 if (entity instanceof Mob) {
                     Mob mobEntity = (Mob)entity;
                     mobEntity.lookAt(livingEntity, 30.0f, 30.0f);
                 }
-                ((Mob)this.actor).lookAt(livingEntity, 30.0f, 30.0f);
+                this.actor.lookAt(livingEntity, 30.0f, 30.0f);
             } else {
-                ((Mob)this.actor).getLookControl().setLookAt(livingEntity, 30.0f, 30.0f);
+                this.actor.getLookControl().setLookAt(livingEntity, 30.0f, 30.0f);
             }
-            if (((LivingEntity)this.actor).isUsingItem()) {
+            if (this.actor.isUsingItem()) {
                 int i;
                 if (!bl && this.targetSeeingTicker < -60) {
-                    ((LivingEntity)this.actor).stopUsingItem();
-                } else if (bl && (i = ((LivingEntity)this.actor).getTicksUsingItem()) >= 20) {
-                    ((LivingEntity)this.actor).stopUsingItem();
-                    ((RangedAttackMob)this.actor).performRangedAttack(livingEntity, BowItem.getPowerForTime(i));
+                    this.actor.stopUsingItem();
+                } else if (bl && (i = this.actor.getTicksUsingItem()) >= 20) {
+                    this.actor.stopUsingItem();
+                    this.actor.performRangedAttack(livingEntity, BowItem.getPowerForTime(i));
                     this.cooldown = this.attackInterval;
                 }
             } else if (--this.cooldown <= 0 && this.targetSeeingTicker >= -60) {
-                ((LivingEntity)this.actor).startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.actor, Items.BOW));
+                this.actor.startUsingItem(ProjectileUtil.getWeaponHoldingHand(this.actor, Items.BOW));
             }
         }
     }

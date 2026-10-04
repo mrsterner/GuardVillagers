@@ -23,6 +23,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.*;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.*;
@@ -66,8 +67,6 @@ import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerListener;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
@@ -76,6 +75,7 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.component.DamageResistant;
+import net.minecraft.world.item.component.SwingAnimation;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -517,7 +517,6 @@ public class GuardEntity extends PathfinderMob implements CrossbowAttackMob, Ran
             this.spawnWithArmor = false;
         }
 
-        this.updateSwingTime();
         super.aiStep();
     }
 
@@ -533,9 +532,9 @@ public class GuardEntity extends PathfinderMob implements CrossbowAttackMob, Ran
     }
 
     @Override
-    protected void blockUsingItem(ServerLevel level, LivingEntity attacker, DamageSource source, float damage) {
-        super.blockUsingItem(level, attacker, source, damage);
-        if (attacker.getMainHandItem().getItem() instanceof AxeItem) this.disableShield(true, attacker.getMainHandItem().getItem());
+    protected void blockUsingItem(ServerLevel level, LivingEntity attacker, DamageSource source, float damage, boolean fullyBlocked) {
+        super.blockUsingItem(level, attacker, source, damage, fullyBlocked);
+        if (attacker.getMainHandItem().is(ItemTags.AXES)) this.disableShield(true, attacker.getMainHandItem().getItem());
     }
 
     @Override
@@ -836,11 +835,11 @@ public class GuardEntity extends PathfinderMob implements CrossbowAttackMob, Ran
     }
 
     @Override
-    protected void blockedByItem(LivingEntity defender, DamageSource source, float damage) {
+    protected void blockedByItem(LivingEntity defender, DamageSource source, float damage, boolean fullyBlocked) {
         if (this.isKicking()) {
             this.setKicking(false);
         }
-        super.blockedByItem(defender, source, damage);
+        super.blockedByItem(defender, source, damage, fullyBlocked);
     }
 
     @Override
@@ -1090,7 +1089,7 @@ public class GuardEntity extends PathfinderMob implements CrossbowAttackMob, Ran
                 this.resetAttackCooldown();
                 this.guard.releaseUsingItem();
                 if (guard.shieldCoolDown == 0) this.guard.shieldCoolDown = 8;
-                this.guard.swing(InteractionHand.MAIN_HAND);
+                this.guard.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
                 if (guard.level() instanceof  ServerLevel serverWorld) {
                     this.guard.doHurtTarget(serverWorld, target);
                 }
